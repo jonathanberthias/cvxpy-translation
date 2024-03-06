@@ -1,0 +1,164 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [
+  "hatchling",
+]
+
+[project]
+name = "cvxpy-gurobi"
+version = "0.1.0"
+description = "Solve CVXPY problems through Gurobipy models"
+readme = "README.md"
+keywords = [
+  "cvxpy",
+  "gurobi",
+  "optimization",
+]
+license = "MIT"
+authors = [
+  { name = "Jonathan Berthias", email = "jvberthias@gmail.com" },
+]
+requires-python = ">=3.8"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = [
+  # "cvxpy" must be available but we don't list it
+  # as a dependency because cvxpy-base is sufficient
+  "gurobipy",
+  "numpy",
+  "scipy",
+]
+[project.urls]
+Documentation = "https://github.com/jonathanberthias/cvxpy2gurobi#readme"
+Issues = "https://github.com/jonathanberthias/cvxpy2gurobi/issues"
+Source = "https://github.com/jonathanberthias/cvxpy2gurobi"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "cvxpy-base==1.4.2",
+  "gurobipy==11.0.0",
+  "coverage[toml]",
+  "pytest",
+  "pytest-insta",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+update-snapshots = "pytest --insta update {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+test-cov-unit = "coverage run -m pytest -k 'not regression'"
+test-cov-regression = "coverage run -m pytest -k regression"
+cov-clean = "coverage erase"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "cov-clean",
+  "test-cov",
+  "cov-report",
+]
+cov-unit = [
+  "cov-clean",
+  "test-cov-unit",
+  "cov-report",
+]
+cov-regression = [
+  "cov-clean",
+  "test-cov-regression",
+  "cov-report",
+]
+cov-html = [
+  "coverage html",
+  "open htmlcov/index.html",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.12"]
+gurobipy = ["11"]
+cvxpy = ["1.4", "1.3", "1.2"]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.11", "3.10", "3.9", "3.8"]
+gurobipy = ["10"]
+cvxpy = ["1.4"]
+
+[tool.hatch.envs.all]
+extra-dependencies = [
+  "gurobipy=={matrix:gurobipy}.*",
+  "cvxpy-base=={matrix:cvxpy}.*",
+]
+matrix-name-format = "{variable}{value}"
+[tool.hatch.envs.all.scripts]
+versions = [
+  "python --version",
+  "pip freeze | grep gurobipy",
+  "pip freeze | grep cvxpy-base",
+]
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy {args:src tests}"
+
+[tool.mypy]
+strict = true
+untyped_calls_exclude = ["cvxpy"]
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = "cvxpy.*"
+implicit_reexport = true
+
+[tool.hatch.envs.hatch-static-analysis]
+# https://hatch.pypa.io/latest/config/static-analysis/
+config-path = "ruff_defaults.toml"
+
+[tool.ruff]
+extend = "ruff_defaults.toml"
+line-length = 88
+preview = true
+unsafe-fixes = true
+
+[tool.ruff.lint]
+extend-ignore = [
+  "N802",    # visitor uses uppercase letters in method names
+  "N811",    # CVXPY uses UPPERCASE for non constants
+  "PLR2004", # 'magic' constants are not that annoying
+  "S101",    # asserts used for type narrowing
+]
+extend-select = [
+  "NPY",
+]
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*" = [
+  "FBT001", # bool positional arguments are necessary with parametrized tests
+  "INP001", # no __init__.py in tests
+  "N806",   # uppercase letters for matrices
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+known-first-party = ["cvxpy_gurobi", "test_problems"]
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.pytest.ini_options]
+pythonpath = "tests"
+
+[tool.coverage.run]
+source_pkgs = ["cvxpy_gurobi"]
+branch = true
+parallel = true

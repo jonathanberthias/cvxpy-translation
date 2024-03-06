@@ -1,0 +1,34 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 64: 0.0 <= x
+ 68: x <= 2.0
+ 72: x == 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: C0 = 1
+ R1: - C0 <= 0
+ R2: C0 <= 2
+Bounds
+ C0 free
+End
+Work: 125
+----------------------------------------
+GUROBI
+Minimize
+  x
+Subject To
+ 64: x >= 0
+ 68: x <= 2
+ 72: x = 1
+Bounds
+ x free
+End
+Work: 128

@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  quad_over_lin(x + Promote(-1.0, (2,)), 1.0)
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 + 2 C1 ^2 ] / 2 
+Subject To
+ R0: - C0 + C2 = 1
+ R1: - C1 + C3 = 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+Work: 90
+----------------------------------------
+GUROBI
+Minimize
+  - 2 x[0] - 2 x[1] + 2 Constant + [ 2 x[0] ^2 + 2 x[1] ^2 ] / 2 
+Subject To
+Bounds
+ x[0] free
+ x[1] free
+ Constant = 1
+End
+Work: 10

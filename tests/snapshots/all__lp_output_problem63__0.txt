@@ -1,0 +1,26 @@
+CVXPY
+Maximize
+  x
+Subject To
+Bounds
+ x <= 0.0
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0
+Subject To
+ R0: C0 <= 0
+Bounds
+ C0 free
+End
+Work: 73
+----------------------------------------
+GUROBI
+Maximize
+  x
+Subject To
+Bounds
+ -infinity <= x <= 0
+End
+Work: 26

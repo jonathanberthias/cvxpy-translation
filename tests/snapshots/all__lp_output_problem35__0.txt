@@ -1,0 +1,28 @@
+CVXPY
+Minimize
+  power(x, 2.0) + power(y, 2.0)
+Subject To
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 + 2 C1 ^2 ] / 2 
+Subject To
+Bounds
+ C0 free
+ C1 free
+End
+Work: 10
+----------------------------------------
+GUROBI
+Minimize
+ [ 2 x ^2 + 2 y ^2 ] / 2 
+Subject To
+Bounds
+ x free
+ y free
+End
+Work: 10

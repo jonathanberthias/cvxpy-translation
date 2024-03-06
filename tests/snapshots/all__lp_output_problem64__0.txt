@@ -1,0 +1,34 @@
+CVXPY
+Minimize
+  n
+Subject To
+ 283: 1.0 <= n
+Bounds
+ n free
+Generals
+ n
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 <= -1
+Bounds
+ C0 free
+Generals
+ C0
+End
+Work: 34
+----------------------------------------
+GUROBI
+Minimize
+  n
+Subject To
+ 283: n >= 1
+Bounds
+ n free
+Generals
+ n
+End
+Work: 34
