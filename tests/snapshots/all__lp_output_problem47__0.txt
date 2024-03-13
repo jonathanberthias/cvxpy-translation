@@ -1,0 +1,42 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 183: x == 1.0
+ 188: y == 1.0
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: C0 = 1
+ R1: C1 = 1
+ R2: C2 = 1
+ R3: C3 = 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+Work: 181
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + x[1]
+Subject To
+ 183[0]: x[0] = 1
+ 183[1]: x[1] = 1
+ 188[0]: y[0] = 1
+ 188[1]: y[1] = 1
+Bounds
+ x[0] free
+ x[1] free
+ y[0] free
+ y[1] free
+End
+Work: 181

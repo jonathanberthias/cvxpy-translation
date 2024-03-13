@@ -1,0 +1,45 @@
+CVXPY
+Maximize
+  x + n + b
+Subject To
+ 291: n <= 1.0
+Bounds
+ x <= 0.0
+ n free
+Binaries
+ b
+Generals
+ n
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2
+Subject To
+ R0: C0 <= 0
+ R1: - C2 <= 0
+ R2: C1 <= 1
+Bounds
+ C0 free
+ C1 free
+Binaries
+ C2
+Generals
+ C1
+End
+Work: 198
+----------------------------------------
+GUROBI
+Maximize
+  x + n + b
+Subject To
+ 291: n <= 1
+Bounds
+ -infinity <= x <= 0
+ n free
+Binaries
+ b
+Generals
+ n
+End
+Work: 77
