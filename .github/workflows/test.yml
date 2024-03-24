@@ -1,0 +1,32 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: pip
+
+      - name: Install hatch
+        run: pipx install hatch
+
+      - name: Display installed versions
+        run: hatch run versions
+
+      - name: Run tests
+        run: hatch run test

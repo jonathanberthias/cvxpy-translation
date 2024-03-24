@@ -14,7 +14,6 @@ Subject To
 Bounds
  C0 free
 End
-Work: 73
 ----------------------------------------
 GUROBI
 Maximize
@@ -23,4 +22,3 @@ Subject To
 Bounds
  -infinity <= x <= 0
 End
-Work: 26

@@ -135,6 +135,4 @@ def lp_from_cvxpy(problem: cp.Problem) -> list[str]:
 def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
     out_path = tmp_path / "gurobi.lp"
     model.write(str(out_path))
-    lp = out_path.read_text().splitlines()[1:]
-    lp.append(f"Work: {model.Work * 1e8:,.0f}")
-    return lp
+    return out_path.read_text().splitlines()[1:]

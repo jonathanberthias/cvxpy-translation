@@ -19,7 +19,6 @@ Bounds
 Generals
  C0
 End
-Work: 34
 ----------------------------------------
 GUROBI
 Minimize
@@ -31,4 +30,3 @@ Bounds
 Generals
  n
 End
-Work: 34

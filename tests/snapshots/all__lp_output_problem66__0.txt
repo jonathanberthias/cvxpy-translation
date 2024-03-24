@@ -27,7 +27,6 @@ Binaries
 Generals
  C1
 End
-Work: 198
 ----------------------------------------
 GUROBI
 Maximize
@@ -42,4 +41,3 @@ Binaries
 Generals
  n
 End
-Work: 77

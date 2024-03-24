@@ -80,6 +80,11 @@ cov-html = [
   "coverage html",
   "open htmlcov/index.html",
 ]
+versions = [
+  "python --version",
+  "pip freeze | grep gurobipy",
+  "pip freeze | grep cvxpy-base",
+]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.12"]
@@ -97,12 +102,6 @@ extra-dependencies = [
   "cvxpy-base=={matrix:cvxpy}.*",
 ]
 matrix-name-format = "{variable}{value}"
-[tool.hatch.envs.all.scripts]
-versions = [
-  "python --version",
-  "pip freeze | grep gurobipy",
-  "pip freeze | grep cvxpy-base",
-]
 
 [tool.hatch.envs.types]
 extra-dependencies = [

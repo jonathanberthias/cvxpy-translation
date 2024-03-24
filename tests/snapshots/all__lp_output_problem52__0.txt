@@ -21,7 +21,6 @@ Bounds
  C2 free
  C3 free
 End
-Work: 23
 ----------------------------------------
 GUROBI
 Minimize
@@ -35,4 +34,3 @@ Bounds
  y[0] free
  y[1] free
 End
-Work: 23
