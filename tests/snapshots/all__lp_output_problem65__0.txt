@@ -15,7 +15,6 @@ Bounds
 Binaries
  C0
 End
-Work: 4
 ----------------------------------------
 GUROBI
 Minimize
@@ -25,4 +24,3 @@ Bounds
 Binaries
  b
 End
-Work: 4

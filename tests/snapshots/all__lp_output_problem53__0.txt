@@ -18,7 +18,6 @@ Bounds
  C0 free
  C1 free
 End
-Work: 115
 ----------------------------------------
 GUROBI
 Minimize
@@ -30,4 +29,3 @@ Bounds
  x[0] free
  x[1] free
 End
-Work: 115

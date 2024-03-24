@@ -25,7 +25,6 @@ Bounds
  soc_x_3 free
  soc_x_4 free
 End
-Work: 3,809
 ----------------------------------------
 GUROBI
 Maximize
@@ -36,4 +35,3 @@ Bounds
  x[0] free
  x[1] free
 End
-Work: 263

@@ -34,7 +34,6 @@ Bounds
  soc_x_7 free
  soc_x_8 free
 End
-Work: 7,376
 ----------------------------------------
 GUROBI
 Minimize
@@ -45,4 +44,3 @@ Bounds
  x[0] free
  x[1] free
 End
-Work: 639
