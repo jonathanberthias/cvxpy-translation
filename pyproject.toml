@@ -44,8 +44,9 @@ Source = "https://github.com/jonathanberthias/cvxpy2gurobi"
 
 [tool.hatch.envs.default]
 dependencies = [
-  "cvxpy-base==1.4.2",
+  "cvxpy-base==1.5.2",
   "gurobipy==11.0.0",
+  "numpy<2",  # as of cvxpy 1.5.2, the gurobi interface is not compatible with numpy 2
   "coverage[toml]",
   "pytest",
   "pytest-insta",
