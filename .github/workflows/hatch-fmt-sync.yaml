@@ -1,0 +1,32 @@
+name: Sync Ruff settings
+
+on:
+  schedule:
+    - cron: "0 5 17 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  hatch-fmt-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pipx install hatch
+
+      - name: Sync Ruff settings
+        run: hatch fmt --check --sync || true
+
+      - name: Commit changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: sync Ruff settings"
+          branch: sync-ruff-settings
+          title: "chore: sync Ruff settings"
+          body: "This PR was automatically generated to sync Ruff settings."
