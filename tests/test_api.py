@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import Callable
-from typing import TypeAlias
 
 import cvxpy as cp
 import gurobipy as gp
@@ -9,6 +9,9 @@ import pytest
 
 import cvxpy_gurobi
 from cvxpy_gurobi import ParamDict
+
+if TYPE_CHECKING:
+    from typing import TypeAlias
 
 
 @pytest.fixture
