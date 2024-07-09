@@ -47,62 +47,44 @@ dependencies = [
   "cvxpy-base==1.5.2",
   "gurobipy==11.0.0",
   "numpy<2",  # as of cvxpy 1.5.2, the gurobi interface is not compatible with numpy 2
-  "coverage[toml]",
   "pytest",
   "pytest-insta",
 ]
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
 update-snapshots = "pytest --insta update {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
-test-cov-unit = "coverage run -m pytest -k 'not regression'"
-test-cov-regression = "coverage run -m pytest -k regression"
-cov-clean = "coverage erase"
-cov-report = [
-  "- coverage combine",
-  "coverage report",
-]
-cov = [
-  "cov-clean",
-  "test-cov",
-  "cov-report",
-]
-cov-unit = [
-  "cov-clean",
-  "test-cov-unit",
-  "cov-report",
-]
-cov-regression = [
-  "cov-clean",
-  "test-cov-regression",
-  "cov-report",
-]
-cov-html = [
-  "coverage html",
-  "open htmlcov/index.html",
-]
 versions = [
   "python --version",
   "pip freeze | grep gurobipy",
   "pip freeze | grep cvxpy-base",
 ]
 
-[[tool.hatch.envs.all.matrix]]
-python = ["3.12"]
-gurobipy = ["11"]
-cvxpy = ["1.4", "1.3", "1.2"]
-
-[[tool.hatch.envs.all.matrix]]
-python = ["3.11", "3.10", "3.9", "3.8"]
-gurobipy = ["10"]
-cvxpy = ["1.4"]
-
-[tool.hatch.envs.all]
-extra-dependencies = [
-  "gurobipy=={matrix:gurobipy}.*",
+[tool.hatch.envs.hatch-test]
+dependencies = [
   "cvxpy-base=={matrix:cvxpy}.*",
+  "gurobipy=={matrix:gurobipy}.*",
+  "numpy<2",  # as of cvxpy 1.5.2, the gurobi interface is not compatible with numpy 2
+  "scipy{matrix:scipy:}",
+  "coverage[toml]",
+  "pytest",
+  "pytest-insta",
 ]
 matrix-name-format = "{variable}{value}"
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.12"]
+gurobipy = ["11"]
+cvxpy = ["1.5", "1.4"]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.11"]
+gurobipy = ["11"]
+cvxpy = ["1.3"]
+scipy = ["<1.14"]  # cvxpy 1.3 uses scipy features (.A) removed in 1.14
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.10", "3.9", "3.8"]
+gurobipy = ["11"]
+cvxpy = ["1.5"]
 
 [tool.hatch.envs.types]
 extra-dependencies = [
@@ -129,6 +111,7 @@ config-path = "ruff_defaults.toml"
 extend = "ruff_defaults.toml"
 line-length = 88
 preview = true
+show-fixes = true
 unsafe-fixes = true
 
 [tool.ruff.lint]

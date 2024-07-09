@@ -41,8 +41,5 @@ jobs:
       - name: Install hatch
         run: pipx install hatch
 
-      - name: Display installed versions
-        run: hatch run versions
-
       - name: Run tests
-        run: hatch run test
+        run: hatch test --cover

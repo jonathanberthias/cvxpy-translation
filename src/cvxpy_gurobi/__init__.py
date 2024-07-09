@@ -6,7 +6,9 @@ from functools import reduce
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import Iterator
+from typing import Union
 
 import cvxpy as cp
 import cvxpy.settings as cp_settings
@@ -54,8 +56,8 @@ __all__ = (
 )
 
 
-AnyVar: TypeAlias = gp.Var | gp.MVar
-ParamDict: TypeAlias = dict[str, str | float]
+AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
+ParamDict: TypeAlias = Dict[str, Union[str, float]]
 
 # Default name for the solver when registering it with CVXPY.
 # "Native" refers to the fact that the entire problem is solved using Gurobi,
