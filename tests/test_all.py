@@ -73,7 +73,7 @@ def test_lp_output(
         )
     )
 
-    if cp.__version__.startswith("1.4"):
+    if cp.__version__.startswith("1.5"):
         assert snapshot() == output
     else:
         # don't update snapshots nor delete them
