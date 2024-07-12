@@ -9,6 +9,7 @@ import gurobipy as gp
 import pytest
 
 import cvxpy_gurobi
+from cvxpy_gurobi import CVXPY_VERSION
 from cvxpy_gurobi import ParamDict
 
 if TYPE_CHECKING:
@@ -40,6 +41,12 @@ def validate(problem: cp.Problem, *, dual: bool) -> None:
     assert problem.value == 1.0
     assert problem.var_dict["x"].value == 1.0
     assert problem.status == cp.OPTIMAL
+    assert problem.solver_stats is not None
+    assert problem.solver_stats.solve_time is not None
+    assert problem.solver_stats.solver_name == cvxpy_gurobi.NATIVE_GUROBI
+    assert isinstance(problem.solver_stats.extra_stats, gp.Model)
+    if CVXPY_VERSION >= (1, 4):  # didn't exist before
+        assert problem.compilation_time is not None
     dual_value = problem.constraints[0].dual_value
     if dual:
         assert dual_value is not None
@@ -86,7 +93,7 @@ def test_manual(
 ) -> None:
     model = cvxpy_gurobi.build_model(problem, params=params)
     model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model)
+    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
     validate(problem)
 
 
@@ -96,7 +103,7 @@ def test_manual_with_env(
     env = gp.Env()
     model = cvxpy_gurobi.build_model(problem, env=env, params=params)
     model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model)
+    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
     validate(problem)
 
 
@@ -109,5 +116,5 @@ def test_granular(
     if params:
         cvxpy_gurobi.set_params(model, params=params)
     model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model)
+    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
     validate(problem)

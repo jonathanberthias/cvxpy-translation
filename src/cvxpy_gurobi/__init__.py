@@ -17,6 +17,7 @@ import numpy as np
 import numpy.typing as npt
 from cvxpy.constraints.nonpos import Inequality
 from cvxpy.constraints.zero import Equality
+from cvxpy.problems.problem import SolverStats
 from cvxpy.reductions.solution import Solution
 from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
@@ -24,6 +25,16 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 if TYPE_CHECKING:
     from typing import TypeAlias
+
+    try:
+        from typing import Self
+    except ImportError:
+        try:
+            # Use Self from typing_extensions if available
+            # but we don't want to add it as a dependency
+            from typing_extensions import Self
+        except ImportError:
+            Self: TypeAlias = Any
 
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
@@ -55,6 +66,7 @@ __all__ = (
     "UnsupportedExpressionError",
 )
 
+CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 ParamDict: TypeAlias = Dict[str, Union[str, float]]
@@ -86,17 +98,34 @@ class UnsupportedConstraintError(UnsupportedError):
     msg_template = "Unsupported CVXPY constraint: {}"
 
 
+class _Timer:
+    time: float
+
+    def __enter__(self) -> Self:
+        self._start = time.perf_counter()
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        end = time.perf_counter()
+        self.time = end - self._start
+
+
 def solve(problem: cp.Problem, params: ParamDict | None = None) -> float:
     """Solves a CVXPY problem using Gurobi.
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_gurobi.solve(problem)
     """
-    start_setup = time.process_time()
-    model = build_model(problem, params=params)
-    setup_time = time.process_time() - start_setup
-    model.optimize()
-    backfill_problem(problem, model, setup_time=setup_time)
+    with _Timer() as compilation:
+        model = build_model(problem, params=params)
+
+    with _Timer() as solve:
+        model.optimize()
+
+    backfill_problem(
+        problem, model, compilation_time=compilation.time, solve_time=solve.time
+    )
+
     return problem.value
 
 
@@ -179,24 +208,35 @@ def to_gurobi_var(var: cp.Variable, model: gp.Model) -> AnyVar:
 
 
 def backfill_problem(
-    problem: cp.Problem, model: gp.Model, setup_time: float | None = None
+    problem: cp.Problem,
+    model: gp.Model,
+    compilation_time: float | None = None,
+    solve_time: float | None = None,
 ) -> None:
     """Update the CVXPY problem with the solution from the Gurobi model."""
-    solution = extract_solution_from_model(model, problem, setup_time=setup_time)
+    solution = extract_solution_from_model(model, problem)
     problem.unpack(solution)
 
+    if CVXPY_VERSION >= (1, 4):
+        # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
+        solver_stats = SolverStats.from_dict(solution.attr, NATIVE_GUROBI)
+    else:
+        solver_stats = SolverStats(solution.attr, NATIVE_GUROBI)
+    problem._solver_stats = solver_stats  # noqa: SLF001
 
-def extract_solution_from_model(
-    model: gp.Model, problem: cp.Problem, setup_time: float | None = None
-) -> Solution:
+    if solve_time is not None:
+        problem._solve_time = solve_time  # noqa: SLF001
+    if CVXPY_VERSION >= (1, 4) and compilation_time is not None:
+        # added in https://github.com/cvxpy/cvxpy/pull/2046
+        problem._compilation_time = compilation_time  # noqa: SLF001
+
+
+def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solution:
     attr = {
         cp_settings.EXTRA_STATS: model,
         cp_settings.SOLVE_TIME: model.Runtime,
         cp_settings.NUM_ITERS: model.IterCount,
     }
-    if setup_time is not None:
-        attr[cp_settings.SETUP_TIME] = setup_time
-
     status = gurobi_conif.GUROBI.STATUS_MAP[model.Status]
     if status not in SOLUTION_PRESENT:
         return failure_solution(status, attr)
