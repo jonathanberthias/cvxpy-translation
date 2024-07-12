@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 from typing import Callable
 
@@ -35,19 +36,20 @@ def params(dual: bool) -> ParamDict | None:
 Validator: TypeAlias = Callable[[cp.Problem], None]
 
 
-@pytest.fixture
-def validate(dual: bool) -> Validator:
-    def validator(problem: cp.Problem) -> None:
-        assert problem.value == 1.0
-        assert problem.var_dict["x"].value == 1.0
-        assert problem.status == cp.OPTIMAL
-        dual_value = problem.constraints[0].dual_value
-        if dual:
-            assert dual_value is not None
-        else:
-            assert dual_value is None
+def validate(problem: cp.Problem, *, dual: bool) -> None:
+    assert problem.value == 1.0
+    assert problem.var_dict["x"].value == 1.0
+    assert problem.status == cp.OPTIMAL
+    dual_value = problem.constraints[0].dual_value
+    if dual:
+        assert dual_value is not None
+    else:
+        assert dual_value is None
 
-    return validator
+
+@pytest.fixture(name="validate")
+def _validate(dual: bool) -> Validator:
+    return partial(validate, dual=dual)
 
 
 def test_registered_solver(
@@ -56,6 +58,20 @@ def test_registered_solver(
     cvxpy_gurobi.register_solver(params=params)
     problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI)
     validate(problem)
+
+
+def test_registered_solver_kwargs(
+    problem: cp.Problem, validate: Validator, params: ParamDict
+) -> None:
+    cvxpy_gurobi.register_solver()
+    problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI, **(params or {}))
+    validate(problem)
+
+
+def test_registered_solver_kwargs_override(problem: cp.Problem) -> None:
+    cvxpy_gurobi.register_solver(params={gp.GRB.Param.QCPDual: 0})
+    problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI, **{gp.GRB.Param.QCPDual: 1})
+    validate(problem, dual=True)
 
 
 def test_direct_solve(

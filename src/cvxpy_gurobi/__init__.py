@@ -115,8 +115,10 @@ def register_solver(params: ParamDict | None = None) -> None:
 def make_solver(params: ParamDict | None = None) -> Callable[[cp.Problem], float]:
     """Returns a function that solves a CVXPY problem using Gurobi."""
 
-    def solver(problem: cp.Problem) -> float:
-        return solve(problem, params)
+    def solver(problem: cp.Problem, **kwargs) -> float:
+        solve_params = params.copy() if params else {}
+        solve_params.update(kwargs)
+        return solve(problem, params=solve_params)
 
     return solver
 
