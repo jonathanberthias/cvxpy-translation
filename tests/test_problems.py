@@ -1,4 +1,9 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from functools import wraps
 from itertools import chain
+from typing import Callable
 from typing import Iterator
 
 import cvxpy as cp
@@ -6,7 +11,32 @@ import numpy as np
 import scipy.sparse as sp
 
 
-def all_valid_problems() -> Iterator[cp.Problem]:
+@dataclass(frozen=True)
+class ProblemTestCase:
+    problem: cp.Problem
+    group: str
+    invalid_reason: str | None = None
+
+
+def group_cases(
+    group: str, *, invalid_reason: str | None = None
+) -> Callable[
+    [Callable[[], Iterator[cp.Problem]]], Callable[[], Iterator[ProblemTestCase]]
+]:
+    def dec(
+        iter_fn: Callable[[], Iterator[cp.Problem]],
+    ) -> Callable[[], Iterator[ProblemTestCase]]:
+        @wraps(iter_fn)
+        def inner() -> Iterator[ProblemTestCase]:
+            for problem in iter_fn():
+                yield ProblemTestCase(problem, group, invalid_reason=invalid_reason)
+
+        return inner
+
+    return dec
+
+
+def all_problems() -> Iterator[ProblemTestCase]:
     yield from chain(
         simple_expressions(),
         scalar_linear_constraints(),
@@ -14,14 +44,15 @@ def all_valid_problems() -> Iterator[cp.Problem]:
         matrix_constraints(),
         matrix_quadratic_expressions(),
         attributes(),
+        invalid_expressions(),
     )
 
 
-def all_problems() -> Iterator[cp.Problem]:
-    yield from all_valid_problems()
-    yield from invalid_expressions()
+def all_valid_problems() -> Iterator[ProblemTestCase]:
+    yield from (case for case in all_problems() if not case.invalid_reason)
 
 
+@group_cases("simple")
 def simple_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
@@ -51,6 +82,7 @@ def simple_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**2 + y**2))
 
 
+@group_cases("scalar_linear")
 def scalar_linear_constraints() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
@@ -74,6 +106,7 @@ def scalar_linear_constraints() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x), [2 * x + y >= 1])
 
 
+@group_cases("matrix")
 def matrix_constraints() -> Iterator[cp.Problem]:
     x = cp.Variable(2, name="x")
     y = cp.Variable(2, name="y")
@@ -96,6 +129,7 @@ def matrix_constraints() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0])
 
 
+@group_cases("quadratic")
 def quadratic_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
@@ -115,6 +149,7 @@ def quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize((x - y) ** 2 + x + y))
 
 
+@group_cases("matrix_quadratic")
 def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(2, name="x")
     A = 2 * np.eye(2)
@@ -128,6 +163,7 @@ def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
 
 
+@group_cases("attributes")
 def attributes() -> Iterator[cp.Problem]:
     x = cp.Variable(nonpos=True, name="x")
     yield cp.Problem(cp.Maximize(x))
@@ -145,6 +181,7 @@ def attributes() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(x + n + b), [n <= 1])
 
 
+@group_cases("invalid", invalid_reason="unsupported expressions")
 def invalid_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(x**3))
