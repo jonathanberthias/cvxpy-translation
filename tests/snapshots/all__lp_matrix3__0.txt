@@ -2,8 +2,8 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 183: x == 1.0
- 188: y == 1.0
+ 30: x == 1.0
+ 35: y == 1.0
 Bounds
  x free
  y free
@@ -28,10 +28,10 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 183[0]: x[0] = 1
- 183[1]: x[1] = 1
- 188[0]: y[0] = 1
- 188[1]: y[1] = 1
+ 30[0]: x[0] = 1
+ 30[1]: x[1] = 1
+ 35[0]: y[0] = 1
+ 35[1]: y[1] = 1
 Bounds
  x[0] free
  x[1] free

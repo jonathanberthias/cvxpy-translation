@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 98: x + y <= 1.0
+ 67: x + y <= 1.0
 Bounds
  x free
  y free
@@ -22,7 +22,7 @@ GUROBI
 Minimize
   x
 Subject To
- 98: x + y <= 1
+ 67: x + y <= 1
 Bounds
  x free
  y free

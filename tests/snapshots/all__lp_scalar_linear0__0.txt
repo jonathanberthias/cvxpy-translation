@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 36: 1.0 <= x
+ 5: 1.0 <= x
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Minimize
   x
 Subject To
- 36: x >= 1
+ 5: x >= 1
 Bounds
  x free
 End

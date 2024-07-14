@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 93: 1.0 <= x + y
+ 62: 1.0 <= x + y
 Bounds
  x free
  y free
@@ -22,7 +22,7 @@ GUROBI
 Minimize
   x
 Subject To
- 93: x + y >= 1
+ 62: x + y >= 1
 Bounds
  x free
  y free

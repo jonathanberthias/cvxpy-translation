@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 103: x + y == 1.0
+ 72: x + y == 1.0
 Bounds
  x free
  y free
@@ -22,7 +22,7 @@ GUROBI
 Minimize
   x
 Subject To
- 103: x + y = 1
+ 72: x + y = 1
 Bounds
  x free
  y free

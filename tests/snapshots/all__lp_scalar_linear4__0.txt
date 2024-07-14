@@ -2,8 +2,8 @@ CVXPY
 Minimize
   x
 Subject To
- 56: 1.0 <= x
- 60: x <= 1.0
+ 25: 1.0 <= x
+ 29: x <= 1.0
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Minimize
   x
 Subject To
- 56: x >= 1
- 60: x <= 1
+ 25: x >= 1
+ 29: x <= 1
 Bounds
  x free
 End

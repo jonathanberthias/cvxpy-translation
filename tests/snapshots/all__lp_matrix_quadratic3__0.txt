@@ -2,7 +2,7 @@ CVXPY
 Minimize
   quad_over_lin(x, 1.0)
 Subject To
- 272: quad_over_lin(x, 1.0) <= 1.0
+ 17: quad_over_lin(x, 1.0) <= 1.0
 Bounds
  x free
 End
@@ -39,7 +39,7 @@ GUROBI
 Minimize
  [ 2 x[0] ^2 + 2 x[1] ^2 ] / 2 
 Subject To
- 272: [ x[0] ^2 + x[1] ^2 ] <= 1
+ 17: [ x[0] ^2 + x[1] ^2 ] <= 1
 Bounds
  x[0] free
  x[1] free

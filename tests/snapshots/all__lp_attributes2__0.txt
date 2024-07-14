@@ -2,7 +2,7 @@ CVXPY
 Minimize
   n
 Subject To
- 283: 1.0 <= n
+ 6: 1.0 <= n
 Bounds
  n free
 Generals
@@ -24,7 +24,7 @@ GUROBI
 Minimize
   n
 Subject To
- 283: n >= 1
+ 6: n >= 1
 Bounds
  n free
 Generals

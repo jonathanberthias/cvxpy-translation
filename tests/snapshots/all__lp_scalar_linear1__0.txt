@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 40: x <= 1.0
+ 9: x <= 1.0
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Maximize
   x
 Subject To
- 40: x <= 1
+ 9: x <= 1
 Bounds
  x free
 End
