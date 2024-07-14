@@ -40,6 +40,8 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.binary_operators import DivExpression
     from cvxpy.atoms.affine.binary_operators import MulExpression
     from cvxpy.atoms.affine.binary_operators import multiply
+    from cvxpy.atoms.affine.index import index
+    from cvxpy.atoms.affine.index import special_index
     from cvxpy.atoms.affine.promote import Promote
     from cvxpy.atoms.affine.sum import Sum
     from cvxpy.atoms.affine.unary_operators import NegExpression
@@ -79,23 +81,23 @@ NATIVE_GUROBI: str = "NATIVE_GUROBI"
 
 
 class UnsupportedError(ValueError):
-    msg_template = "Unsupported CVXPY node: {}"
+    msg_template = "Unsupported CVXPY node: {node}"
 
     def __init__(self, node: cp.Expression | cp.Constraint) -> None:
-        super().__init__(self.msg_template.format(node))
+        super().__init__(self.msg_template.format(node=node, klass=type(node)))
         self.node = node
 
 
-class UnsupportedExpressionError(ValueError):
-    msg_template = "Unsupported CVXPY expression: {}"
-
-
-class InvalidPowerError(UnsupportedExpressionError):
-    msg_template = "Unsupported power: {}, only quadratic expressions are supported"
-
-
 class UnsupportedConstraintError(UnsupportedError):
-    msg_template = "Unsupported CVXPY constraint: {}"
+    msg_template = "Unsupported CVXPY constraint: {node}"
+
+
+class UnsupportedExpressionError(UnsupportedError):
+    msg_template = "Unsupported CVXPY expression: {node} ({klass})"
+
+
+class InvalidPowerError(ValueError):
+    msg_template = "Unsupported power: {node}, only quadratic expressions are supported"
 
 
 class _Timer:
@@ -279,7 +281,7 @@ def extract_variable_value(
     value = np.zeros(shape)
     for idx, subvar_name in _matrix_to_gurobi_names(var_name, shape):
         subvar = model.getVarByName(subvar_name)
-        assert subvar is not None
+        assert subvar is not None, subvar_name
         value[idx] = subvar.X
     return value
 
@@ -333,7 +335,7 @@ def _matrix_to_gurobi_names(
     base_name: str, shape: tuple[int, ...]
 ) -> Iterator[tuple[tuple[int, ...], str]]:
     for idx in np.ndindex(shape):
-        formatted_idx = ", ".join(str(i) for i in idx)
+        formatted_idx = ",".join(str(i) for i in idx)
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
@@ -422,6 +424,9 @@ class ExpressionTranslater:
     def visit_DivExpression(self, node: DivExpression) -> Any:
         return self.visit(node.args[0]) / self.visit(node.args[1])
 
+    def visit_index(self, node: index) -> Any:
+        return self.visit(node.args[0])[node.key]
+
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args
         x = self.visit(x)
@@ -455,6 +460,9 @@ class ExpressionTranslater:
         quad = gp.quicksum(squares)
         lin = self.visit(y)
         return quad / lin
+
+    def visit_special_index(self, node: special_index) -> Any:
+        return self.visit(node.args[0])[node.key]
 
     def visit_Sum(self, node: Sum) -> Any:
         return self.visit(node.args[0]).sum()
