@@ -2,8 +2,8 @@ CVXPY
 Minimize
   x
 Subject To
- 48: 1.0 <= x
- 52: x <= 2.0
+ 17: 1.0 <= x
+ 21: x <= 2.0
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Minimize
   x
 Subject To
- 48: x >= 1
- 52: x <= 2
+ 17: x >= 1
+ 21: x <= 2
 Bounds
  x free
 End

@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 204: 0.0 <= x + y + Promote(1.0, (2,))
+ 51: 0.0 <= x + y + Promote(1.0, (2,))
 Bounds
  x free
  y free
@@ -25,8 +25,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 204[0]: x[0] + y[0] >= -1
- 204[1]: x[1] + y[1] >= -1
+ 51[0]: x[0] + y[0] >= -1
+ 51[1]: x[1] + y[1] >= -1
 Bounds
  x[0] free
  x[1] free

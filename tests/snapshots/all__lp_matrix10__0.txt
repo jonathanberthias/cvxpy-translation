@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 244: [[0.0 1.0]
+ 91: [[0.0 1.0]
  [2.0 3.0]] @ x + y == 1.0
 Bounds
  x free
@@ -26,8 +26,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 244[0]: x[1] + y[0] = 1
- 244[1]: 2 x[0] + 3 x[1] + y[1] = 1
+ 91[0]: x[1] + y[0] = 1
+ 91[1]: 2 x[0] + 3 x[1] + y[1] = 1
 Bounds
  x[0] free
  x[1] free

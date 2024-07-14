@@ -2,8 +2,8 @@ CVXPY
 Minimize
   x
 Subject To
- 84: x == 1.0
- 88: y == 1.0
+ 53: x == 1.0
+ 57: y == 1.0
 Bounds
  x free
  y free
@@ -24,8 +24,8 @@ GUROBI
 Minimize
   x
 Subject To
- 84: x = 1
- 88: y = 1
+ 53: x = 1
+ 57: y = 1
 Bounds
  x free
  y free

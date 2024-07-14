@@ -2,8 +2,8 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 166: 1.0 <= x
- 171: x <= 2.0
+ 13: 1.0 <= x
+ 18: x <= 2.0
 Bounds
  x free
 End
@@ -25,10 +25,10 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 166[0]: x[0] >= 1
- 166[1]: x[1] >= 1
- 171[0]: x[0] <= 2
- 171[1]: x[1] <= 2
+ 13[0]: x[0] >= 1
+ 13[1]: x[1] >= 1
+ 18[0]: x[0] <= 2
+ 18[1]: x[1] <= 2
 Bounds
  x[0] free
  x[1] free

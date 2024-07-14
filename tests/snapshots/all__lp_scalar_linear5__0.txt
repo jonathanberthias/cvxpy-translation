@@ -2,9 +2,9 @@ CVXPY
 Minimize
   x
 Subject To
- 64: 0.0 <= x
- 68: x <= 2.0
- 72: x == 1.0
+ 33: 0.0 <= x
+ 37: x <= 2.0
+ 41: x == 1.0
 Bounds
  x free
 End
@@ -24,9 +24,9 @@ GUROBI
 Minimize
   x
 Subject To
- 64: x >= 0
- 68: x <= 2
- 72: x = 1
+ 33: x >= 0
+ 37: x <= 2
+ 41: x = 1
 Bounds
  x free
 End

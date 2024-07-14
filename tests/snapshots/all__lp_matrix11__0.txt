@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 254: [[0.0 1.0]
+ 101: [[0.0 1.0]
  [2.0 3.0]] @ x + y + Promote(1.0, (2,)) == 0.0
 Bounds
  x free
@@ -26,8 +26,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 254[0]: x[1] + y[0] = -1
- 254[1]: 2 x[0] + 3 x[1] + y[1] = -1
+ 101[0]: x[1] + y[0] = -1
+ 101[1]: 2 x[0] + 3 x[1] + y[1] = -1
 Bounds
  x[0] free
  x[1] free

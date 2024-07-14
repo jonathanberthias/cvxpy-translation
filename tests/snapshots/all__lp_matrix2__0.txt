@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 177: x == 1.0
+ 24: x == 1.0
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 177[0]: x[0] = 1
- 177[1]: x[1] = 1
+ 24[0]: x[0] = 1
+ 24[1]: x[1] = 1
 Bounds
  x[0] free
  x[1] free

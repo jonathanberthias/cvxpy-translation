@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 44: x == 1.0
+ 13: x == 1.0
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Minimize
   x
 Subject To
- 44: x = 1
+ 13: x = 1
 Bounds
  x free
 End

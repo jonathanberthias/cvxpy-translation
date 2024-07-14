@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import wraps
-from itertools import chain
 from typing import Callable
 from typing import Iterator
 
@@ -37,15 +36,18 @@ def group_cases(
 
 
 def all_problems() -> Iterator[ProblemTestCase]:
-    yield from chain(
-        simple_expressions(),
-        scalar_linear_constraints(),
-        quadratic_expressions(),
-        matrix_constraints(),
-        matrix_quadratic_expressions(),
-        attributes(),
-        invalid_expressions(),
-    )
+    for problem_gen in (
+        simple_expressions,
+        scalar_linear_constraints,
+        quadratic_expressions,
+        matrix_constraints,
+        matrix_quadratic_expressions,
+        attributes,
+        invalid_expressions,
+    ):
+        # Make sure order of groups does not matter
+        reset_id_counter()
+        yield from problem_gen()
 
 
 def all_valid_problems() -> Iterator[ProblemTestCase]:
@@ -189,3 +191,11 @@ def invalid_expressions() -> Iterator[cp.Problem]:
     # TODO: maybe using setPWLObj?
     yield cp.Problem(cp.Minimize(cp.abs(x)))
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
+
+
+def reset_id_counter() -> tuple:
+    """Reset the counter used to assign constraint ids."""
+    from cvxpy.lin_ops.lin_utils import ID_COUNTER
+
+    ID_COUNTER.count = 1
+    return ()
