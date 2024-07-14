@@ -11,6 +11,7 @@ import gurobipy as gp
 import pytest
 
 import cvxpy_gurobi
+from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
 if TYPE_CHECKING:
@@ -20,46 +21,28 @@ if TYPE_CHECKING:
     from pytest_insta.fixture import SnapshotFixture
 
 
-@pytest.fixture(params=all_valid_problems())
-def problem(request: pytest.FixtureRequest) -> cp.Problem:
+@pytest.fixture(params=all_valid_problems(), ids=lambda case: case.group)
+def case(request: pytest.FixtureRequest) -> ProblemTestCase:
     return request.param
 
 
-@pytest.fixture
-def solved_problem(problem: cp.Problem) -> cp.Problem:
-    problem.solve(solver=cp.GUROBI)
-    return problem
-
-
-@pytest.fixture
-def model(problem: cp.Problem) -> gp.Model:
-    return cvxpy_gurobi.build_model(problem)
-
-
-@pytest.fixture
-def solved_model(model: gp.Model) -> gp.Model:
-    model.optimize()
-    return model
-
-
-def test_lp_output(
-    solved_problem: cp.Problem,
-    solved_model: gp.Model,
-    snapshot: SnapshotFixture,
-    tmp_path: Path,
-) -> None:
+def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) -> None:
     """Generate LP output for CVXPY and Gurobi..
 
     This test requires human intervention to check the differences in the
     generated snapshot files.
     """
-    cvxpy_lines = lp_from_cvxpy(solved_problem)
-    cvxpy_gurobi_lines = lp_from_gurobi(
-        solved_problem.solver_stats.extra_stats, tmp_path
-    )
-    gurobi_lines = lp_from_gurobi(solved_model, tmp_path)
+    problem = case.problem
+    cvxpy_lines = lp_from_cvxpy(problem)
 
-    divider = ["----------------------------------------"]
+    quiet_solve(problem)
+    generated_model = problem.solver_stats.extra_stats
+    cvxpy_gurobi_lines = lp_from_gurobi(generated_model, tmp_path)
+
+    model = cvxpy_gurobi.build_model(problem)
+    gurobi_lines = lp_from_gurobi(model, tmp_path)
+
+    divider = ["-" * 40]
     output = "\n".join(
         chain(
             ["CVXPY"],
@@ -80,14 +63,12 @@ def test_lp_output(
         snapshot.session.strategy = "update-none"
 
 
-def test_backfill(problem: cp.Problem) -> None:
+def test_backfill(case: ProblemTestCase) -> None:
+    problem = case.problem
     cvxpy_gurobi.solve(problem, {gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
 
-    with warnings.catch_warnings():
-        # Some problems are unbounded
-        warnings.filterwarnings("ignore", category=UserWarning)
-        problem.solve(solver=cp.GUROBI)
+    quiet_solve(problem)
     cp_sol: Solution = problem.solution
 
     assert our_sol.status == cp_sol.status
@@ -136,3 +117,10 @@ def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
     out_path = tmp_path / "gurobi.lp"
     model.write(str(out_path))
     return out_path.read_text().splitlines()[1:]
+
+
+def quiet_solve(problem: cp.Problem) -> None:
+    with warnings.catch_warnings():
+        # Some problems are unbounded
+        warnings.filterwarnings("ignore", category=UserWarning)
+        problem.solve(solver=cp.GUROBI)
