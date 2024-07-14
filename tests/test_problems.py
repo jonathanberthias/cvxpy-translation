@@ -42,6 +42,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         quadratic_expressions,
         matrix_constraints,
         matrix_quadratic_expressions,
+        indexing,
         attributes,
         invalid_expressions,
     ):
@@ -165,6 +166,37 @@ def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
 
 
+@group_cases("indexing")
+def indexing() -> Iterator[cp.Problem]:
+    x = cp.Variable(2, name="x", nonneg=True)
+    m = cp.Variable((2, 2), name="m", nonneg=True)
+    y = x + np.array([1, 2])
+
+    idx = 0
+    yield cp.Problem(cp.Minimize(x[idx]))
+    yield cp.Problem(cp.Minimize(y[idx]))
+    yield cp.Problem(cp.Minimize(m[idx, idx]))
+
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx, :])))
+
+    idx = np.array([0])
+    yield cp.Problem(cp.Minimize(cp.sum(x[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(y[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx, :])))
+
+    idx = np.array([True, False])
+    yield cp.Problem(cp.Minimize(cp.sum(x[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(y[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[idx, :])))
+
+    yield cp.Problem(cp.Minimize(cp.sum(x[:])))
+    yield cp.Problem(cp.Minimize(cp.sum(y[:])))
+    yield cp.Problem(cp.Minimize(cp.sum(m[:, :])))
+
+
 @group_cases("attributes")
 def attributes() -> Iterator[cp.Problem]:
     x = cp.Variable(nonpos=True, name="x")
@@ -193,9 +225,8 @@ def invalid_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
 
 
-def reset_id_counter() -> tuple:
+def reset_id_counter() -> None:
     """Reset the counter used to assign constraint ids."""
     from cvxpy.lin_ops.lin_utils import ID_COUNTER
 
     ID_COUNTER.count = 1
-    return ()

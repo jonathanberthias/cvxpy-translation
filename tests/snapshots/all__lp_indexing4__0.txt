@@ -1,0 +1,29 @@
+CVXPY
+Minimize
+  Sum(m[0, 0:2], None, False)
+Subject To
+Bounds
+ 0.0 <= m
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C2
+Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: - C2 <= 0
+ R3: - C3 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  m[0,0] + m[0,1] + 0 m[1,0] + 0 m[1,1]
+Subject To
+Bounds
+End
