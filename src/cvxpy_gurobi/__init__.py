@@ -23,6 +23,9 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
+from cvxpy_gurobi._version import __version__
+from cvxpy_gurobi._version import __version_tuple__
+
 if TYPE_CHECKING:
     from typing import TypeAlias
 
@@ -52,6 +55,8 @@ if TYPE_CHECKING:
 
 
 __all__ = (
+    "__version__",
+    "__version_tuple__",
     "backfill_problem",
     "build_model",
     "fill_model",
