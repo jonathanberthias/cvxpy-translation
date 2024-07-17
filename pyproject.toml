@@ -8,20 +8,23 @@ requires = [
 [project]
 name = "cvxpy-gurobi"
 dynamic = ["version"]
-description = "Solve CVXPY problems through Gurobipy models"
+description = "Translate CVXPY problems into gurobipy models"
 readme = "README.md"
 keywords = [
   "cvxpy",
   "gurobi",
+  "gurobipy",
   "optimization",
 ]
-license = "MIT"
+license = "Apache-2.0"
 authors = [
   { name = "Jonathan Berthias", email = "jvberthias@gmail.com" },
 ]
 requires-python = ">=3.8"
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
@@ -30,6 +33,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
   # "cvxpy" must be available but we don't list it
@@ -39,12 +43,13 @@ dependencies = [
   "scipy",
 ]
 [project.urls]
-Documentation = "https://github.com/jonathanberthias/cvxpy2gurobi#readme"
-Issues = "https://github.com/jonathanberthias/cvxpy2gurobi/issues"
-Source = "https://github.com/jonathanberthias/cvxpy2gurobi"
+Documentation = "https://github.com/jonathanberthias/cvxpy-gurobi#readme"
+Issues = "https://github.com/jonathanberthias/cvxpy-gurobi/issues"
+Source = "https://github.com/jonathanberthias/cvxpy-gurobi"
 
 [tool.hatch]
 version.source = "vcs"
+version.raw-options = { local_scheme = "no-local-version" }
 build.hooks.vcs.version-file = "src/cvxpy_gurobi/_version.py"
 
 [tool.hatch.envs.default]
