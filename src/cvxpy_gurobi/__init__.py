@@ -67,7 +67,6 @@ __all__ = (
     "register_solver",
     "set_params",
     "solve",
-    "translate",
     "UnsupportedConstraintError",
     "UnsupportedError",
     "UnsupportedExpressionError",
@@ -415,9 +414,6 @@ class ExpressionTranslater:
             raise UnsupportedExpressionError(node)
         return visitor(node)
 
-    def visit_abs(self, node: atoms_abs) -> gp.GenExprAbs:
-        return gp.abs_(self.visit(node.args[0]))
-
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
         return reduce(operator.add, args)
@@ -443,9 +439,6 @@ class ExpressionTranslater:
 
     def visit_NegExpression(self, node: NegExpression) -> Any:
         return -self.visit(node.args[0])
-
-    def visit_one_minus_pos(self, node: cp.one_minus_pos) -> Any:
-        return 1 - self.visit(node.args[0])
 
     def visit_power(self, node: power) -> Any:
         power = self.visit(node.p)
@@ -474,8 +467,3 @@ class ExpressionTranslater:
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         return self.vars[var.name()]
-
-
-def translate(expr: cp.Expression, variables: dict[str, AnyVar]) -> Any:
-    """Translate a CVXPY expression to a Gurobi expression."""
-    return ExpressionTranslater(variables).visit(expr)
