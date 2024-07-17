@@ -48,7 +48,6 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.promote import Promote
     from cvxpy.atoms.affine.sum import Sum
     from cvxpy.atoms.affine.unary_operators import NegExpression
-    from cvxpy.atoms.elementwise.abs import abs as atoms_abs
     from cvxpy.atoms.elementwise.power import power
     from cvxpy.atoms.quad_over_lin import quad_over_lin
     from cvxpy.constraints.constraint import Constraint
@@ -100,7 +99,7 @@ class UnsupportedExpressionError(UnsupportedError):
     msg_template = "Unsupported CVXPY expression: {node} ({klass})"
 
 
-class InvalidPowerError(ValueError):
+class InvalidPowerError(UnsupportedExpressionError):
     msg_template = "Unsupported power: {node}, only quadratic expressions are supported"
 
 

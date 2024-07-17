@@ -1,6 +1,8 @@
 import cvxpy as cp
 import pytest
 
+import cvxpy_gurobi
+import test_problems
 from cvxpy_gurobi import ExpressionTranslater
 
 
@@ -12,3 +14,10 @@ def test_no_missing_atoms() -> None:
         if getattr(ExpressionTranslater, f"visit_{atom.__name__}", None) is None  # type: ignore[attr-defined]
     ]
     assert missing == []
+
+
+@pytest.mark.parametrize("case", test_problems.invalid_expressions())
+def test_failing_atoms(case) -> None:
+    translater = ExpressionTranslater({})
+    with pytest.raises(cvxpy_gurobi.UnsupportedError):
+        translater.visit(case.problem.objective.expr)
