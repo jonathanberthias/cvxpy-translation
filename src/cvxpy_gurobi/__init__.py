@@ -5,7 +5,6 @@ import time
 from functools import reduce
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Callable
 from typing import Dict
 from typing import Iterator
 from typing import Union
@@ -58,13 +57,9 @@ __all__ = (
     "__version_tuple__",
     "backfill_problem",
     "build_model",
-    "fill_model",
     "InvalidPowerError",
-    "make_solver",
-    "map_variables",
-    "NATIVE_GUROBI",
+    "GUROBI_TRANSLATION",
     "register_solver",
-    "set_params",
     "solve",
     "UnsupportedConstraintError",
     "UnsupportedError",
@@ -74,13 +69,11 @@ __all__ = (
 CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
-ParamDict: TypeAlias = Dict[str, Union[str, float]]
+Param: TypeAlias = Union[str, float]
+ParamDict: TypeAlias = Dict[str, Param]
 
 # Default name for the solver when registering it with CVXPY.
-# "Native" refers to the fact that the entire problem is solved using Gurobi,
-# as opposed to the default behavior where CVXPY reformulates the problem
-# before sending it to Gurobi.
-NATIVE_GUROBI: str = "NATIVE_GUROBI"
+GUROBI_TRANSLATION: str = "GUROBI_TRANSLATION"
 
 
 class UnsupportedError(ValueError):
@@ -115,14 +108,14 @@ class _Timer:
         self.time = end - self._start
 
 
-def solve(problem: cp.Problem, params: ParamDict | None = None) -> float:
-    """Solves a CVXPY problem using Gurobi.
+def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) -> float:
+    """Solve a CVXPY problem using Gurobi.
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_gurobi.solve(problem)
     """
     with _Timer() as compilation:
-        model = build_model(problem, params=params)
+        model = build_model(problem, params=params, env=env)
 
     with _Timer() as solve:
         model.optimize()
@@ -134,31 +127,17 @@ def solve(problem: cp.Problem, params: ParamDict | None = None) -> float:
     return problem.value
 
 
-def register_solver(params: ParamDict | None = None) -> None:
-    """Registers the solver under the `NATIVE_GUROBI` name.
+def register_solver(name: str = GUROBI_TRANSLATION) -> None:
+    """Register the solver under the given name, defaults to `NATIVE_GUROBI`.
 
     Once this function has been called, the solver can be used as follows:
-        problem.solve(solver=NATIVE_GUROBI)
-
-    Args:
-        params: A dictionary of Gurobi parameters to set on the model.
+        problem.solve(method=NATIVE_GUROBI)
     """
-    cp.Problem.register_solve(NATIVE_GUROBI, make_solver(params))
-
-
-def make_solver(params: ParamDict | None = None) -> Callable[[cp.Problem], float]:
-    """Returns a function that solves a CVXPY problem using Gurobi."""
-
-    def solver(problem: cp.Problem, **kwargs) -> float:
-        solve_params = params.copy() if params else {}
-        solve_params.update(kwargs)
-        return solve(problem, params=solve_params)
-
-    return solver
+    cp.Problem.register_solve(name, solve)
 
 
 def build_model(
-    problem: cp.Problem, params: ParamDict | None = None, env: gp.Env | None = None
+    problem: cp.Problem, *, env: gp.Env | None = None, params: ParamDict | None = None
 ) -> gp.Model:
     """Convert a CVXPY problem to a Gurobi model."""
     model = gp.Model(env=env)
@@ -224,9 +203,9 @@ def backfill_problem(
 
     if CVXPY_VERSION >= (1, 4):
         # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
-        solver_stats = SolverStats.from_dict(solution.attr, NATIVE_GUROBI)
+        solver_stats = SolverStats.from_dict(solution.attr, GUROBI_TRANSLATION)
     else:
-        solver_stats = SolverStats(solution.attr, NATIVE_GUROBI)
+        solver_stats = SolverStats(solution.attr, GUROBI_TRANSLATION)
     problem._solver_stats = solver_stats  # noqa: SLF001
 
     if solve_time is not None:

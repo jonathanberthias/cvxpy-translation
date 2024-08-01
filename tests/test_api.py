@@ -10,10 +10,11 @@ import pytest
 
 import cvxpy_gurobi
 from cvxpy_gurobi import CVXPY_VERSION
-from cvxpy_gurobi import ParamDict
 
 if TYPE_CHECKING:
     from typing import TypeAlias
+
+    from cvxpy_gurobi import ParamDict
 
 
 @pytest.fixture
@@ -28,10 +29,10 @@ def dual(request: pytest.FixtureRequest) -> bool:
 
 
 @pytest.fixture
-def params(dual: bool) -> ParamDict | None:
+def params(dual: bool) -> ParamDict:
     if dual:
         return {gp.GRB.Param.QCPDual: 1}
-    return None
+    return {}
 
 
 Validator: TypeAlias = Callable[[cp.Problem], None]
@@ -43,7 +44,7 @@ def validate(problem: cp.Problem, *, dual: bool) -> None:
     assert problem.status == cp.OPTIMAL
     assert problem.solver_stats is not None
     assert problem.solver_stats.solve_time is not None
-    assert problem.solver_stats.solver_name == cvxpy_gurobi.NATIVE_GUROBI
+    assert problem.solver_stats.solver_name == cvxpy_gurobi.GUROBI_TRANSLATION
     assert isinstance(problem.solver_stats.extra_stats, gp.Model)
     if CVXPY_VERSION >= (1, 4):  # didn't exist before
         assert problem.compilation_time is not None
@@ -60,37 +61,38 @@ def _validate(dual: bool) -> Validator:
 
 
 def test_registered_solver(
-    problem: cp.Problem, validate: Validator, params: ParamDict | None
-) -> None:
-    cvxpy_gurobi.register_solver(params=params)
-    problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI)
-    validate(problem)
-
-
-def test_registered_solver_kwargs(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
     cvxpy_gurobi.register_solver()
-    problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI, **(params or {}))
+    problem.solve(method=cvxpy_gurobi.GUROBI_TRANSLATION, **params)
     validate(problem)
 
 
-def test_registered_solver_kwargs_override(problem: cp.Problem) -> None:
-    cvxpy_gurobi.register_solver(params={gp.GRB.Param.QCPDual: 0})
-    problem.solve(method=cvxpy_gurobi.NATIVE_GUROBI, **{gp.GRB.Param.QCPDual: 1})
-    validate(problem, dual=True)
+def test_registered_solver_with_env(
+    problem: cp.Problem, validate: Validator, params: ParamDict
+) -> None:
+    env = gp.Env(params=params)
+    cvxpy_gurobi.register_solver()
+    problem.solve(method=cvxpy_gurobi.GUROBI_TRANSLATION, env=env)
+    validate(problem)
 
 
 def test_direct_solve(
-    problem: cp.Problem, validate: Validator, params: ParamDict | None
+    problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    cvxpy_gurobi.solve(problem, params=params)
+    cvxpy_gurobi.solve(problem, **params)
     validate(problem)
 
 
-def test_manual(
-    problem: cp.Problem, validate: Validator, params: ParamDict | None
+def test_direct_solve_with_env(
+    problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
+    env = gp.Env(params=params)
+    cvxpy_gurobi.solve(problem, env=env)
+    validate(problem)
+
+
+def test_manual(problem: cp.Problem, validate: Validator, params: ParamDict) -> None:
     model = cvxpy_gurobi.build_model(problem, params=params)
     model.optimize()
     cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
@@ -98,23 +100,16 @@ def test_manual(
 
 
 def test_manual_with_env(
-    problem: cp.Problem, validate: Validator, params: ParamDict | None
+    problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    env = gp.Env()
-    model = cvxpy_gurobi.build_model(problem, env=env, params=params)
+    env = gp.Env(params=params)
+    model = cvxpy_gurobi.build_model(problem, env=env)
     model.optimize()
     cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
     validate(problem)
 
 
-def test_granular(
-    problem: cp.Problem, validate: Validator, params: ParamDict | None
-) -> None:
-    model = gp.Model()
-    var_map = cvxpy_gurobi.map_variables(problem, model)
-    cvxpy_gurobi.fill_model(problem, model, var_map)
-    if params:
-        cvxpy_gurobi.set_params(model, params=params)
-    model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
-    validate(problem)
+def test_readme_example():
+    problem = cp.Problem(cp.Maximize(cp.Variable(name="x", nonpos=True)))
+    cvxpy_gurobi.solve(problem)
+    assert problem.value == 0
