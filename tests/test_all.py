@@ -65,7 +65,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
 
 def test_backfill(case: ProblemTestCase) -> None:
     problem = case.problem
-    cvxpy_gurobi.solve(problem, {gp.GRB.Param.QCPDual: 1})
+    cvxpy_gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
 
     quiet_solve(problem)

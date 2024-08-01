@@ -4,17 +4,29 @@ This small library provides an alternative way to solve CVXPY problems with Guro
 
 ## Usage
 
-For basic use cases, the library provides a custom solver that can be registered
-with CVXPY's `Problem` class.
+The library provides a solver that will translate a CVXPY `Problem` into a `gurobipy.Model`,
+and optimize using Gurobi:
 
 ```python
 import cvxpy as cp
-from cvxpy_gurobi import NATIVE_GUROBI, solver
-
-cp.Problem.register_solve_method(NATIVE_GUROBI, solver())
+import cvxpy_gurobi
 
 problem = cp.Problem(cp.Maximize(cp.Variable(name="x", nonpos=True)))
-problem.solve(method=NATIVE_GUROBI)
+cvxpy_gurobi.solve(problem)
+assert problem.value == 0
+```
+
+The solver can also be registered with CVXPY and used as any other solver:
+
+```python
+import cvxpy as cp
+from cvxpy_gurobi import GUROBI_TRANSLATION, solver
+
+cvxpy_gurobi.register_solver()
+# ^ this is the same as:
+cp.Problem.register_solve_method(GUROBI_TRANSLATION, solver())
+
+problem.solve(method=GUROBI_TRANSLATION)
 ```
 
 This solver is a simple wrapper for the most common use case:
@@ -33,14 +45,18 @@ into an equivalent `gurobipy.Model`, and `backfill_problem` sets the optimal
 values on the original problem.
 
 > [!NOTE]
-> Note that both functions must be used together as they rely on naming conventions to map variables and constraints between CVXPY and Gurobi.
+> Both functions must be used together as they rely on naming conventions to map variables and constraints between CVXPY and Gurobi.
 
 The output of the `build_model` function is a standard `gurobipy.Model` instance,
 which can be further customized prior to solving. This approach enables you to
 manage how the model will be optimized.
 
-There are more useful functions and arguments to customize the model,
-see `tests/test_api.py` to discover the supported interface.
+
+## Installation
+
+```sh
+pip install cvxpy-gurobi
+```
 
 
 ## CVXPY has an interface to Gurobi, why is this needed?
@@ -113,6 +129,7 @@ CVXPY has 2 main features: a modelling API and interfaces to many solvers. The m
 # Supported versions
 
 All supported versions of Python, CVXPY and `gurobipy` should work.
-However, due to licensing restrictions,
-`gurobipy` cannot be tested in CI on versions before 10.0.
-If you run into a bug, please open an issue in this repo specifying the versions used.
+However, due to licensing restrictions, old versions of
+`gurobipy` cannot be tested in CI.
+If you run into a bug, please open an issue in this repo specifying
+the versions used.
