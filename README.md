@@ -133,3 +133,31 @@ However, due to licensing restrictions, old versions of
 `gurobipy` cannot be tested in CI.
 If you run into a bug, please open an issue in this repo specifying
 the versions used.
+
+
+# Contributing
+
+It is *highly recommended* to use [Hatch](https://hatch.pypa.io/latest/) for development.
+It will handle all virtual
+environment management.
+
+To lint and format the code, run:
+```sh
+hatch fmt
+```
+
+For testing, run:
+```sh
+hatch test
+```
+
+This will test the latest version of dependencies. You can also run `hatch test --all`
+to test several combinations of the supported version range.
+
+Make sure any change is tested through a snapshot test. To add a new test case,
+build a simple CVXPY problem in `tests/test_problems.py` in the appropriate category,
+then run:
+```sh
+hatch run update-snapshots
+```
+You can then check the output in the `tests/snapshots` folder is as expected.
