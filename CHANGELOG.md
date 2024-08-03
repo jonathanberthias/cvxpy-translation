@@ -25,4 +25,4 @@ In this release, the following elements are already covered:
 - `Variable` (duh)
 
 
-[0.1.0]: https://github.com/jonathanberthias/cvxpy-gurobi/compare/7d97aaf...0.1.0
+[0.1.0]: https://github.com/jonathanberthias/cvxpy-gurobi/compare/7d97aaf...v0.1.0
