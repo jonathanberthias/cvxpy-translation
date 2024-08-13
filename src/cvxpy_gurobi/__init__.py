@@ -141,16 +141,13 @@ def build_model(
 ) -> gp.Model:
     """Convert a CVXPY problem to a Gurobi model."""
     model = gp.Model(env=env)
-    variables = map_variables(problem, model)
-    fill_model(problem, model, variables)
+    fill_model(problem, model)
     if params:
         set_params(model, params)
     return model
 
 
-def fill_model(
-    problem: cp.Problem, model: gp.Model, variable_map: dict[str, AnyVar]
-) -> None:
+def fill_model(problem: cp.Problem, model: gp.Model) -> None:
     """Add the objective and constraints from a CVXPY problem to a Gurobi model.
 
     Args:
@@ -158,37 +155,15 @@ def fill_model(
         model: The Gurobi model to which constraints and objectives are added.
         variable_map: A mapping from CVXPY variable names to Gurobi variables.
     """
-    ObjectiveBuilder(model, variable_map).visit(problem.objective)
-    ConstraintsBuilder(model, variable_map).visit_constraints(problem.constraints)
+    translater = ExpressionTranslater(model)
+    ObjectiveBuilder(translater).visit(problem.objective)
+    ConstraintsBuilder(translater).visit_constraints(problem.constraints)
     model.update()
 
 
 def set_params(model: gp.Model, params: ParamDict) -> None:
     for key, param in params.items():
         model.setParam(key, param)
-
-
-def map_variables(problem: cp.Problem, model: gp.Model) -> dict[str, AnyVar]:
-    return {var.name(): to_gurobi_var(var, model) for var in problem.variables()}
-
-
-def to_gurobi_var(var: cp.Variable, model: gp.Model) -> AnyVar:
-    lb = -gp.GRB.INFINITY
-    ub = gp.GRB.INFINITY
-    if var.is_nonneg():
-        lb = 0
-    if var.is_nonpos():
-        ub = 0
-
-    vtype = gp.GRB.CONTINUOUS
-    if var.attributes["integer"]:
-        vtype = gp.GRB.INTEGER
-    if var.attributes["boolean"]:
-        vtype = gp.GRB.BINARY
-
-    if var.shape == ():
-        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
-    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
 
 
 def backfill_problem(
@@ -322,10 +297,9 @@ def _matrix_to_gurobi_names(
 
 
 class ObjectiveBuilder:
-    def __init__(self, model: gp.Model, variables: dict[str, AnyVar]):
-        self.m = model
-        self.vars = variables
-        self.translater = ExpressionTranslater(variables)
+    def __init__(self, translater: ExpressionTranslater) -> None:
+        self.translater = translater
+        self.m = translater.model
 
     def visit(self, objective: cp.Objective) -> None:
         sense = (
@@ -335,10 +309,9 @@ class ObjectiveBuilder:
 
 
 class ConstraintsBuilder:
-    def __init__(self, model: gp.Model, variables: dict[str, AnyVar]):
-        self.m = model
-        self.vars = variables
-        self.translater = ExpressionTranslater(variables)
+    def __init__(self, translater: ExpressionTranslater) -> None:
+        self.translater = translater
+        self.m = translater.model
 
     def translate(self, node: cp.Expression) -> Any:
         return self.translater.visit(node)
@@ -382,9 +355,29 @@ class ConstraintsBuilder:
         )
 
 
+def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
+    lb = -gp.GRB.INFINITY
+    ub = gp.GRB.INFINITY
+    if var.is_nonneg():
+        lb = 0
+    if var.is_nonpos():
+        ub = 0
+
+    vtype = gp.GRB.CONTINUOUS
+    if var.attributes["integer"]:
+        vtype = gp.GRB.INTEGER
+    if var.attributes["boolean"]:
+        vtype = gp.GRB.BINARY
+
+    if var.shape == ():
+        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
+    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
+
+
 class ExpressionTranslater:
-    def __init__(self, variables: dict[str, AnyVar]):
-        self.vars = variables
+    def __init__(self, model: gp.Model):
+        self.model = model
+        self.vars = {}
 
     def visit(self, node: cp.Expression) -> Any:
         visitor = getattr(self, f"visit_{type(node).__name__}", None)
@@ -444,4 +437,6 @@ class ExpressionTranslater:
         return self.visit(node.args[0]).sum()
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
-        return self.vars[var.name()]
+        if var.id not in self.vars:
+            self.vars[var.id] = translate_variable(var, self.model)
+        return self.vars[var.id]
