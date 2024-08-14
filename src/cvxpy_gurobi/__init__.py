@@ -347,13 +347,14 @@ class Translater:
 
     def visit(self, node: Canonical) -> Any:
         visitor = getattr(self, f"visit_{type(node).__name__}", None)
-        if visitor is None:
-            if isinstance(node, cp.Constraint):
-                raise UnsupportedConstraintError(node)
-            if isinstance(node, cp.Expression):
-                raise UnsupportedExpressionError(node)
-            raise UnsupportedError(node)
-        return visitor(node)
+        if visitor is not None:
+            return visitor(node)
+
+        if isinstance(node, cp.Constraint):
+            raise UnsupportedConstraintError(node)
+        if isinstance(node, cp.Expression):
+            raise UnsupportedExpressionError(node)
+        raise UnsupportedError(node)
 
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
