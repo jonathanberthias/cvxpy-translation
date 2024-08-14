@@ -293,21 +293,6 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
-class ObjectiveBuilder:
-    def __init__(self, translater: Translater) -> None:
-        self.translater = translater
-        self.m = translater.model
-
-
-class ConstraintsBuilder:
-    def __init__(self, translater: Translater) -> None:
-        self.translater = translater
-        self.m = translater.model
-
-    def translate(self, node: cp.Expression) -> Any:
-        return self.translater.visit(node)
-
-
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     lb = -gp.GRB.INFINITY
     ub = gp.GRB.INFINITY
