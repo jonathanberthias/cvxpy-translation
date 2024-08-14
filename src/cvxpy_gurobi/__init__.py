@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.unary_operators import NegExpression
     from cvxpy.atoms.elementwise.power import power
     from cvxpy.atoms.quad_over_lin import quad_over_lin
-    from cvxpy.constraints.constraint import Constraint
+    from cvxpy.utilities.canonical import Canonical
 
 
 __all__ = (
@@ -79,7 +79,7 @@ GUROBI_TRANSLATION: str = "GUROBI_TRANSLATION"
 class UnsupportedError(ValueError):
     msg_template = "Unsupported CVXPY node: {node}"
 
-    def __init__(self, node: cp.Expression | cp.Constraint) -> None:
+    def __init__(self, node: Canonical) -> None:
         super().__init__(self.msg_template.format(node=node, klass=type(node)))
         self.node = node
 
@@ -141,16 +141,13 @@ def build_model(
 ) -> gp.Model:
     """Convert a CVXPY problem to a Gurobi model."""
     model = gp.Model(env=env)
-    variables = map_variables(problem, model)
-    fill_model(problem, model, variables)
+    fill_model(problem, model)
     if params:
         set_params(model, params)
     return model
 
 
-def fill_model(
-    problem: cp.Problem, model: gp.Model, variable_map: dict[str, AnyVar]
-) -> None:
+def fill_model(problem: cp.Problem, model: gp.Model) -> None:
     """Add the objective and constraints from a CVXPY problem to a Gurobi model.
 
     Args:
@@ -158,37 +155,12 @@ def fill_model(
         model: The Gurobi model to which constraints and objectives are added.
         variable_map: A mapping from CVXPY variable names to Gurobi variables.
     """
-    ObjectiveBuilder(model, variable_map).visit(problem.objective)
-    ConstraintsBuilder(model, variable_map).visit_constraints(problem.constraints)
-    model.update()
+    Translater(model).visit(problem)
 
 
 def set_params(model: gp.Model, params: ParamDict) -> None:
     for key, param in params.items():
         model.setParam(key, param)
-
-
-def map_variables(problem: cp.Problem, model: gp.Model) -> dict[str, AnyVar]:
-    return {var.name(): to_gurobi_var(var, model) for var in problem.variables()}
-
-
-def to_gurobi_var(var: cp.Variable, model: gp.Model) -> AnyVar:
-    lb = -gp.GRB.INFINITY
-    ub = gp.GRB.INFINITY
-    if var.is_nonneg():
-        lb = 0
-    if var.is_nonpos():
-        ub = 0
-
-    vtype = gp.GRB.CONTINUOUS
-    if var.attributes["integer"]:
-        vtype = gp.GRB.INTEGER
-    if var.attributes["boolean"]:
-        vtype = gp.GRB.BINARY
-
-    if var.shape == ():
-        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
-    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
 
 
 def backfill_problem(
@@ -321,76 +293,53 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
-class ObjectiveBuilder:
-    def __init__(self, model: gp.Model, variables: dict[str, AnyVar]):
-        self.m = model
-        self.vars = variables
-        self.translater = ExpressionTranslater(variables)
+def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
+    lb = -gp.GRB.INFINITY
+    ub = gp.GRB.INFINITY
+    if var.is_nonneg():
+        lb = 0
+    if var.is_nonpos():
+        ub = 0
 
-    def visit(self, objective: cp.Objective) -> None:
-        sense = (
-            gp.GRB.MINIMIZE if isinstance(objective, cp.Minimize) else gp.GRB.MAXIMIZE
-        )
-        self.m.setObjective(self.translater.visit(objective.expr), sense=sense)
+    vtype = gp.GRB.CONTINUOUS
+    if var.attributes["integer"]:
+        vtype = gp.GRB.INTEGER
+    if var.attributes["boolean"]:
+        vtype = gp.GRB.BINARY
 
-
-class ConstraintsBuilder:
-    def __init__(self, model: gp.Model, variables: dict[str, AnyVar]):
-        self.m = model
-        self.vars = variables
-        self.translater = ExpressionTranslater(variables)
-
-    def translate(self, node: cp.Expression) -> Any:
-        return self.translater.visit(node)
-
-    def visit_constraints(self, constraints: list[Constraint]) -> None:
-        for constraint in constraints:
-            self.m.addConstr(
-                self.visit_constraint(constraint), name=str(constraint.constr_id)
-            )
-
-    def visit_constraint(self, constraint: Constraint) -> Any:
-        visitor = getattr(self, f"visit_{type(constraint).__name__}", None)
-        if visitor is None:  # pragma: no cover
-            raise UnsupportedConstraintError(constraint)
-        return visitor(constraint)
-
-    def visit_Equality(self, constraint: Equality) -> Any:
-        left, right = constraint.args
-        left = self.translate(left)
-        right = self.translate(right)
-        return left == right
-
-    def _should_reverse_inequality(self, lower: object, upper: object) -> bool:
-        # gurobipy objects don't have base classes and don't define __module__
-        # This is very hacky but seems to work
-        upper_from_gurobi = "'gurobipy." in str(type(upper))
-        # having lower as an array raises an error when using the <= operator:
-        # gurobipy.GurobiError:
-        #     Constraint has no bool value (are you trying "lb <= expr <= ub"?)
-        # so we need to reverse the inequality
-        return upper_from_gurobi and isinstance(lower, np.ndarray)
-
-    def visit_Inequality(self, ineq: Inequality) -> Any:
-        lower, upper = ineq.args
-        lower = self.translate(lower)
-        upper = self.translate(upper)
-        return (
-            upper >= lower
-            if self._should_reverse_inequality(lower, upper)
-            else lower <= upper
-        )
+    if var.shape == ():
+        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
+    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
 
 
-class ExpressionTranslater:
-    def __init__(self, variables: dict[str, AnyVar]):
-        self.vars = variables
+def _should_reverse_inequality(lower: object, upper: object) -> bool:
+    """When writing an inequality constraint lower <= upper,
+    we get an error if lower is an array and upper is a gurobipy object:
+        gurobipy.GurobiError:
+            Constraint has no bool value (are you trying "lb <= expr <= ub"?)
+    In that case, we should write upper >= lower instead.
+    """
+    # gurobipy objects don't have base classes and don't define __module__
+    # This is very hacky but seems to work
+    upper_from_gurobi = "'gurobipy." in str(type(upper))
+    return upper_from_gurobi and isinstance(lower, np.ndarray)
 
-    def visit(self, node: cp.Expression) -> Any:
+
+class Translater:
+    def __init__(self, model: gp.Model):
+        self.model = model
+        self.vars: dict[int, AnyVar] = {}
+
+    def visit(self, node: Canonical) -> Any:
         visitor = getattr(self, f"visit_{type(node).__name__}", None)
-        if visitor is None:
+        if visitor is not None:
+            return visitor(node)
+
+        if isinstance(node, cp.Constraint):
+            raise UnsupportedConstraintError(node)
+        if isinstance(node, cp.Expression):
             raise UnsupportedExpressionError(node)
-        return visitor(node)
+        raise UnsupportedError(node)
 
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
@@ -403,8 +352,32 @@ class ExpressionTranslater:
     def visit_DivExpression(self, node: DivExpression) -> Any:
         return self.visit(node.args[0]) / self.visit(node.args[1])
 
+    def visit_Equality(self, constraint: Equality) -> Any:
+        left, right = constraint.args
+        left = self.visit(left)
+        right = self.visit(right)
+        return left == right
+
     def visit_index(self, node: index) -> Any:
         return self.visit(node.args[0])[node.key]
+
+    def visit_Inequality(self, ineq: Inequality) -> Any:
+        lower, upper = ineq.args
+        lower = self.visit(lower)
+        upper = self.visit(upper)
+        return (
+            upper >= lower
+            if _should_reverse_inequality(lower, upper)
+            else lower <= upper
+        )
+
+    def visit_Maximize(self, objective: cp.Maximize) -> None:
+        obj = self.visit(objective.expr)
+        self.model.setObjective(obj, sense=gp.GRB.MAXIMIZE)
+
+    def visit_Minimize(self, objective: cp.Minimize) -> None:
+        obj = self.visit(objective.expr)
+        self.model.setObjective(obj, sense=gp.GRB.MINIMIZE)
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args
@@ -425,6 +398,12 @@ class ExpressionTranslater:
         arg = self.visit(node.args[0])
         return arg**power
 
+    def visit_Problem(self, problem: cp.Problem) -> None:
+        self.visit(problem.objective)
+        for constraint in problem.constraints:
+            self.model.addConstr(self.visit(constraint), name=str(constraint.constr_id))
+        self.model.update()
+
     def visit_Promote(self, node: Promote) -> Any:
         # FIXME: should we do something here?
         return self.visit(node.args[0])
@@ -444,4 +423,7 @@ class ExpressionTranslater:
         return self.visit(node.args[0]).sum()
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
-        return self.vars[var.name()]
+        if var.id not in self.vars:
+            self.vars[var.id] = translate_variable(var, self.model)
+            self.model.update()
+        return self.vars[var.id]
