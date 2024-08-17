@@ -36,7 +36,6 @@ Bounds
  y free
  AddExpression_1 free
  Constant_2 free
- minimum_3 free
 General Constraints
  GC0: minimum_3 = MIN ( AddExpression_1 , Constant_2 )
 End

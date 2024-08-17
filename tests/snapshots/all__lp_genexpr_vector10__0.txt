@@ -1,0 +1,49 @@
+CVXPY
+Maximize
+  Sum(minimum(X, Y), None, False)
+Subject To
+ 59: X <= 1.0
+ 64: Y <= 1.0
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 - C2 <= 0
+ R1: - C1 - C3 <= 0
+ R2: - C0 - C4 <= 0
+ R3: - C1 - C5 <= 0
+ R4: - C2 <= 0
+ R5: - C3 <= 0
+ R6: - C4 <= 0
+ R7: - C5 <= 0
+ R8: C2 <= 1
+ R9: C3 <= 1
+ R10: C4 <= 1
+ R11: C5 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  minimum_1 + minimum_2
+Subject To
+ 59[0]: X[0] <= 1
+ 59[1]: X[1] <= 1
+ 64[0]: Y[0] <= 1
+ 64[1]: Y[1] <= 1
+Bounds
+General Constraints
+ GC0: minimum_1 = MIN ( X[0] , Y[0] )
+ GC1: minimum_2 = MIN ( X[1] , Y[1] )
+End

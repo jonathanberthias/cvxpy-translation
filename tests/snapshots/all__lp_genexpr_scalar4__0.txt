@@ -28,7 +28,6 @@ Subject To
 Bounds
  x free
  Constant_1 free
- minimum_2 free
 General Constraints
  GC0: minimum_2 = MIN ( x , Constant_1 )
 End

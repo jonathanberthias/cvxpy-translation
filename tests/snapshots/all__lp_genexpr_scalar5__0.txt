@@ -32,7 +32,6 @@ Subject To
 Bounds
  x free
  y free
- minimum_1 free
 General Constraints
  GC0: minimum_1 = MIN ( x , y )
 End

@@ -295,9 +295,24 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
-def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
+def iterzip_subexpressions(*exprs: Any, shape: tuple[int, ...]) -> Iterator[tuple[Any, ...]]:
+    """Return a simultaneous iterator over the subexpressions of the given expressions.
+    
+    For example, given two expressions `x` and `y` with shape (2,), this function will return:
+        (x[0], y[0])
+        (x[1], y[1])
+    """
+    # In many cases, CVXPY will apply broadcasting rules to constants. We don't want to get too fancy
+    # so we'll just promote constants to the shape of the expression.
+    # We don't need to be careful since CVXPY has already validated that the shapes are compatible.
+    promoted_exprs = [cp.Constant(np.full(shape, expr.value)) if isinstance(expr, cp.Constant) and expr.shape != shape else expr for expr in exprs]
     for idx in np.ndindex(shape):
-        yield expr[idx]
+        yield tuple(expr[idx] for expr in promoted_exprs)
+
+
+def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[tuple[Any, ...]]:
+    for subexprs in iterzip_subexpressions(expr, shape=shape):
+        yield subexprs[0]
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
@@ -465,10 +480,13 @@ class Translater:
         self.model.setObjective(obj, sense=gp.GRB.MAXIMIZE)
 
     def visit_maximum(self, node: cp.maximum) -> Any:
-        x, y = node.args
-        x = self.translate_into_variable(x)
-        y = self.translate_into_variable(y)
-        return self.make_auxilliary_variable_for(gp.max_(x, y), "maximum")
+        if node.shape == ():
+            varargs = [self.translate_into_variable(x) for x in node.args]
+            return self.make_auxilliary_variable_for(gp.max_(*varargs), "maximum", lb=0)
+        return np.array([
+            self.visit_maximum(cp.maximum(*x))
+            for x in iterzip_subexpressions(*node.args, shape=node.shape)
+        ])
 
     def visit_min(self, node: cp.min) -> Any:
         arg = node.args[0]
@@ -480,10 +498,13 @@ class Translater:
         self.model.setObjective(obj, sense=gp.GRB.MINIMIZE)
 
     def visit_minimum(self, node: cp.minimum) -> Any:
-        x, y = node.args
-        x = self.translate_into_variable(x)
-        y = self.translate_into_variable(y)
-        return self.make_auxilliary_variable_for(gp.min_(x, y), "minimum")
+        if node.shape == ():
+            varargs = [self.translate_into_variable(x) for x in node.args]
+            return self.make_auxilliary_variable_for(gp.min_(*varargs), "minimum", lb=0)
+        return np.array([
+            self.visit_minimum(cp.minimum(*x))
+            for x in iterzip_subexpressions(*node.args, shape=node.shape)
+        ])
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args
@@ -526,7 +547,8 @@ class Translater:
         return self.visit(node.args[0])[node.key]
 
     def visit_Sum(self, node: Sum) -> Any:
-        return self.visit(node.args[0]).sum()
+        expr = self.visit(node.args[0])
+        return expr.sum()
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

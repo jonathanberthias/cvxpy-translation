@@ -182,10 +182,12 @@ def generalized_scalar_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.minimum(x, 2)), [x <= 1])
     yield cp.Problem(cp.Maximize(cp.minimum(x, y)), [x <= 1, y <= 1])
     yield cp.Problem(cp.Maximize(cp.minimum(x + y, 1)), [x <= 1, y <= 1])
+    yield cp.Problem(cp.Maximize(cp.minimum(x, y, 1)), [x <= 1, y <= 1])
 
     yield cp.Problem(cp.Minimize(cp.maximum(x, 1)), [x >= 2])
     yield cp.Problem(cp.Minimize(cp.maximum(x, y)), [x >= 0, y >= 0])
     yield cp.Problem(cp.Minimize(cp.maximum(x + y, 1)), [x >= 0, y >= 0])
+    yield cp.Problem(cp.Minimize(cp.maximum(x, y, 1)), [x >= 0, y >= 0])
 
 
 @group_cases("genexpr_vector")
@@ -206,6 +208,12 @@ def generalized_vector_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.max(X) + cp.max(Y)))
     yield cp.Problem(cp.Minimize(cp.max(X + Y)))
 
+    yield cp.Problem(cp.Maximize(cp.sum(cp.minimum(X, Y))), [X <= 1, Y <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(cp.minimum(X, Y, 1))), [X <= 1, Y <= 1])
+
+    yield cp.Problem(cp.Minimize(cp.sum(cp.maximum(X, Y))), [X >= 1, Y >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(cp.maximum(X, Y, 1))), [X >= 1, Y >= 1])
+
 
 @group_cases("genexpr_matrix")
 def generalized_matrix_expressions() -> Iterator[cp.Problem]:
@@ -225,6 +233,12 @@ def generalized_matrix_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.max(X) + 1))
     yield cp.Problem(cp.Minimize(cp.max(X) + cp.max(Y)))
     yield cp.Problem(cp.Minimize(cp.max(X + Y)))
+
+    yield cp.Problem(cp.Maximize(cp.sum(cp.minimum(X, Y))), [X <= 1, Y <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(cp.minimum(X, Y, 1))), [X <= 1, Y <= 1])
+
+    yield cp.Problem(cp.Minimize(cp.sum(cp.maximum(X, Y))), [X >= 1, Y >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(cp.maximum(X, Y, 1))), [X >= 1, Y >= 1])
 
 
 @group_cases("indexing")

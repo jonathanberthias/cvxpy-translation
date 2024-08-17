@@ -1,12 +1,10 @@
 CVXPY
 Minimize
-  maximum(x, y)
+  maximum(x, 1.0)
 Subject To
- 43: 0.0 <= x
- 47: 0.0 <= y
+ 47: 2.0 <= x
 Bounds
  x free
- y free
 End
 ----------------------------------------
 AFTER COMPILATION
@@ -14,25 +12,22 @@ Minimize
   C0
 Subject To
  R0: - C0 + C1 <= 0
- R1: - C0 + C2 <= 0
- R2: - C1 <= 0
- R3: - C2 <= 0
+ R1: - C0 <= -1
+ R2: - C1 <= -2
 Bounds
  C0 free
  C1 free
- C2 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  maximum_1
+  maximum_2
 Subject To
- 43: x >= 0
- 47: y >= 0
+ R0: Constant_1 = 1
+ 47: x >= 2
 Bounds
  x free
- y free
- maximum_1 free
+ Constant_1 free
 General Constraints
- GC0: maximum_1 = MAX ( x , y )
+ GC0: maximum_2 = MAX ( x , Constant_1 )
 End

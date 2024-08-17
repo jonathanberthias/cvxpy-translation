@@ -1,0 +1,85 @@
+CVXPY
+Minimize
+  Sum(maximum(X, Y, 1.0), None, False)
+Subject To
+ 99: 1.0 <= X
+ 104: 1.0 <= Y
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: - C0 + C4 <= 0
+ R1: - C1 + C5 <= 0
+ R2: - C2 + C6 <= 0
+ R3: - C3 + C7 <= 0
+ R4: - C0 + C8 <= 0
+ R5: - C1 + C9 <= 0
+ R6: - C2 + C10 <= 0
+ R7: - C3 + C11 <= 0
+ R8: - C0 <= -1
+ R9: - C1 <= -1
+ R10: - C2 <= -1
+ R11: - C3 <= -1
+ R12: - C4 <= 0
+ R13: - C5 <= 0
+ R14: - C6 <= 0
+ R15: - C7 <= 0
+ R16: - C8 <= 0
+ R17: - C9 <= 0
+ R18: - C10 <= 0
+ R19: - C11 <= 0
+ R20: - C4 <= -1
+ R21: - C5 <= -1
+ R22: - C6 <= -1
+ R23: - C7 <= -1
+ R24: - C8 <= -1
+ R25: - C9 <= -1
+ R26: - C10 <= -1
+ R27: - C11 <= -1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+ C9 free
+ C10 free
+ C11 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  maximum_2 + maximum_4 + maximum_6 + maximum_8
+Subject To
+ R0: index_1 = 1
+ R1: index_3 = 1
+ R2: index_5 = 1
+ R3: index_7 = 1
+ 99[0,0]: X[0,0] >= 1
+ 99[0,1]: X[0,1] >= 1
+ 99[1,0]: X[1,0] >= 1
+ 99[1,1]: X[1,1] >= 1
+ 104[0,0]: Y[0,0] >= 1
+ 104[0,1]: Y[0,1] >= 1
+ 104[1,0]: Y[1,0] >= 1
+ 104[1,1]: Y[1,1] >= 1
+Bounds
+ index_1 free
+ index_3 free
+ index_5 free
+ index_7 free
+General Constraints
+ GC0: maximum_2 = MAX ( X[0,0] , Y[0,0] , index_1 )
+ GC1: maximum_4 = MAX ( X[0,1] , Y[0,1] , index_3 )
+ GC2: maximum_6 = MAX ( X[1,0] , Y[1,0] , index_5 )
+ GC3: maximum_8 = MAX ( X[1,1] , Y[1,1] , index_7 )
+End
