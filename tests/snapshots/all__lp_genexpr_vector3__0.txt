@@ -1,0 +1,37 @@
+CVXPY
+Maximize
+  min(X, None, False) + 1.0
+Subject To
+ 19: X <= 1.0
+Bounds
+ 0.0 <= X
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 <= 0
+ R1: - C0 - C2 <= 0
+ R2: - C1 <= 0
+ R3: - C2 <= 0
+ R4: C1 <= 1
+ R5: C2 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  min_1 + Constant
+Subject To
+ 19[0]: X[0] <= 1
+ 19[1]: X[1] <= 1
+Bounds
+ min_1 free
+ Constant = 1
+General Constraints
+ GC0: min_1 = MIN ( X[0] , X[1] )
+End

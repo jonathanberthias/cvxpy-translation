@@ -1,0 +1,34 @@
+CVXPY
+Maximize
+  minimum(x, 2.0)
+Subject To
+ 14: x <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 <= 0
+ R1: - C0 <= 2
+ R2: C1 <= 1
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  minimum_2
+Subject To
+ R0: Constant_1 = 2
+ 14: x <= 1
+Bounds
+ x free
+ Constant_1 free
+ minimum_2 free
+General Constraints
+ GC0: minimum_2 = MIN ( x , Constant_1 )
+End

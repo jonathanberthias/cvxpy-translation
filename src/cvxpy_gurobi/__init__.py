@@ -8,6 +8,7 @@ from typing import Any
 from typing import Dict
 from typing import Iterator
 from typing import Union
+from typing import overload
 
 import cvxpy as cp
 import cvxpy.settings as cp_settings
@@ -293,6 +294,11 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
+def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
+    for idx in np.ndindex(shape):
+        yield expr[idx]
+
+
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     lb = -gp.GRB.INFINITY
     ub = gp.GRB.INFINITY
@@ -307,9 +313,28 @@ def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     if var.attributes["boolean"]:
         vtype = gp.GRB.BINARY
 
-    if var.shape == ():
-        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
-    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
+    return add_variable(model, var.shape, lb=lb, ub=ub, vtype=vtype, name=var.name())
+
+
+@overload
+def add_variable(
+    model: gp.Model, shape: tuple[()], name: str, vtype: str, lb: float, ub: float
+) -> gp.Var: ...
+@overload
+def add_variable(
+    model: gp.Model, shape: tuple[int, ...], name: str, vtype: str, lb: float, ub: float
+) -> AnyVar: ...
+def add_variable(
+    model: gp.Model,
+    shape: tuple[int, ...],
+    name: str,
+    vtype: str = gp.GRB.CONTINUOUS,
+    lb: float = -gp.GRB.INFINITY,
+    ub: float = gp.GRB.INFINITY,
+) -> AnyVar:
+    if shape == ():
+        return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
+    return model.addMVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
 
 
 def _should_reverse_inequality(lower: object, upper: object) -> bool:
@@ -329,6 +354,7 @@ class Translater:
     def __init__(self, model: gp.Model):
         self.model = model
         self.vars: dict[int, AnyVar] = {}
+        self._aux_id = 0
 
     def visit(self, node: Canonical) -> Any:
         visitor = getattr(self, f"visit_{type(node).__name__}", None)
@@ -341,12 +367,56 @@ class Translater:
             raise UnsupportedExpressionError(node)
         raise UnsupportedError(node)
 
+    def translate_as_variable(
+        self,
+        node: cp.Expression,
+        *,
+        vtype: str = gp.GRB.CONTINUOUS,
+        lb: float = -gp.GRB.INFINITY,
+        ub: float = gp.GRB.INFINITY,
+    ) -> gp.Var:
+        expr = self.visit(node)
+        if isinstance(expr, gp.Var):
+            return expr
+        return self.add_variable_for(
+            expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
+        )
+
+    def add_variable_for(
+        self,
+        expr: Any,
+        atom_name: str,
+        *,
+        vtype: str = gp.GRB.CONTINUOUS,
+        lb: float = -gp.GRB.INFINITY,
+        ub: float = gp.GRB.INFINITY,
+    ) -> gp.Var:
+        self._aux_id += 1
+        var = add_variable(
+            self.model,
+            shape=(),
+            name=f"{atom_name}_{self._aux_id}",
+            vtype=vtype,
+            lb=lb,
+            ub=ub,
+        )
+        self.model.addConstr(var == expr)
+        return var
+
+    def visit_abs(self, node: cp.abs) -> Any:
+        if node.shape == ():
+            x = self.translate_as_variable(node.args[0])
+            return self.add_variable_for(gp.abs_(x), "abs", lb=0)
+        return [
+            self.visit_abs(cp.abs(x))
+            for x in iter_subexpressions(node.args[0], node.shape)
+        ]
+
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
         return reduce(operator.add, args)
 
-    def visit_Constant(self, const: cp.Constant) -> npt.NDArray[np.float64]:
-        # TODO: can be a sparse array - fix annotation?
+    def visit_Constant(self, const: cp.Constant) -> Any:
         return const.value
 
     def visit_DivExpression(self, node: DivExpression) -> Any:
@@ -371,13 +441,33 @@ class Translater:
             else lower <= upper
         )
 
+    def visit_max(self, node: cp.max) -> Any:
+        varargs = [self.translate_as_variable(arg) for arg in node.args[0]]
+        return self.add_variable_for(gp.max_(*varargs), "max")
+
     def visit_Maximize(self, objective: cp.Maximize) -> None:
         obj = self.visit(objective.expr)
         self.model.setObjective(obj, sense=gp.GRB.MAXIMIZE)
 
+    def visit_maximum(self, node: cp.maximum) -> Any:
+        x, y = node.args
+        x = self.translate_as_variable(x)
+        y = self.translate_as_variable(y)
+        return self.add_variable_for(gp.max_(x, y), "maximum")
+
+    def visit_min(self, node: cp.min) -> Any:
+        varargs = [self.translate_as_variable(arg) for arg in node.args[0]]
+        return self.add_variable_for(gp.min_(*varargs), "min")
+
     def visit_Minimize(self, objective: cp.Minimize) -> None:
         obj = self.visit(objective.expr)
         self.model.setObjective(obj, sense=gp.GRB.MINIMIZE)
+
+    def visit_minimum(self, node: cp.minimum) -> Any:
+        x, y = node.args
+        x = self.translate_as_variable(x)
+        y = self.translate_as_variable(y)
+        return self.add_variable_for(gp.min_(x, y), "minimum")
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args
@@ -420,7 +510,12 @@ class Translater:
         return self.visit(node.args[0])[node.key]
 
     def visit_Sum(self, node: Sum) -> Any:
-        return self.visit(node.args[0]).sum()
+        expr = self.visit(node.args[0])
+        try:
+            return expr.sum()
+        except AttributeError:
+            # expr is a list of expressions
+            return gp.quicksum(expr)
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

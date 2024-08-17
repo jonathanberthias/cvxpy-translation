@@ -1,0 +1,41 @@
+CVXPY
+Minimize
+  max(X, None, False) + max(Y, None, False)
+Subject To
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 + C2 <= 0
+ R1: - C0 + C3 <= 0
+ R2: - C1 + C4 <= 0
+ R3: - C1 + C5 <= 0
+ R4: - C2 <= 0
+ R5: - C3 <= 0
+ R6: - C4 <= 0
+ R7: - C5 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 X[0] + 0 X[1] + max_1 + 0 Y[0] + 0 Y[1] + max_2
+Subject To
+Bounds
+ max_1 free
+ max_2 free
+General Constraints
+ GC0: max_1 = MAX ( X[0] , X[1] )
+ GC1: max_2 = MAX ( Y[0] , Y[1] )
+End

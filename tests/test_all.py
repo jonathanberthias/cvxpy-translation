@@ -67,6 +67,7 @@ def test_backfill(case: ProblemTestCase) -> None:
     problem = case.problem
     cvxpy_gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
+    our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
 
     quiet_solve(problem)
     cp_sol: Solution = problem.solution
@@ -76,9 +77,16 @@ def test_backfill(case: ProblemTestCase) -> None:
     assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
     for key in our_sol.primal_vars:
         assert our_sol.primal_vars[key] == pytest.approx(cp_sol.primal_vars[key])
-    assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
-    for key in our_sol.dual_vars:
-        assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
+    # Dual values are not available for MIPs
+    # Sometimes, the Gurobi model is a MIP even though the CVXPY problem is not,
+    # notably when using genexprs
+    # So we only check the dual values if the model is not a MIP
+    # This is one point where we cannot guarantee that our solution is the same as CVXPY's
+    # if the dual values are important
+    if not our_model.IsMIP:
+        assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
+        for key in our_sol.dual_vars:
+            assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
     assert set(our_sol.attr) >= set(cp_sol.attr)
     # In some cases, iteration count can be negative??
     cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)

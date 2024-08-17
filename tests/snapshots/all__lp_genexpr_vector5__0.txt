@@ -1,0 +1,50 @@
+CVXPY
+Maximize
+  min(X + Y, None, False)
+Subject To
+ 39: X <= 1.0
+ 44: Y <= 1.0
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 - C3 <= 0
+ R1: - C0 - C2 - C4 <= 0
+ R2: - C1 <= 0
+ R3: - C2 <= 0
+ R4: - C3 <= 0
+ R5: - C4 <= 0
+ R6: C1 <= 1
+ R7: C2 <= 1
+ R8: C3 <= 1
+ R9: C4 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  min_3
+Subject To
+ R0: - X[0] - Y[0] + index_1 = 0
+ R1: - X[1] - Y[1] + index_2 = 0
+ 39[0]: X[0] <= 1
+ 39[1]: X[1] <= 1
+ 44[0]: Y[0] <= 1
+ 44[1]: Y[1] <= 1
+Bounds
+ index_1 free
+ index_2 free
+ min_3 free
+General Constraints
+ GC0: min_3 = MIN ( index_1 , index_2 )
+End
