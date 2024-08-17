@@ -302,12 +302,10 @@ def iterzip_subexpressions(*exprs: Any, shape: tuple[int, ...]) -> Iterator[tupl
         (x[0], y[0])
         (x[1], y[1])
     """
-    # In many cases, CVXPY will apply broadcasting rules to constants. We don't want to get too fancy
-    # so we'll just promote constants to the shape of the expression.
-    # We don't need to be careful since CVXPY has already validated that the shapes are compatible.
-    promoted_exprs = [cp.Constant(np.full(shape, expr.value)) if isinstance(expr, cp.Constant) and expr.shape != shape else expr for expr in exprs]
     for idx in np.ndindex(shape):
-        yield tuple(expr[idx] for expr in promoted_exprs)
+        # "unwrap" scalar constant values: this will avoid one level of indexing and more variables
+        yield tuple(expr if isinstance(expr, cp.Constant) and expr.size == 1 else expr[idx]
+                     for expr in exprs)
 
 
 def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[tuple[Any, ...]]:
@@ -420,6 +418,10 @@ class Translater:
         """Add a variable constrained to the value of the given gurobipy expression."""
         assert prod(getattr(expr, "shape", ())) == 1, expr.shape
         self._aux_id += 1
+        include_constraint = True
+        if isinstance(expr, (float, np.ndarray)):
+            lb = ub = float(expr)
+            include_constraint = False
         var = add_variable(
             self.model,
             shape=(),
@@ -428,7 +430,8 @@ class Translater:
             lb=lb,
             ub=ub,
         )
-        self.model.addConstr(var == expr)
+        if include_constraint:
+            self.model.addConstr(var == expr)
         return var
 
     def visit_abs(self, node: cp.abs) -> Any:

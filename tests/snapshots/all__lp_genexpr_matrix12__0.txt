@@ -58,12 +58,9 @@ End
 ----------------------------------------
 GUROBI
 Maximize
-  minimum_2 + minimum_4 + minimum_6 + minimum_8
+  0 Constant_1 + minimum_2 + 0 Constant_3 + minimum_4 + 0 Constant_5
+   + minimum_6 + 0 Constant_7 + minimum_8
 Subject To
- R0: index_1 = 1
- R1: index_3 = 1
- R2: index_5 = 1
- R3: index_7 = 1
  75[0,0]: X[0,0] <= 1
  75[0,1]: X[0,1] <= 1
  75[1,0]: X[1,0] <= 1
@@ -73,13 +70,13 @@ Subject To
  80[1,0]: Y[1,0] <= 1
  80[1,1]: Y[1,1] <= 1
 Bounds
- index_1 free
- index_3 free
- index_5 free
- index_7 free
+ Constant_1 = 1
+ Constant_3 = 1
+ Constant_5 = 1
+ Constant_7 = 1
 General Constraints
- GC0: minimum_2 = MIN ( X[0,0] , Y[0,0] , index_1 )
- GC1: minimum_4 = MIN ( X[0,1] , Y[0,1] , index_3 )
- GC2: minimum_6 = MIN ( X[1,0] , Y[1,0] , index_5 )
- GC3: minimum_8 = MIN ( X[1,1] , Y[1,1] , index_7 )
+ GC0: minimum_2 = MIN ( X[0,0] , Y[0,0] , Constant_1 )
+ GC1: minimum_4 = MIN ( X[0,1] , Y[0,1] , Constant_3 )
+ GC2: minimum_6 = MIN ( X[1,0] , Y[1,0] , Constant_5 )
+ GC3: minimum_8 = MIN ( X[1,1] , Y[1,1] , Constant_7 )
 End

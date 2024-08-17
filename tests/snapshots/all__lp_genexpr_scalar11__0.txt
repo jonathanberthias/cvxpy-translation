@@ -26,15 +26,14 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  maximum_2
+  0 Constant_1 + maximum_2
 Subject To
- R0: Constant_1 = 1
  71: x >= 0
  75: y >= 0
 Bounds
  x free
  y free
- Constant_1 free
+ Constant_1 = 1
 General Constraints
  GC0: maximum_2 = MAX ( x , y , Constant_1 )
 End

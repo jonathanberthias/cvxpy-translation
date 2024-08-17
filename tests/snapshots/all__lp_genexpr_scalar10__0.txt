@@ -25,17 +25,16 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  maximum_3
+  0 Constant_2 + maximum_3
 Subject To
  R0: - x - y + AddExpression_1 = 0
- R1: Constant_2 = 1
  62: x >= 0
  66: y >= 0
 Bounds
  x free
  y free
  AddExpression_1 free
- Constant_2 free
+ Constant_2 = 1
 General Constraints
  GC0: maximum_3 = MAX ( AddExpression_1 , Constant_2 )
 End

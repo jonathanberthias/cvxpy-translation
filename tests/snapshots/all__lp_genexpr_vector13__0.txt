@@ -38,18 +38,16 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  maximum_2 + maximum_4
+  0 Constant_1 + maximum_2 + 0 Constant_3 + maximum_4
 Subject To
- R0: index_1 = 1
- R1: index_3 = 1
  95[0]: X[0] >= 1
  95[1]: X[1] >= 1
  100[0]: Y[0] >= 1
  100[1]: Y[1] >= 1
 Bounds
- index_1 free
- index_3 free
+ Constant_1 = 1
+ Constant_3 = 1
 General Constraints
- GC0: maximum_2 = MAX ( X[0] , Y[0] , index_1 )
- GC1: maximum_4 = MAX ( X[1] , Y[1] , index_3 )
+ GC0: maximum_2 = MAX ( X[0] , Y[0] , Constant_1 )
+ GC1: maximum_4 = MAX ( X[1] , Y[1] , Constant_3 )
 End

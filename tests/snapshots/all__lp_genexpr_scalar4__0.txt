@@ -21,13 +21,12 @@ End
 ----------------------------------------
 GUROBI
 Maximize
-  minimum_2
+  0 Constant_1 + minimum_2
 Subject To
- R0: Constant_1 = 2
  14: x <= 1
 Bounds
  x free
- Constant_1 free
+ Constant_1 = 2
 General Constraints
  GC0: minimum_2 = MIN ( x , Constant_1 )
 End
