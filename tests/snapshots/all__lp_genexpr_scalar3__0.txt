@@ -27,7 +27,7 @@ Subject To
 Bounds
  x free
  y free
- abs_2 free
+ AddExpression_1 free
 General Constraints
  GC0: abs_2 = ABS ( AddExpression_1 )
 End

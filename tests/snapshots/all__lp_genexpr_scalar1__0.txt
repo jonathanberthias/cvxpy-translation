@@ -23,7 +23,6 @@ Minimize
 Subject To
 Bounds
  x free
- abs_1 free
  Constant = 1
 General Constraints
  GC0: abs_1 = ABS ( x )

@@ -35,8 +35,8 @@ Subject To
  R0: - X[0] - Y[0] + index_1 = 0
  R1: - X[1] - Y[1] + index_3 = 0
 Bounds
- abs_2 free
- abs_4 free
+ index_1 free
+ index_3 free
 General Constraints
  GC0: abs_2 = ABS ( index_1 )
  GC1: abs_4 = ABS ( index_3 )

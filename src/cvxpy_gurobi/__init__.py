@@ -378,6 +378,10 @@ class Translater:
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
+        if isinstance(expr, gp.MVar):
+            assert expr.shape == (1,)
+            # Extract the underlying variable
+            return expr.tolist()[0]
         return self.add_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
         )
@@ -407,10 +411,10 @@ class Translater:
         if node.shape == ():
             x = self.translate_as_variable(node.args[0])
             return self.add_variable_for(gp.abs_(x), "abs", lb=0)
-        return [
+        return np.array([
             self.visit_abs(cp.abs(x))
             for x in iter_subexpressions(node.args[0], node.shape)
-        ]
+        ])
 
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
@@ -510,12 +514,7 @@ class Translater:
         return self.visit(node.args[0])[node.key]
 
     def visit_Sum(self, node: Sum) -> Any:
-        expr = self.visit(node.args[0])
-        try:
-            return expr.sum()
-        except AttributeError:
-            # expr is a list of expressions
-            return gp.quicksum(expr)
+        return self.visit(node.args[0]).sum()
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

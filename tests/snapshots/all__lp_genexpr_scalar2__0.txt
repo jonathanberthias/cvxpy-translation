@@ -28,9 +28,7 @@ Minimize
 Subject To
 Bounds
  x free
- abs_1 free
  y free
- abs_2 free
 General Constraints
  GC0: abs_1 = ABS ( x )
  GC1: abs_2 = ABS ( y )
