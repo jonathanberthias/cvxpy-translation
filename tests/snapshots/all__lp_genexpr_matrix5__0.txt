@@ -1,0 +1,71 @@
+CVXPY
+Maximize
+  min(X, None, False) + min(Y, None, False)
+Subject To
+ 31: X <= 1.0
+ 36: Y <= 1.0
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 - C2 <= 0
+ R1: - C0 - C3 <= 0
+ R2: - C0 - C4 <= 0
+ R3: - C0 - C5 <= 0
+ R4: - C1 - C6 <= 0
+ R5: - C1 - C7 <= 0
+ R6: - C1 - C8 <= 0
+ R7: - C1 - C9 <= 0
+ R8: - C2 <= 0
+ R9: - C3 <= 0
+ R10: - C4 <= 0
+ R11: - C5 <= 0
+ R12: - C6 <= 0
+ R13: - C7 <= 0
+ R14: - C8 <= 0
+ R15: - C9 <= 0
+ R16: C2 <= 1
+ R17: C3 <= 1
+ R18: C4 <= 1
+ R19: C5 <= 1
+ R20: C6 <= 1
+ R21: C7 <= 1
+ R22: C8 <= 1
+ R23: C9 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+ C9 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  min_1 + min_2
+Subject To
+ 31[0,0]: X[0,0] <= 1
+ 31[0,1]: X[0,1] <= 1
+ 31[1,0]: X[1,0] <= 1
+ 31[1,1]: X[1,1] <= 1
+ 36[0,0]: Y[0,0] <= 1
+ 36[0,1]: Y[0,1] <= 1
+ 36[1,0]: Y[1,0] <= 1
+ 36[1,1]: Y[1,1] <= 1
+Bounds
+ min_1 free
+ min_2 free
+General Constraints
+ GC0: min_1 = MIN ( X[0,0] , X[0,1] , X[1,0] , X[1,1] )
+ GC1: min_2 = MIN ( Y[0,0] , Y[0,1] , Y[1,0] , Y[1,1] )
+End

@@ -376,7 +376,7 @@ class Translater:
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
     ) -> gp.Var:
-        """Translate a CVXPY expression, and returns a gurobipy variable constrained to its value.
+        """Translate a CVXPY expression, and return a gurobipy variable constrained to its value.
 
         This is useful for gurobipy functions that only handle variables as their arguments.
         Only scalar expressions are supported.
@@ -386,9 +386,9 @@ class Translater:
         if isinstance(expr, gp.Var):
             return expr
         if isinstance(expr, gp.MVar):
-            assert expr.shape == (1,)
+            assert prod(expr.shape) == 1
             # Extract the underlying variable
-            return expr.tolist()[0]
+            return expr.item()
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
         )
@@ -456,7 +456,8 @@ class Translater:
         )
 
     def visit_max(self, node: cp.max) -> Any:
-        varargs = [self.translate_into_variable(arg) for arg in node.args[0]]
+        arg = node.args[0]
+        varargs = [self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)]
         return self.make_auxilliary_variable_for(gp.max_(*varargs), "max")
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
@@ -470,7 +471,8 @@ class Translater:
         return self.make_auxilliary_variable_for(gp.max_(x, y), "maximum")
 
     def visit_min(self, node: cp.min) -> Any:
-        varargs = [self.translate_into_variable(arg) for arg in node.args[0]]
+        arg = node.args[0]
+        varargs = [self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)]
         return self.make_auxilliary_variable_for(gp.min_(*varargs), "min")
 
     def visit_Minimize(self, objective: cp.Minimize) -> None:

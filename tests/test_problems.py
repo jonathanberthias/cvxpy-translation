@@ -44,6 +44,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         matrix_quadratic_expressions,
         generalized_scalar_expressions,
         generalized_vector_expressions,
+        generalized_matrix_expressions,
         indexing,
         attributes,
         invalid_expressions,
@@ -193,6 +194,26 @@ def generalized_vector_expressions() -> Iterator[cp.Problem]:
     Y = cp.Variable(2, name="Y", nonneg=True)
 
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + Y))))
+
+    yield cp.Problem(cp.Maximize(cp.min(X)), [X <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(X) + 1), [X <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(X) + cp.min(Y)), [X <= 1, Y <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(X + Y)), [X <= 1, Y <= 1])
+
+    yield cp.Problem(cp.Minimize(cp.max(X)))
+    yield cp.Problem(cp.Minimize(cp.max(X) + 1))
+    yield cp.Problem(cp.Minimize(cp.max(X) + cp.max(Y)))
+    yield cp.Problem(cp.Minimize(cp.max(X + Y)))
+
+
+@group_cases("genexpr_matrix")
+def generalized_matrix_expressions() -> Iterator[cp.Problem]:
+    X = cp.Variable((2, 2), name="X", nonneg=True)
+    Y = cp.Variable((2, 2), name="Y", nonneg=True)
+
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + 1))))
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + Y))))
 
     yield cp.Problem(cp.Maximize(cp.min(X)), [X <= 1])

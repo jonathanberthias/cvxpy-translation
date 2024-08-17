@@ -1,0 +1,72 @@
+CVXPY
+Maximize
+  min(X + Y, None, False)
+Subject To
+ 43: X <= 1.0
+ 48: Y <= 1.0
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 - C5 <= 0
+ R1: - C0 - C2 - C6 <= 0
+ R2: - C0 - C3 - C7 <= 0
+ R3: - C0 - C4 - C8 <= 0
+ R4: - C1 <= 0
+ R5: - C2 <= 0
+ R6: - C3 <= 0
+ R7: - C4 <= 0
+ R8: - C5 <= 0
+ R9: - C6 <= 0
+ R10: - C7 <= 0
+ R11: - C8 <= 0
+ R12: C1 <= 1
+ R13: C2 <= 1
+ R14: C3 <= 1
+ R15: C4 <= 1
+ R16: C5 <= 1
+ R17: C6 <= 1
+ R18: C7 <= 1
+ R19: C8 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  min_5
+Subject To
+ R0: - X[0,0] - Y[0,0] + index_1 = 0
+ R1: - X[0,1] - Y[0,1] + index_2 = 0
+ R2: - X[1,0] - Y[1,0] + index_3 = 0
+ R3: - X[1,1] - Y[1,1] + index_4 = 0
+ 43[0,0]: X[0,0] <= 1
+ 43[0,1]: X[0,1] <= 1
+ 43[1,0]: X[1,0] <= 1
+ 43[1,1]: X[1,1] <= 1
+ 48[0,0]: Y[0,0] <= 1
+ 48[0,1]: Y[0,1] <= 1
+ 48[1,0]: Y[1,0] <= 1
+ 48[1,1]: Y[1,1] <= 1
+Bounds
+ index_1 free
+ index_2 free
+ index_3 free
+ index_4 free
+ min_5 free
+General Constraints
+ GC0: min_5 = MIN ( index_1 , index_2 , index_3 , index_4 )
+End
