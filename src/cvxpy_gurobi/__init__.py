@@ -3,6 +3,7 @@ from __future__ import annotations
 import operator
 import time
 from functools import reduce
+from math import prod
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Dict
@@ -367,7 +368,7 @@ class Translater:
             raise UnsupportedExpressionError(node)
         raise UnsupportedError(node)
 
-    def translate_as_variable(
+    def translate_into_variable(
         self,
         node: cp.Expression,
         *,
@@ -375,6 +376,12 @@ class Translater:
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
     ) -> gp.Var:
+        """Translate a CVXPY expression, and returns a gurobipy variable constrained to its value.
+
+        This is useful for gurobipy functions that only handle variables as their arguments.
+        Only scalar expressions are supported.
+        If translating the expression results in a variable, it is returned directly.
+        """
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
@@ -382,11 +389,11 @@ class Translater:
             assert expr.shape == (1,)
             # Extract the underlying variable
             return expr.tolist()[0]
-        return self.add_variable_for(
+        return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
         )
 
-    def add_variable_for(
+    def make_auxilliary_variable_for(
         self,
         expr: Any,
         atom_name: str,
@@ -395,6 +402,8 @@ class Translater:
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
     ) -> gp.Var:
+        """Add a variable constrained to the value of the given gurobipy expression."""
+        assert prod(getattr(expr, "shape", ())) == 1, expr.shape
         self._aux_id += 1
         var = add_variable(
             self.model,
@@ -409,8 +418,9 @@ class Translater:
 
     def visit_abs(self, node: cp.abs) -> Any:
         if node.shape == ():
-            x = self.translate_as_variable(node.args[0])
-            return self.add_variable_for(gp.abs_(x), "abs", lb=0)
+            x = self.translate_into_variable(node.args[0])
+            return self.make_auxilliary_variable_for(gp.abs_(x), "abs", lb=0)
+        # gp.abs_ does not support arrays of variables, so we need to do it manually
         return np.array([
             self.visit_abs(cp.abs(x))
             for x in iter_subexpressions(node.args[0], node.shape)
@@ -446,8 +456,8 @@ class Translater:
         )
 
     def visit_max(self, node: cp.max) -> Any:
-        varargs = [self.translate_as_variable(arg) for arg in node.args[0]]
-        return self.add_variable_for(gp.max_(*varargs), "max")
+        varargs = [self.translate_into_variable(arg) for arg in node.args[0]]
+        return self.make_auxilliary_variable_for(gp.max_(*varargs), "max")
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
         obj = self.visit(objective.expr)
@@ -455,13 +465,13 @@ class Translater:
 
     def visit_maximum(self, node: cp.maximum) -> Any:
         x, y = node.args
-        x = self.translate_as_variable(x)
-        y = self.translate_as_variable(y)
-        return self.add_variable_for(gp.max_(x, y), "maximum")
+        x = self.translate_into_variable(x)
+        y = self.translate_into_variable(y)
+        return self.make_auxilliary_variable_for(gp.max_(x, y), "maximum")
 
     def visit_min(self, node: cp.min) -> Any:
-        varargs = [self.translate_as_variable(arg) for arg in node.args[0]]
-        return self.add_variable_for(gp.min_(*varargs), "min")
+        varargs = [self.translate_into_variable(arg) for arg in node.args[0]]
+        return self.make_auxilliary_variable_for(gp.min_(*varargs), "min")
 
     def visit_Minimize(self, objective: cp.Minimize) -> None:
         obj = self.visit(objective.expr)
@@ -469,9 +479,9 @@ class Translater:
 
     def visit_minimum(self, node: cp.minimum) -> Any:
         x, y = node.args
-        x = self.translate_as_variable(x)
-        y = self.translate_as_variable(y)
-        return self.add_variable_for(gp.min_(x, y), "minimum")
+        x = self.translate_into_variable(x)
+        y = self.translate_into_variable(y)
+        return self.make_auxilliary_variable_for(gp.min_(x, y), "minimum")
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args
