@@ -295,20 +295,24 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
-def iterzip_subexpressions(*exprs: Any, shape: tuple[int, ...]) -> Iterator[tuple[Any, ...]]:
+def iterzip_subexpressions(
+    *exprs: Any, shape: tuple[int, ...]
+) -> Iterator[tuple[Any, ...]]:
     """Return a simultaneous iterator over the subexpressions of the given expressions.
-    
+
     For example, given two expressions `x` and `y` with shape (2,), this function will return:
         (x[0], y[0])
         (x[1], y[1])
     """
     for idx in np.ndindex(shape):
         # "unwrap" scalar constant values: this will avoid one level of indexing and more variables
-        yield tuple(expr if isinstance(expr, cp.Constant) and expr.size == 1 else expr[idx]
-                     for expr in exprs)
+        yield tuple(
+            expr if isinstance(expr, cp.Constant) and expr.size == 1 else expr[idx]
+            for expr in exprs
+        )
 
 
-def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[tuple[Any, ...]]:
+def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
     for subexprs in iterzip_subexpressions(expr, shape=shape):
         yield subexprs[0]
 
@@ -475,7 +479,9 @@ class Translater:
 
     def visit_max(self, node: cp.max) -> Any:
         arg = node.args[0]
-        varargs = [self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)]
+        varargs = [
+            self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)
+        ]
         return self.make_auxilliary_variable_for(gp.max_(*varargs), "max")
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
@@ -493,7 +499,9 @@ class Translater:
 
     def visit_min(self, node: cp.min) -> Any:
         arg = node.args[0]
-        varargs = [self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)]
+        varargs = [
+            self.translate_into_variable(x) for x in iter_subexpressions(arg, arg.shape)
+        ]
         return self.make_auxilliary_variable_for(gp.min_(*varargs), "min")
 
     def visit_Minimize(self, objective: cp.Minimize) -> None:
