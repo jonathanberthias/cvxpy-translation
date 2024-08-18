@@ -302,9 +302,8 @@ def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
 
 
 def to_subexpressions_array(expr: Any, shape: tuple[int, ...]) -> npt.NDArray:
-    return np.fromiter(iter_subexpressions(expr, shape), dtype=np.object_).reshape(
-        shape
-    )
+    array = np.fromiter(iter_subexpressions(expr, shape), dtype=np.object_)
+    return array.reshape(shape)
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
@@ -393,7 +392,6 @@ class Translater:
         if isinstance(expr, gp.Var):
             return expr
         if isinstance(expr, gp.MVar):
-            assert prod(expr.shape) == 1
             # Extract the underlying variable
             return expr.item()
         return self.make_auxilliary_variable_for(
