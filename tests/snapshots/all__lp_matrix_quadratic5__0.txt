@@ -1,7 +1,7 @@
 CVXPY
 Minimize
-  quad_over_lin([[2.0 0.0]
- [0.0 2.0]] @ x, 1.0)
+  quad_over_lin([[np.float64(2.0) np.float64(0.0)]
+ [np.float64(0.0) np.float64(2.0)]] @ x, 1.0)
 Subject To
 Bounds
  x free
