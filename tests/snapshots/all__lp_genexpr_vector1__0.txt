@@ -1,0 +1,43 @@
+CVXPY
+Minimize
+  Sum(abs(X + Y), None, False)
+Subject To
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 + C2 + C4 <= 0
+ R1: - C1 + C3 + C5 <= 0
+ R2: - C0 - C2 - C4 <= 0
+ R3: - C1 - C3 - C5 <= 0
+ R4: - C2 <= 0
+ R5: - C3 <= 0
+ R6: - C4 <= 0
+ R7: - C5 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  abs_2 + abs_4
+Subject To
+ R0: - X[0] - Y[0] + index_1 = 0
+ R1: - X[1] - Y[1] + index_3 = 0
+Bounds
+ index_1 free
+ index_3 free
+General Constraints
+ GC0: abs_2 = ABS ( index_1 )
+ GC1: abs_4 = ABS ( index_3 )
+End

@@ -1,0 +1,35 @@
+CVXPY
+Minimize
+  Sum(abs(X) + Promote(1.0, (2,)), None, False)
+Subject To
+Bounds
+ 0.0 <= X
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 + C2 <= 0
+ R1: - C1 + C3 <= 0
+ R2: - C0 - C2 <= 0
+ R3: - C1 - C3 <= 0
+ R4: - C2 <= 0
+ R5: - C3 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 X[0] + 0 X[1] + abs_1 + abs_2 + 2 Constant
+Subject To
+Bounds
+ Constant = 1
+General Constraints
+ GC0: abs_1 = ABS ( X[0] )
+ GC1: abs_2 = ABS ( X[1] )
+End
