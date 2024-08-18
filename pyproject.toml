@@ -163,5 +163,6 @@ omit = [
 ]
 [tool.coverage.report]
 exclude_also = [
-  'if TYPE_CHECKING:',
+  "if TYPE_CHECKING:",
+  "@overload",
 ]

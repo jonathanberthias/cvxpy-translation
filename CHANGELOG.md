@@ -1,3 +1,11 @@
+# Unreleased
+
+## Added
+
+- Handle CVXPY atoms that have an equivalent generalized expression
+  in `gurobipy`. They are translated by adding auxilliary variables
+  constrained to the value of the arguments of the atom to the problem.
+
 # [0.1.0] - 2024-08-01
 
 This is the first release of `cvxpy-gurobi`!

@@ -1,0 +1,73 @@
+CVXPY
+Minimize
+  Sum(abs(X) + abs(Y), None, False)
+Subject To
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3 + C4 + C5 + C6 + C7
+Subject To
+ R0: - C0 + C8 <= 0
+ R1: - C1 + C9 <= 0
+ R2: - C2 + C10 <= 0
+ R3: - C3 + C11 <= 0
+ R4: - C0 - C8 <= 0
+ R5: - C1 - C9 <= 0
+ R6: - C2 - C10 <= 0
+ R7: - C3 - C11 <= 0
+ R8: - C4 + C12 <= 0
+ R9: - C5 + C13 <= 0
+ R10: - C6 + C14 <= 0
+ R11: - C7 + C15 <= 0
+ R12: - C4 - C12 <= 0
+ R13: - C5 - C13 <= 0
+ R14: - C6 - C14 <= 0
+ R15: - C7 - C15 <= 0
+ R16: - C8 <= 0
+ R17: - C9 <= 0
+ R18: - C10 <= 0
+ R19: - C11 <= 0
+ R20: - C12 <= 0
+ R21: - C13 <= 0
+ R22: - C14 <= 0
+ R23: - C15 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+ C9 free
+ C10 free
+ C11 free
+ C12 free
+ C13 free
+ C14 free
+ C15 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 X[0,0] + 0 X[0,1] + 0 X[1,0] + 0 X[1,1] + abs_1 + abs_2 + abs_3 + abs_4
+   + 0 Y[0,0] + 0 Y[0,1] + 0 Y[1,0] + 0 Y[1,1] + abs_5 + abs_6 + abs_7
+   + abs_8
+Subject To
+Bounds
+General Constraints
+ GC0: abs_1 = ABS ( X[0,0] )
+ GC1: abs_2 = ABS ( X[0,1] )
+ GC2: abs_3 = ABS ( X[1,0] )
+ GC3: abs_4 = ABS ( X[1,1] )
+ GC4: abs_5 = ABS ( Y[0,0] )
+ GC5: abs_6 = ABS ( Y[0,1] )
+ GC6: abs_7 = ABS ( Y[1,0] )
+ GC7: abs_8 = ABS ( Y[1,1] )
+End

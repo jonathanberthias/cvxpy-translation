@@ -3,11 +3,14 @@ from __future__ import annotations
 import operator
 import time
 from functools import reduce
+from math import prod
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Callable
 from typing import Dict
 from typing import Iterator
 from typing import Union
+from typing import overload
 
 import cvxpy as cp
 import cvxpy.settings as cp_settings
@@ -293,6 +296,17 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
+def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
+    for idx in np.ndindex(shape):
+        yield expr[idx]
+
+
+def to_subexpressions_array(expr: Any, shape: tuple[int, ...]) -> npt.NDArray:
+    return np.fromiter(iter_subexpressions(expr, shape), dtype=np.object_).reshape(
+        shape
+    )
+
+
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     lb = -gp.GRB.INFINITY
     ub = gp.GRB.INFINITY
@@ -307,9 +321,28 @@ def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     if var.attributes["boolean"]:
         vtype = gp.GRB.BINARY
 
-    if var.shape == ():
-        return model.addVar(name=var.name(), lb=lb, ub=ub, vtype=vtype)
-    return model.addMVar(var.shape, name=var.name(), lb=lb, ub=ub, vtype=vtype)
+    return add_variable(model, var.shape, lb=lb, ub=ub, vtype=vtype, name=var.name())
+
+
+@overload
+def add_variable(
+    model: gp.Model, shape: tuple[()], name: str, vtype: str, lb: float, ub: float
+) -> gp.Var: ...
+@overload
+def add_variable(
+    model: gp.Model, shape: tuple[int, ...], name: str, vtype: str, lb: float, ub: float
+) -> AnyVar: ...
+def add_variable(
+    model: gp.Model,
+    shape: tuple[int, ...],
+    name: str,
+    vtype: str = gp.GRB.CONTINUOUS,
+    lb: float = -gp.GRB.INFINITY,
+    ub: float = gp.GRB.INFINITY,
+) -> AnyVar:
+    if shape == ():
+        return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
+    return model.addMVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
 
 
 def _should_reverse_inequality(lower: object, upper: object) -> bool:
@@ -329,6 +362,7 @@ class Translater:
     def __init__(self, model: gp.Model):
         self.model = model
         self.vars: dict[int, AnyVar] = {}
+        self._aux_id = 0
 
     def visit(self, node: Canonical) -> Any:
         visitor = getattr(self, f"visit_{type(node).__name__}", None)
@@ -341,12 +375,79 @@ class Translater:
             raise UnsupportedExpressionError(node)
         raise UnsupportedError(node)
 
+    def translate_into_variable(
+        self,
+        node: cp.Expression,
+        *,
+        vtype: str = gp.GRB.CONTINUOUS,
+        lb: float = -gp.GRB.INFINITY,
+        ub: float = gp.GRB.INFINITY,
+    ) -> gp.Var:
+        """Translate a CVXPY expression, and return a gurobipy variable constrained to its value.
+
+        This is useful for gurobipy functions that only handle variables as their arguments.
+        Only scalar expressions are supported.
+        If translating the expression results in a variable, it is returned directly.
+        """
+        expr = self.visit(node)
+        if isinstance(expr, gp.Var):
+            return expr
+        if isinstance(expr, gp.MVar):
+            assert prod(expr.shape) == 1
+            # Extract the underlying variable
+            return expr.item()
+        return self.make_auxilliary_variable_for(
+            expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
+        )
+
+    def make_auxilliary_variable_for(
+        self,
+        expr: Any,
+        atom_name: str,
+        *,
+        vtype: str = gp.GRB.CONTINUOUS,
+        lb: float = -gp.GRB.INFINITY,
+        ub: float = gp.GRB.INFINITY,
+    ) -> gp.Var:
+        """Add a variable constrained to the value of the given gurobipy expression."""
+        assert prod(getattr(expr, "shape", ())) == 1, expr.shape
+        self._aux_id += 1
+        var = add_variable(
+            self.model,
+            shape=(),
+            name=f"{atom_name}_{self._aux_id}",
+            vtype=vtype,
+            lb=lb,
+            ub=ub,
+        )
+        self.model.addConstr(var == expr)
+        return var
+
+    def apply_and_visit_elementwise(
+        self, fn: Callable[[cp.Expression], cp.Expression], expr: cp.Expression
+    ) -> npt.NDArray[np.object_]:
+        subarray = to_subexpressions_array(expr, expr.shape)
+
+        def visit(x: cp.Expression) -> cp.Expression:
+            return self.visit(fn(x))
+
+        vectorized_visitor = np.vectorize(visit, otypes=[np.object_])
+        return vectorized_visitor(subarray)
+
+    def visit_abs(self, node: cp.abs) -> Any:
+        (arg,) = node.args
+        if isinstance(arg, cp.Constant):
+            return np.abs(arg.value)
+        if node.shape == ():
+            var = self.translate_into_variable(arg)
+            return self.make_auxilliary_variable_for(gp.abs_(var), "abs", lb=0)
+        return self.apply_and_visit_elementwise(cp.abs, arg)
+
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
         return reduce(operator.add, args)
 
-    def visit_Constant(self, const: cp.Constant) -> npt.NDArray[np.float64]:
-        # TODO: can be a sparse array - fix annotation?
+    def visit_Constant(self, const: cp.Constant) -> Any:
         return const.value
 
     def visit_DivExpression(self, node: DivExpression) -> Any:
@@ -420,7 +521,8 @@ class Translater:
         return self.visit(node.args[0])[node.key]
 
     def visit_Sum(self, node: Sum) -> Any:
-        return self.visit(node.args[0]).sum()
+        expr = self.visit(node.args[0])
+        return expr.sum()
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

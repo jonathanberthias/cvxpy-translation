@@ -42,6 +42,9 @@ def all_problems() -> Iterator[ProblemTestCase]:
         quadratic_expressions,
         matrix_constraints,
         matrix_quadratic_expressions,
+        generalized_scalar_expressions,
+        generalized_vector_expressions,
+        generalized_matrix_expressions,
         indexing,
         attributes,
         invalid_expressions,
@@ -166,6 +169,45 @@ def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
 
 
+@group_cases("genexpr_scalar")
+def generalized_scalar_expressions() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x")
+    y = cp.Variable(name="y")
+
+    yield cp.Problem(cp.Minimize(cp.abs(x)))
+    yield cp.Problem(cp.Minimize(cp.abs(x) + 1))
+    yield cp.Problem(cp.Minimize(cp.abs(x) + cp.abs(y)))
+    yield cp.Problem(cp.Minimize(cp.abs(x + y)))
+
+
+@group_cases("genexpr_vector")
+def generalized_vector_expressions() -> Iterator[cp.Problem]:
+    X = cp.Variable(2, name="X", nonneg=True)
+    Y = cp.Variable(2, name="Y", nonneg=True)
+    A = np.array([1, -2])
+
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + Y))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + 1)))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + A)))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + cp.abs(Y))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + cp.abs(A))))
+
+
+@group_cases("genexpr_matrix")
+def generalized_matrix_expressions() -> Iterator[cp.Problem]:
+    X = cp.Variable((2, 2), name="X", nonneg=True)
+    Y = cp.Variable((2, 2), name="Y", nonneg=True)
+    A = np.array([[1, -2], [3, 4]])
+
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + Y))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X + 1))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + A)))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + cp.abs(Y))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.abs(X) + cp.abs(A))))
+
+
 @group_cases("indexing")
 def indexing() -> Iterator[cp.Problem]:
     x = cp.Variable(2, name="x", nonneg=True)
@@ -220,8 +262,6 @@ def invalid_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(x**3))
     yield cp.Problem(cp.Minimize(x**4))
-    # TODO: maybe using setPWLObj?
-    yield cp.Problem(cp.Minimize(cp.abs(x)))
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
 
 
