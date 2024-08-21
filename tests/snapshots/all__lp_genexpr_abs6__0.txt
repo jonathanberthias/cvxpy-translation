@@ -1,0 +1,35 @@
+CVXPY
+Minimize
+  abs(X) + abs(Y)
+Subject To
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 + C2 <= 0
+ R1: - C0 - C2 <= 0
+ R2: - C1 + C3 <= 0
+ R3: - C1 - C3 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 X[0] + abs_1 + 0 Y + abs_2
+Subject To
+Bounds
+ X[0] free
+ Y free
+General Constraints
+ GC0: abs_1 = ABS ( X[0] )
+ GC1: abs_2 = ABS ( Y )
+End

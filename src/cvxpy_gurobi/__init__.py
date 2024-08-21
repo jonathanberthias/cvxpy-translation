@@ -296,6 +296,14 @@ def _matrix_to_gurobi_names(
         yield idx, f"{base_name}[{formatted_idx}]"
 
 
+def _shape(expr: Any) -> tuple[int, ...]:
+    return getattr(expr, "shape", ())
+
+
+def _is_scalar_shape(shape: tuple[int, ...]) -> bool:
+    return prod(shape) == 1
+
+
 def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
     for idx in np.ndindex(shape):
         yield expr[idx]
@@ -374,6 +382,16 @@ class Translater:
             raise UnsupportedExpressionError(node)
         raise UnsupportedError(node)
 
+    def translate_into_scalar(self, node: cp.Expression) -> Any:
+        expr = self.visit(node)
+        shape = _shape(expr)
+        if shape == ():
+            return expr
+        assert _is_scalar_shape(shape), f"Expected scalar, got shape {shape}"
+        # expr can be many things: an ndarray, MVar, MLinExpr, etc.
+        # but let's assume it always has an `item` method
+        return expr.item()
+
     def translate_into_variable(
         self,
         node: cp.Expression,
@@ -408,7 +426,7 @@ class Translater:
         ub: float = gp.GRB.INFINITY,
     ) -> gp.Var:
         """Add a variable constrained to the value of the given gurobipy expression."""
-        assert prod(getattr(expr, "shape", ())) == 1, expr.shape
+        assert _is_scalar_shape(_shape(expr)), expr.shape
         self._aux_id += 1
         var = add_variable(
             self.model,
@@ -471,11 +489,11 @@ class Translater:
         )
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
-        obj = self.visit(objective.expr)
+        obj = self.translate_into_scalar(objective.expr)
         self.model.setObjective(obj, sense=gp.GRB.MAXIMIZE)
 
     def visit_Minimize(self, objective: cp.Minimize) -> None:
-        obj = self.visit(objective.expr)
+        obj = self.translate_into_scalar(objective.expr)
         self.model.setObjective(obj, sense=gp.GRB.MINIMIZE)
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
