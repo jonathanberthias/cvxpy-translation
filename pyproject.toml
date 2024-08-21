@@ -56,7 +56,7 @@ build.hooks.vcs.version-file = "src/cvxpy_gurobi/_version.py"
 dependencies = [
   "cvxpy-base==1.5.*",
   "gurobipy==11.*",
-  "numpy",
+  "numpy!=2.1.0",  # broken with cvxpy<=1.5.3
   "pytest",
   "pytest-insta",
 ]
@@ -72,7 +72,7 @@ versions = [
 dependencies = [
   "cvxpy-base=={matrix:cvxpy}.*",
   "gurobipy=={matrix:gurobipy}.*",
-  "numpy",
+  "numpy!=2.1.0",  # broken with cvxpy<=1.5.3
   "scipy{matrix:scipy:}",
   "coverage[toml]",
   "pytest",
