@@ -1,0 +1,50 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 363: max(X + [[1.00 -2.00]
+ [3.00 4.00]], None, False) <= 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+ R0: C0 - C4 <= -1
+ R1: C1 - C4 <= -3
+ R2: C2 - C4 <= 2
+ R3: C3 - C4 <= -4
+ R4: C4 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ R0: - X[0,0] + AddExpression_1[0,0] = 1
+ R1: - X[0,1] + AddExpression_1[0,1] = -2
+ R2: - X[1,0] + AddExpression_1[1,0] = 3
+ R3: - X[1,1] + AddExpression_1[1,1] = 4
+ 363: max_2 <= 1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ AddExpression_1[0,0] free
+ AddExpression_1[0,1] free
+ AddExpression_1[1,0] free
+ AddExpression_1[1,1] free
+ max_2 free
+General Constraints
+ GC0: max_2 = MAX ( AddExpression_1[0,0] , AddExpression_1[0,1] ,
+   AddExpression_1[1,0] , AddExpression_1[1,1] )
+End

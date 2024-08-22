@@ -1,0 +1,34 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 204: max(X, None, False) <= 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1
+Subject To
+ R0: C0 - C2 <= 0
+ R1: C1 - C2 <= 0
+ R2: C2 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0] + X[1]
+Subject To
+ 204: max_1 <= 1
+Bounds
+ X[0] free
+ X[1] free
+ max_1 free
+General Constraints
+ GC0: max_1 = MAX ( X[0] , X[1] )
+End

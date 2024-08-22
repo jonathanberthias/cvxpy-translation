@@ -1,0 +1,36 @@
+CVXPY
+Maximize
+  min(x + y, None, False)
+Subject To
+ 29: x <= 1.0
+ 33: y <= 1.0
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 - C2 <= 0
+ R1: C1 <= 1
+ R2: C2 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  AddExpression_1
+Subject To
+ R0: - x - y + AddExpression_1 = 0
+ 29: x <= 1
+ 33: y <= 1
+Bounds
+ x free
+ y free
+ AddExpression_1 free
+End

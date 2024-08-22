@@ -43,6 +43,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         matrix_constraints,
         matrix_quadratic_expressions,
         genexpr_abs,
+        genexpr_min_max,
         indexing,
         attributes,
         invalid_expressions,
@@ -206,6 +207,76 @@ def genexpr_abs() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(x) + A)))
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(x) + cp.abs(y))))
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(x) + cp.abs(A))))
+
+
+@group_cases("genexpr_min_max")
+def genexpr_min_max() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x")
+    y = cp.Variable(name="y")
+
+    yield cp.Problem(cp.Maximize(cp.min(x)), [x <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x) + 1), [x <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x) + cp.min(y)), [x <= 1, y <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x + y)), [x <= 1, y <= 1])
+
+    yield cp.Problem(cp.Minimize(cp.max(x)), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x) + 1), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x) + cp.max(y)), [x >= 1, y >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x + y)), [x >= 1, y >= 1])
+
+    x = cp.Variable(1, name="x")
+    y = cp.Variable(name="y")
+
+    yield cp.Problem(cp.Maximize(cp.min(x)), [x <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x) + 1), [x <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x) + cp.min(y)), [x <= 1, y <= 1])
+    yield cp.Problem(cp.Maximize(cp.min(x + y)), [x <= 1, y <= 1])
+
+    yield cp.Problem(cp.Minimize(cp.max(x)), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x) + 1), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x) + cp.max(y)), [x >= 1, y >= 1])
+    yield cp.Problem(cp.Minimize(cp.max(x + y)), [x >= 1, y >= 1])
+
+    x = cp.Variable(2, name="X")
+    y = cp.Variable(2, name="Y")
+    A = np.array([1, -2])
+
+    yield cp.Problem(cp.Maximize(cp.min(x)), [x <= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + 1 >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + cp.min(y) >= 1, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x + y) >= 1, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x + A) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + cp.min(A) >= 1])
+
+    yield cp.Problem(cp.Minimize(cp.max(x)), [x >= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + 1 <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(y) <= 1, y == 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + y) <= 1, y == 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + A) <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
+
+
+    x = cp.Variable((2, 2), name="X")
+    y = cp.Variable((2, 2), name="Y")
+    A = np.array([[1, -2], [3, 4]])
+
+    yield cp.Problem(cp.Maximize(cp.min(x)), [x <= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + 1 >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + cp.min(y) >= 1, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x + y) >= 1, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x + A) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.min(x) + cp.min(A) >= 1])
+
+    yield cp.Problem(cp.Minimize(cp.max(x)), [x >= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + 1 <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(y) <= 1, y == 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + y) <= 1, y == 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + A) <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
 
 
 @group_cases("indexing")

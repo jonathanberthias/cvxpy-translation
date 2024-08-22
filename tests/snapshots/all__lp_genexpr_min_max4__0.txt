@@ -1,0 +1,28 @@
+CVXPY
+Minimize
+  max(x, None, False)
+Subject To
+ 38: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 + C1 <= 0
+ R1: - C1 <= -1
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x
+Subject To
+ 38: x >= 1
+Bounds
+ x free
+End

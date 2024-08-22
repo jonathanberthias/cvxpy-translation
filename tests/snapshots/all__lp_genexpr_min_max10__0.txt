@@ -1,0 +1,36 @@
+CVXPY
+Maximize
+  min(x, None, False) + min(y, None, False)
+Subject To
+ 85: x <= 1.0
+ 89: y <= 1.0
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 - C2 <= 0
+ R1: - C1 - C3 <= 0
+ R2: C2 <= 1
+ R3: C3 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x[0] + y
+Subject To
+ 85[0]: x[0] <= 1
+ 89: y <= 1
+Bounds
+ x[0] free
+ y free
+End
