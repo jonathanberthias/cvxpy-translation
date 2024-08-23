@@ -257,7 +257,6 @@ def genexpr_min_max() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + A) <= 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
 
-
     x = cp.Variable((2, 2), name="X")
     y = cp.Variable((2, 2), name="Y")
     A = np.array([[1, -2], [3, 4]])

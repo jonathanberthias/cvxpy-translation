@@ -494,7 +494,11 @@ class Translater:
         )
 
     def _min_max(
-        self, node: cp.min | cp.max, gp_fn: Callable[[list[gp.Var]], Any], np_fn: Callable[[Any], float], name: str
+        self,
+        node: cp.min | cp.max,
+        gp_fn: Callable[[list[gp.Var]], Any],
+        np_fn: Callable[[Any], float],
+        name: str,
     ) -> AnyVar | float:
         (arg,) = node.args
         if isinstance(arg, cp.Constant):
