@@ -1,0 +1,65 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 339: max(X, None, False) + max(Y, None, False) <= 1.0
+ 344: Y == 1.0
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+ R0: C5 = 1
+ R1: C6 = 1
+ R2: C7 = 1
+ R3: C8 = 1
+ R4: C0 - C4 <= 0
+ R5: C1 - C4 <= 0
+ R6: C2 - C4 <= 0
+ R7: C3 - C4 <= 0
+ R8: C5 - C9 <= 0
+ R9: C6 - C9 <= 0
+ R10: C7 - C9 <= 0
+ R11: C8 - C9 <= 0
+ R12: C4 + C9 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+ C9 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ 339: max_1 + max_2 <= 1
+ 344[0,0]: Y[0,0] = 1
+ 344[0,1]: Y[0,1] = 1
+ 344[1,0]: Y[1,0] = 1
+ 344[1,1]: Y[1,1] = 1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ max_1 free
+ Y[0,0] free
+ Y[0,1] free
+ Y[1,0] free
+ Y[1,1] free
+ max_2 free
+General Constraints
+ GC0: max_1 = MAX ( X[0,0] , X[0,1] , X[1,0] , X[1,1] )
+ GC1: max_2 = MAX ( Y[0,0] , Y[0,1] , Y[1,0] , Y[1,1] )
+End

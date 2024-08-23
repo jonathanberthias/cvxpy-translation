@@ -1,0 +1,67 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 292: 1.0 <= min(X + Y, None, False)
+ 297: Y == 1.0
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: C4 = 1
+ R1: C5 = 1
+ R2: C6 = 1
+ R3: C7 = 1
+ R4: - C0 - C4 - C8 <= 0
+ R5: - C1 - C5 - C8 <= 0
+ R6: - C2 - C6 - C8 <= 0
+ R7: - C3 - C7 - C8 <= 0
+ R8: C8 <= -1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ R0: - X[0,0] - Y[0,0] + AddExpression_1[0,0] = 0
+ R1: - X[0,1] - Y[0,1] + AddExpression_1[0,1] = 0
+ R2: - X[1,0] - Y[1,0] + AddExpression_1[1,0] = 0
+ R3: - X[1,1] - Y[1,1] + AddExpression_1[1,1] = 0
+ 292: min_2 >= 1
+ 297[0,0]: Y[0,0] = 1
+ 297[0,1]: Y[0,1] = 1
+ 297[1,0]: Y[1,0] = 1
+ 297[1,1]: Y[1,1] = 1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ Y[0,0] free
+ Y[0,1] free
+ Y[1,0] free
+ Y[1,1] free
+ AddExpression_1[0,0] free
+ AddExpression_1[0,1] free
+ AddExpression_1[1,0] free
+ AddExpression_1[1,1] free
+ min_2 free
+General Constraints
+ GC0: min_2 = MIN ( AddExpression_1[0,0] , AddExpression_1[0,1] ,
+   AddExpression_1[1,0] , AddExpression_1[1,1] )
+End

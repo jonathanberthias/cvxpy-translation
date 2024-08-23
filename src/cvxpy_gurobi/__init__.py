@@ -304,6 +304,10 @@ def _is_scalar_shape(shape: tuple[int, ...]) -> bool:
     return prod(shape) == 1
 
 
+def _squeeze_shape(shape: tuple[int, ...]) -> tuple[int, ...]:
+    return tuple(d for d in shape if d != 1)
+
+
 def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
     for idx in np.ndindex(shape):
         yield expr[idx]
@@ -399,19 +403,20 @@ class Translater:
         vtype: str = gp.GRB.CONTINUOUS,
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
-    ) -> gp.Var:
+    ) -> AnyVar:
         """Translate a CVXPY expression, and return a gurobipy variable constrained to its value.
 
         This is useful for gurobipy functions that only handle variables as their arguments.
-        Only scalar expressions are supported.
         If translating the expression results in a variable, it is returned directly.
         """
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
         if isinstance(expr, gp.MVar):
-            # Extract the underlying variable
-            return expr.item()
+            if _is_scalar_shape(expr.shape):
+                # Extract the underlying variable
+                return expr.item()
+            return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
         )
@@ -424,13 +429,13 @@ class Translater:
         vtype: str = gp.GRB.CONTINUOUS,
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
-    ) -> gp.Var:
+    ) -> AnyVar:
         """Add a variable constrained to the value of the given gurobipy expression."""
-        assert _is_scalar_shape(_shape(expr)), expr.shape
+        shape = _squeeze_shape(_shape(expr))
         self._aux_id += 1
         var = add_variable(
             self.model,
-            shape=(),
+            shape=shape,
             name=f"{atom_name}_{self._aux_id}",
             vtype=vtype,
             lb=lb,
@@ -440,14 +445,13 @@ class Translater:
         return var
 
     def apply_and_visit_elementwise(
-        self, fn: Callable[[cp.Expression], cp.Expression], expr: cp.Expression
+        self, fn: Callable[[cp.Expression], Any], expr: cp.Expression
     ) -> npt.NDArray[np.object_]:
-        subarray = to_subexpressions_array(expr, expr.shape)
-
-        def visit(x: cp.Expression) -> cp.Expression:
+        def visit(x: cp.Expression) -> Any:
             return self.visit(fn(x))
 
         vectorized_visitor = np.vectorize(visit, otypes=[np.object_])
+        subarray = to_subexpressions_array(expr, expr.shape)
         return vectorized_visitor(subarray)
 
     def visit_abs(self, node: cp.abs) -> Any:
@@ -456,6 +460,7 @@ class Translater:
             return np.abs(arg.value)
         if node.shape == ():
             var = self.translate_into_variable(arg)
+            assert isinstance(var, gp.Var)
             return self.make_auxilliary_variable_for(gp.abs_(var), "abs", lb=0)
         return self.apply_and_visit_elementwise(cp.abs, arg)
 
@@ -487,6 +492,28 @@ class Translater:
             if _should_reverse_inequality(lower, upper)
             else lower <= upper
         )
+
+    def _min_max(
+        self,
+        node: cp.min | cp.max,
+        gp_fn: Callable[[list[gp.Var]], Any],
+        np_fn: Callable[[Any], float],
+        name: str,
+    ) -> AnyVar | float:
+        (arg,) = node.args
+        if isinstance(arg, cp.Constant):
+            return np_fn(arg.value)
+        var = self.translate_into_variable(arg)
+        if isinstance(var, gp.Var):
+            # min/max of a single variable is the variable itself
+            return var
+        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)
+
+    def visit_max(self, node: cp.max) -> AnyVar | float:
+        return self._min_max(node, gp_fn=gp.max_, np_fn=np.max, name="max")
+
+    def visit_min(self, node: cp.min) -> AnyVar | float:
+        return self._min_max(node, gp_fn=gp.min_, np_fn=np.min, name="min")
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
         obj = self.translate_into_scalar(objective.expr)
