@@ -39,7 +39,7 @@ if TYPE_CHECKING:
             # but we don't want to add it as a dependency
             from typing_extensions import Self
         except ImportError:
-            Self: TypeAlias = Any
+            Self: TypeAlias = Any  # type: ignore[no-redef]
 
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
@@ -308,14 +308,40 @@ def _squeeze_shape(shape: tuple[int, ...]) -> tuple[int, ...]:
     return tuple(d for d in shape if d != 1)
 
 
-def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
+def iterzip_subexpressions(
+    *exprs: Any, shape: tuple[int, ...]
+) -> Iterator[tuple[Any, ...]]:
     for idx in np.ndindex(shape):
-        yield expr[idx]
+        yield tuple(expr[idx] for expr in exprs)
+
+
+def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
+    for exprs in iterzip_subexpressions(expr, shape=shape):
+        yield exprs[0]
 
 
 def to_subexpressions_array(expr: Any, shape: tuple[int, ...]) -> npt.NDArray:
-    array = np.fromiter(iter_subexpressions(expr, shape), dtype=np.object_)
-    return array.reshape(shape)
+    return np.fromiter(
+        iter_subexpressions(expr, shape=shape), dtype=np.object_
+    ).reshape(shape)
+
+
+def to_zipped_subexpressions_array(
+    *exprs: Any, shape: tuple[int, ...]
+) -> npt.NDArray[np.object_]:
+    return np.fromiter(
+        iterzip_subexpressions(*exprs, shape=shape), dtype=np.object_
+    ).reshape(shape)
+
+
+def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
+    """Promote an array of Gurobi objects to the equivalent Gurobi matrixapi object."""
+    kind = type(array.flat[0])
+    if issubclass(kind, gp.Var):
+        return gp.MVar.fromlist(array)  # type: ignore[arg-type] # annotation is more restrictive than runtime
+    # TODO: support other types
+    msg = f"Cannot promote array of {kind}"
+    raise NotImplementedError(msg)
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
@@ -446,13 +472,33 @@ class Translater:
 
     def apply_and_visit_elementwise(
         self, fn: Callable[[cp.Expression], Any], expr: cp.Expression
-    ) -> npt.NDArray[np.object_]:
+    ) -> Any:
+        """Apply fn to each element of `expr` and return the array of results."""
+
         def visit(x: cp.Expression) -> Any:
             return self.visit(fn(x))
 
         vectorized_visitor = np.vectorize(visit, otypes=[np.object_])
-        subarray = to_subexpressions_array(expr, expr.shape)
-        return vectorized_visitor(subarray)
+        subarray = to_subexpressions_array(expr, shape=expr.shape)
+        translated = vectorized_visitor(subarray)
+        return promote_array_to_gurobi_matrixapi(translated)
+
+    def star_apply_and_visit_elementwise(
+        self, fn: Callable[[Any], Any], *exprs: cp.Expression
+    ) -> Any:
+        """Apply fn across all given expressions and return the array of results.
+
+        The difference with `apply_and_visit_elementwise` is that fn is expected
+        to take multiple scalar arguments.
+        """
+
+        def visit(args: tuple[cp.Expression, ...]) -> Any:
+            return self.visit(fn(*args))
+
+        vectorized_visitor = np.vectorize(visit, otypes=[np.object_])
+        subarray = to_zipped_subexpressions_array(*exprs, shape=exprs[0].shape)
+        translated = vectorized_visitor(subarray)
+        return promote_array_to_gurobi_matrixapi(translated)
 
     def visit_abs(self, node: cp.abs) -> Any:
         (arg,) = node.args
@@ -484,9 +530,9 @@ class Translater:
         return self.visit(node.args[0])[node.key]
 
     def visit_Inequality(self, ineq: Inequality) -> Any:
-        lower, upper = ineq.args
-        lower = self.visit(lower)
-        upper = self.visit(upper)
+        lo, up = ineq.args
+        lower = self.visit(lo)
+        upper = self.visit(up)
         return (
             upper >= lower
             if _should_reverse_inequality(lower, upper)
@@ -499,7 +545,7 @@ class Translater:
         gp_fn: Callable[[list[gp.Var]], Any],
         np_fn: Callable[[Any], float],
         name: str,
-    ) -> AnyVar | float:
+    ) -> gp.Var | float:
         (arg,) = node.args
         if isinstance(arg, cp.Constant):
             return np_fn(arg.value)
@@ -507,13 +553,31 @@ class Translater:
         if isinstance(var, gp.Var):
             # min/max of a single variable is the variable itself
             return var
-        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)
+        # type ignore: gp_fn will return a scalar expression so this will make a Var, not an MVar
+        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)  # type: ignore[return-value]
 
-    def visit_max(self, node: cp.max) -> AnyVar | float:
+    def visit_max(self, node: cp.max) -> gp.Var | float:
         return self._min_max(node, gp_fn=gp.max_, np_fn=np.max, name="max")
 
-    def visit_min(self, node: cp.min) -> AnyVar | float:
+    def visit_min(self, node: cp.min) -> gp.Var | float:
         return self._min_max(node, gp_fn=gp.min_, np_fn=np.min, name="min")
+
+    def _minimum_maximum(
+        self, node: cp.minimum | cp.maximum, gp_fn: Callable[[Any], Any], name: str
+    ) -> Any:
+        args = node.args
+
+        if _is_scalar_shape(node.shape):
+            varargs = [self.translate_into_scalar(arg) for arg in args]
+            return self.make_auxilliary_variable_for(gp_fn(varargs), name)
+
+        return self.star_apply_and_visit_elementwise(type(node), *args)
+
+    def visit_maximum(self, node: cp.maximum) -> Any:
+        return self._minimum_maximum(node, gp_fn=gp.max_, name="maximum")
+
+    def visit_minimum(self, node: cp.minimum) -> Any:
+        return self._minimum_maximum(node, gp_fn=gp.min_, name="minimum")
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
         obj = self.translate_into_scalar(objective.expr)

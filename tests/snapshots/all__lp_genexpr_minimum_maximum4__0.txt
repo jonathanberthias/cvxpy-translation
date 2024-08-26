@@ -1,0 +1,32 @@
+CVXPY
+Maximize
+  x
+Subject To
+ 32: maximum(x, 1.0) <= 2.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0
+Subject To
+ R0: C0 - C1 <= 0
+ R1: - C1 <= -1
+ R2: C1 <= 2
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x
+Subject To
+ 32: maximum_1 <= 2
+Bounds
+ x free
+ maximum_1 free
+General Constraints
+ GC0: maximum_1 = MAX ( x , 1 )
+End
