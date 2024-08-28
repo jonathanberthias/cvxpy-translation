@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 6: 1.0 <= minimum(x, 2.0)
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 - C1 <= 0
+ R1: - C1 <= 2
+ R2: C1 <= -1
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x
+Subject To
+ 6: minimum_1 >= 1
+Bounds
+ x free
+ minimum_1 free
+General Constraints
+ GC0: minimum_1 = MIN ( x , 2 )
+End

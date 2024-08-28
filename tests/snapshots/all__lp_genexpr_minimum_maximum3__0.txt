@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 23: minimum(1.0, 2.0) <= 1.0
+ 27: 0.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: <= 0
+ R1: - C0 <= 0
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x
+Subject To
+ 23: minimum_1 <= 1
+ 27: x >= 0
+Bounds
+ x free
+ minimum_1 free
+General Constraints
+ GC0: minimum_1 = MIN ( 1 )
+End
