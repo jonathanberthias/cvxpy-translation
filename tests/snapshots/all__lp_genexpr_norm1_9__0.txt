@@ -1,0 +1,37 @@
+CVXPY
+Minimize
+  norm1(x + -[ 1. -2.])
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 + C2 <= 1
+ R1: - C1 + C3 <= -2
+ R2: - C0 - C2 <= -1
+ R3: - C1 - C3 <= 2
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  norm1_2
+Subject To
+ R0: - x[0] + AddExpression_1[0] = -1
+ R1: - x[1] + AddExpression_1[1] = 2
+Bounds
+ x[0] free
+ x[1] free
+ AddExpression_1[0] free
+ AddExpression_1[1] free
+General Constraints
+ GC0: norm1_2 = NORM ( 1 ) ( AddExpression_1[0] , AddExpression_1[1] )
+End

@@ -1,0 +1,43 @@
+CVXPY
+Minimize
+  norm1(X)
+Subject To
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: - C0 + C4 <= 0
+ R1: - C1 + C5 <= 0
+ R2: - C2 + C6 <= 0
+ R3: - C3 + C7 <= 0
+ R4: - C0 - C4 <= 0
+ R5: - C1 - C5 <= 0
+ R6: - C2 - C6 <= 0
+ R7: - C3 - C7 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 X[0,0] + 0 X[0,1] + 0 X[1,0] + 0 X[1,1] + norm1_1
+Subject To
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+General Constraints
+ GC0: norm1_1 = NORM ( 1 ) ( X[0,0] , X[0,1] , X[1,0] , X[1,1] )
+End
