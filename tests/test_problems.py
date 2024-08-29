@@ -45,6 +45,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         genexpr_abs,
         genexpr_min_max,
         genexpr_minimum_maximum,
+        genexpr_norm1,
         indexing,
         attributes,
         invalid_expressions,
@@ -341,6 +342,35 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(A, B) <= 4, x == 1])
+
+
+@group_cases("genexpr_norm1")
+def genexpr_norm1() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x")
+    yield cp.Problem(cp.Minimize(cp.norm1(x)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x - 1)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(-1)))
+    yield cp.Problem(cp.Maximize(x), [cp.norm1(x) <= 1])
+
+    x = cp.Variable(1, name="x")
+    yield cp.Problem(cp.Minimize(cp.norm1(x)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x - 1)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(-1)))
+    yield cp.Problem(cp.Maximize(x), [cp.norm1(x) <= 1])
+
+    x = cp.Variable(2, name="x")
+    A = np.array([1, -2])
+    yield cp.Problem(cp.Minimize(cp.norm1(x)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x - A)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(A)))
+    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [cp.norm1(x) <= 1])
+
+    x = cp.Variable((2, 2), name="X")
+    A = np.array([[1, -2], [3, -4]])
+    yield cp.Problem(cp.Minimize(cp.norm1(x)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x - A)))
+    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(A)))
+    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [cp.norm1(x) <= 1])
 
 
 @group_cases("indexing")

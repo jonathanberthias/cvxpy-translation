@@ -599,6 +599,15 @@ class Translater:
     def visit_NegExpression(self, node: NegExpression) -> Any:
         return -self.visit(node.args[0])
 
+    def visit_norm1(self, node: cp.norm1) -> Any:
+        (x,) = node.args
+        if isinstance(x, cp.Constant):
+            return np.linalg.norm(x.value.ravel(), 1)
+        arg = self.translate_into_variable(x)
+        varargs = [arg] if isinstance(arg, gp.Var) else arg.reshape(-1).tolist()
+        norm = gp.norm(varargs, 1)
+        return self.make_auxilliary_variable_for(norm, "norm1", lb=0)
+
     def visit_power(self, node: power) -> Any:
         power = self.visit(node.p)
         if power != 2:
