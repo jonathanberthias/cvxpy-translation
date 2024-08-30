@@ -1,28 +1,31 @@
 CVXPY
-Minimize
-  Pnorm(x, 2)
+Maximize
+  x
 Subject To
+ 12: Pnorm(x, 2) <= 1.0
 Bounds
  x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  x_0
+  - x_0
 Subject To
- R0: - x_0 + soc_t_0 = 0
- R1: - x_1 + soc_x_1 = 0
- qc0: [ - soc_t_0 ^2 + soc_x_1 ^2 ] <= 0
+ R0: x_1 <= 1
+ R1: - x_1 + soc_t_1 = 0
+ R2: - x_0 + soc_x_2 = 0
+ qc0: [ - soc_t_1 ^2 + soc_x_2 ^2 ] <= 0
 Bounds
  x_0 free
  x_1 free
- soc_x_1 free
+ soc_x_2 free
 End
 ----------------------------------------
 GUROBI
-Minimize
-  0 x + norm2_1
+Maximize
+  x
 Subject To
+ 12: norm2_1 <= 1
 Bounds
  x free
 General Constraints

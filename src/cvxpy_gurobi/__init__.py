@@ -99,6 +99,12 @@ class InvalidPowerError(UnsupportedExpressionError):
     msg_template = "Unsupported power: {node}, only quadratic expressions are supported"
 
 
+class InvalidNormError(UnsupportedExpressionError):
+    msg_template = (
+        "Unsupported norm: {node}, only 1-norm, 2-norm and inf-norm are supported"
+    )
+
+
 class _Timer:
     time: float
 
@@ -599,14 +605,22 @@ class Translater:
     def visit_NegExpression(self, node: NegExpression) -> Any:
         return -self.visit(node.args[0])
 
-    def visit_norm1(self, node: cp.norm1) -> Any:
+    def _handle_norm(self, node: cp.norm1 | cp.Pnorm, p: int, name: str) -> Any:
         (x,) = node.args
         if isinstance(x, cp.Constant):
-            return np.linalg.norm(x.value.ravel(), 1)
+            return np.linalg.norm(x.value.ravel(), p)
         arg = self.translate_into_variable(x)
         varargs = [arg] if isinstance(arg, gp.Var) else arg.reshape(-1).tolist()
-        norm = gp.norm(varargs, 1)
-        return self.make_auxilliary_variable_for(norm, "norm1", lb=0)
+        norm = gp.norm(varargs, p)
+        return self.make_auxilliary_variable_for(norm, name, lb=0)
+
+    def visit_norm1(self, node: cp.norm1) -> Any:
+        return self._handle_norm(node, 1, "norm1")
+
+    def visit_Pnorm(self, node: cp.Pnorm) -> Any:
+        if node.p != 2:
+            raise InvalidNormError(node)
+        return self._handle_norm(node, 2, "norm2")
 
     def visit_power(self, node: power) -> Any:
         power = self.visit(node.p)

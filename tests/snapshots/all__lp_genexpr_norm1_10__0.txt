@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  norm1(x) + norm1([ 1. -2.])
+  norm1(x) + norm1([ 1. -1.])
 Subject To
 Bounds
  x free
@@ -23,7 +23,7 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  0 x[0] + 0 x[1] + norm1_1 + 3 Constant
+  0 x[0] + 0 x[1] + norm1_1 + 2 Constant
 Subject To
 Bounds
  x[0] free

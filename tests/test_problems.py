@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 from functools import wraps
 from typing import Callable
 from typing import Iterator
@@ -46,6 +47,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         genexpr_min_max,
         genexpr_minimum_maximum,
         genexpr_norm1,
+        genexpr_norm2,
         indexing,
         attributes,
         invalid_expressions,
@@ -344,33 +346,49 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(A, B) <= 4, x == 1])
 
 
-@group_cases("genexpr_norm1")
-def genexpr_norm1() -> Iterator[cp.Problem]:
+def _genexpr_norm_problems(
+    norm: Callable[[cp.Expression], cp.Expression],
+) -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
-    yield cp.Problem(cp.Minimize(cp.norm1(x)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x - 1)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(-1)))
-    yield cp.Problem(cp.Maximize(x), [cp.norm1(x) <= 1])
+    yield cp.Problem(cp.Minimize(norm(x)))
+    yield cp.Problem(cp.Minimize(norm(x - 1)))
+    yield cp.Problem(cp.Minimize(norm(x) + norm(-1)))
+    yield cp.Problem(cp.Maximize(x), [norm(x) <= 1])
 
     x = cp.Variable(1, name="x")
-    yield cp.Problem(cp.Minimize(cp.norm1(x)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x - 1)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(-1)))
-    yield cp.Problem(cp.Maximize(x), [cp.norm1(x) <= 1])
+    yield cp.Problem(cp.Minimize(norm(x)))
+    yield cp.Problem(cp.Minimize(norm(x - 1)))
+    yield cp.Problem(cp.Minimize(norm(x) + norm(-1)))
+    yield cp.Problem(cp.Maximize(x), [norm(x) <= 1])
 
     x = cp.Variable(2, name="x")
-    A = np.array([1, -2])
-    yield cp.Problem(cp.Minimize(cp.norm1(x)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x - A)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(A)))
-    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [cp.norm1(x) <= 1])
+    A = np.array([1, -1])
+    yield cp.Problem(cp.Minimize(norm(x)))
+    yield cp.Problem(cp.Minimize(norm(x - A)))
+    yield cp.Problem(cp.Minimize(norm(x) + norm(A)))
+    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [norm(x) <= np.sqrt(2)])
 
     x = cp.Variable((2, 2), name="X")
-    A = np.array([[1, -2], [3, -4]])
-    yield cp.Problem(cp.Minimize(cp.norm1(x)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x - A)))
-    yield cp.Problem(cp.Minimize(cp.norm1(x) + cp.norm1(A)))
-    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [cp.norm1(x) <= 1])
+    yield cp.Problem(cp.Minimize(norm(x)))
+    A = np.array([[2, 1], [-2, -4]])  # 2-norm is exactly 5
+    yield cp.Problem(cp.Minimize(norm(x - A)))
+    yield cp.Problem(cp.Minimize(norm(x) + norm(A)))
+    # lower values in the upper bound lead to tiny differences in the solution
+    # TODO: investigate which of cvxpy or this library is the most accurate
+    yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [norm(x) <= 6])
+
+
+@group_cases("genexpr_norm1")
+def genexpr_norm1() -> Iterator[cp.Problem]:
+    yield from _genexpr_norm_problems(cp.norm1)
+
+
+@group_cases("genexpr_norm2")
+def genexpr_norm2() -> Iterator[cp.Problem]:
+    # we use pnorm(p=2) as the norm2 function will automatically
+    # use matrix norms but Gurobi only handles vector norms
+    # pnorm will only create vector norms
+    yield from _genexpr_norm_problems(partial(cp.pnorm, p=2))
 
 
 @group_cases("indexing")
@@ -425,9 +443,12 @@ def attributes() -> Iterator[cp.Problem]:
 @group_cases("invalid", invalid_reason="unsupported expressions")
 def invalid_expressions() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
+    v = cp.Variable(2, name="v")
     yield cp.Problem(cp.Minimize(x**3))
     yield cp.Problem(cp.Minimize(x**4))
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
+    yield cp.Problem(cp.Minimize(cp.norm(v, 4)))
+    yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
 
 
 def reset_id_counter() -> None:

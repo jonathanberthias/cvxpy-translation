@@ -77,6 +77,7 @@ dependencies = [
   "coverage[toml]",
   "pytest",
   "pytest-insta",
+  "pytest-xdist",
 ]
 matrix-name-format = "{variable}{value}"
 
