@@ -1,7 +1,7 @@
 CVXPY
 Minimize
-  norm1(X + -[[2.00 1.00]
- [-2.00 -4.00]])
+  Pnorm(X + -[[2.00 1.00]
+ [-2.00 -4.00]], 2)
 Subject To
 Bounds
  X free
@@ -9,30 +9,30 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1 + C2 + C3
+  x_0
 Subject To
- R0: - C0 + C4 <= 2
- R1: - C1 + C5 <= -2
- R2: - C2 + C6 <= 1
- R3: - C3 + C7 <= -4
- R4: - C0 - C4 <= -2
- R5: - C1 - C5 <= 2
- R6: - C2 - C6 <= -1
- R7: - C3 - C7 <= 4
+ R0: - x_0 + soc_t_0 = 0
+ R1: - x_1 + soc_x_1 = -2
+ R2: - x_2 + soc_x_2 = 2
+ R3: - x_3 + soc_x_3 = -1
+ R4: - x_4 + soc_x_4 = 4
+ qc0: [ - soc_t_0 ^2 + soc_x_1 ^2 + soc_x_2 ^2 + soc_x_3 ^2 + soc_x_4 ^2 ]
+   <= 0
 Bounds
- C0 free
- C1 free
- C2 free
- C3 free
- C4 free
- C5 free
- C6 free
- C7 free
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ soc_x_1 free
+ soc_x_2 free
+ soc_x_3 free
+ soc_x_4 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  norm1_2
+  norm2_2
 Subject To
  R0: - X[0,0] + AddExpression_1[0,0] = -2
  R1: - X[0,1] + AddExpression_1[0,1] = -1
@@ -48,6 +48,6 @@ Bounds
  AddExpression_1[1,0] free
  AddExpression_1[1,1] free
 General Constraints
- GC0: norm1_2 = NORM ( 1 ) ( AddExpression_1[0,0] , AddExpression_1[0,1] ,
+ GC0: norm2_2 = NORM ( 2 ) ( AddExpression_1[0,0] , AddExpression_1[0,1] ,
    AddExpression_1[1,0] , AddExpression_1[1,1] )
 End

@@ -1,21 +1,21 @@
 CVXPY
 Maximize
-  Sum(x @ [ 1. -2.], None, False)
+  Sum(x @ [ 1. -1.], None, False)
 Subject To
- 40: norm1(x) <= 1.0
+ 40: norm1(x) <= 1.4142135623730951
 Bounds
  x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 + 2 C1
+  - C0 + C1
 Subject To
  R0: C0 - C2 <= 0
  R1: C1 - C3 <= 0
  R2: - C0 - C2 <= 0
  R3: - C1 - C3 <= 0
- R4: C2 + C3 <= 1
+ R4: C2 + C3 <= 1.414213562373095
 Bounds
  C0 free
  C1 free
@@ -25,9 +25,9 @@ End
 ----------------------------------------
 GUROBI
 Maximize
-  x[0] - 2 x[1]
+  x[0] - x[1]
 Subject To
- 40: norm1_1 <= 1
+ 40: norm1_1 <= 1.414213562373095
 Bounds
  x[0] free
  x[1] free

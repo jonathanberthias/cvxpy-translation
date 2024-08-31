@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Pnorm(x + -1.0, 2)
+  Pnorm(x, 2)
 Subject To
 Bounds
  x free
@@ -11,22 +11,24 @@ Minimize
   x_0
 Subject To
  R0: - x_0 + soc_t_0 = 0
- R1: - x_1 + soc_x_1 = -1
- qc0: [ - soc_t_0 ^2 + soc_x_1 ^2 ] <= 0
+ R1: - x_1 + soc_x_1 = 0
+ R2: - x_2 + soc_x_2 = 0
+ qc0: [ - soc_t_0 ^2 + soc_x_1 ^2 + soc_x_2 ^2 ] <= 0
 Bounds
  x_0 free
  x_1 free
+ x_2 free
  soc_x_1 free
+ soc_x_2 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  norm2_2
+  0 x[0] + 0 x[1] + norm2_1
 Subject To
- R0: - x + AddExpression_1 = -1
 Bounds
- x free
- AddExpression_1 free
+ x[0] free
+ x[1] free
 General Constraints
- GC0: norm2_2 = NORM ( 2 ) ( AddExpression_1 )
+ GC0: norm2_1 = NORM ( 2 ) ( x[0] , x[1] )
 End
