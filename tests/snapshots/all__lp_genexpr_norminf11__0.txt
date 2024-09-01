@@ -1,0 +1,35 @@
+CVXPY
+Maximize
+  Sum(x @ [ 1. -1.], None, False)
+Subject To
+ 40: norm_inf(x) <= 1.4142135623730951
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 + C1
+Subject To
+ R0: C0 - C2 <= 0
+ R1: C1 - C2 <= 0
+ R2: - C0 - C2 <= 0
+ R3: - C1 - C2 <= 0
+ R4: C2 <= 1.414213562373095
+Bounds
+ C0 free
+ C1 free
+ C2 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x[0] - x[1]
+Subject To
+ 40: norminf_1 <= 1.414213562373095
+Bounds
+ x[0] free
+ x[1] free
+General Constraints
+ GC0: norminf_1 = NORM ( Inf ) ( x[0] , x[1] )
+End
