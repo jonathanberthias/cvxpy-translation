@@ -1,0 +1,29 @@
+CVXPY
+Minimize
+  norm_inf(x) + norm_inf(-1.0)
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 + C1 <= 0
+ R1: - C0 - C1 <= 0
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  0 x[0] + norminf_1 + Constant
+Subject To
+Bounds
+ x[0] free
+ Constant = 1
+General Constraints
+ GC0: norminf_1 = NORM ( Inf ) ( x[0] )
+End

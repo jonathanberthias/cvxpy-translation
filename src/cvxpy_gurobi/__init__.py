@@ -605,7 +605,9 @@ class Translater:
     def visit_NegExpression(self, node: NegExpression) -> Any:
         return -self.visit(node.args[0])
 
-    def _handle_norm(self, node: cp.norm1 | cp.Pnorm, p: int, name: str) -> Any:
+    def _handle_norm(
+        self, node: cp.norm1 | cp.Pnorm | cp.norm_inf, p: float, name: str
+    ) -> Any:
         (x,) = node.args
         if isinstance(x, cp.Constant):
             return np.linalg.norm(x.value.ravel(), p)
@@ -621,6 +623,9 @@ class Translater:
         if node.p != 2:
             raise InvalidNormError(node)
         return self._handle_norm(node, 2, "norm2")
+
+    def visit_norm_inf(self, node: cp.norm_inf) -> Any:
+        return self._handle_norm(node, np.inf, "norminf")
 
     def visit_power(self, node: power) -> Any:
         power = self.visit(node.p)
