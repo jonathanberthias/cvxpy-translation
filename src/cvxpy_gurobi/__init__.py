@@ -657,7 +657,7 @@ class Translater:
 
     def visit_Sum(self, node: Sum) -> Any:
         expr = self.visit(node.args[0])
-        return expr.sum()
+        return expr.sum(axis=node.axis)
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:
