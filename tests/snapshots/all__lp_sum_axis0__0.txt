@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 6: 1.0 <= Sum(x, None, False)
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: - C2 <= 0
+ R3: - C3 <= 0
+ R4: - C0 - C1 - C2 - C3 <= -1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0,0] + x[0,1] + x[1,0] + x[1,1]
+Subject To
+ 6: x[0,0] + x[0,1] + x[1,0] + x[1,1] >= 1
+Bounds
+End

@@ -50,6 +50,7 @@ def all_problems() -> Iterator[ProblemTestCase]:
         genexpr_norm2,
         genexpr_norminf,
         indexing,
+        sum_axis,
         attributes,
         invalid_expressions,
     ):
@@ -348,7 +349,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
 
 
 def _genexpr_norm_problems(
-    norm: Callable[[cp.Expression], cp.Expression],
+    norm: Callable[[cp.Expression | float | np.ndarray], cp.Expression],
 ) -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(norm(x)))
@@ -426,6 +427,15 @@ def indexing() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x[:])))
     yield cp.Problem(cp.Minimize(cp.sum(y[:])))
     yield cp.Problem(cp.Minimize(cp.sum(m[:, :])))
+
+
+@group_cases("sum_axis")
+def sum_axis() -> Iterator[cp.Problem]:
+    x = cp.Variable((2, 2), name="x", nonneg=True)
+
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=None) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=0) >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=1) >= 1])
 
 
 @group_cases("attributes")
