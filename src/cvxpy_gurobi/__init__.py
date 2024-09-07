@@ -22,12 +22,12 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_gurobi._version import __version__
 from cvxpy_gurobi._version import __version_tuple__
-from cvxpy_gurobi.translate import InvalidNormError
-from cvxpy_gurobi.translate import InvalidPowerError
-from cvxpy_gurobi.translate import Translater
-from cvxpy_gurobi.translate import UnsupportedConstraintError
-from cvxpy_gurobi.translate import UnsupportedError
-from cvxpy_gurobi.translate import UnsupportedExpressionError
+from cvxpy_gurobi.translation import InvalidNormError
+from cvxpy_gurobi.translation import InvalidPowerError
+from cvxpy_gurobi.translation import Translater
+from cvxpy_gurobi.translation import UnsupportedConstraintError
+from cvxpy_gurobi.translation import UnsupportedError
+from cvxpy_gurobi.translation import UnsupportedExpressionError
 
 if TYPE_CHECKING:
     from typing import TypeAlias

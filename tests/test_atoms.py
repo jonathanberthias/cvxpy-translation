@@ -4,7 +4,7 @@ import pytest
 
 import cvxpy_gurobi
 import test_problems
-from cvxpy_gurobi.translate import Translater
+from cvxpy_gurobi.translation import Translater
 
 
 @pytest.mark.xfail(reason="TODO: implement all atoms")
