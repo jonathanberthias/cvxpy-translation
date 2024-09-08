@@ -1,0 +1,50 @@
+CVXPY
+Minimize
+  Sum(Hstack(x, y, [[0.00 1.00]
+ [2.00 3.00]]), None, False)
+Subject To
+ 143: 1.0 <= x
+ 148: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3 + C4 + C5
+Subject To
+ R0: - C0 <= -1
+ R1: - C1 <= -1
+ R2: - C2 <= -1
+ R3: - C3 <= -1
+ R4: - C4 <= -1
+ R5: - C5 <= -1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0,0] + x[0,1] + x[1,0] + x[1,1] + y[0,0] + y[1,0] + 6 Constant
+Subject To
+ 143[0,0]: x[0,0] >= 1
+ 143[0,1]: x[0,1] >= 1
+ 143[1,0]: x[1,0] >= 1
+ 143[1,1]: x[1,1] >= 1
+ 148[0,0]: y[0,0] >= 1
+ 148[1,0]: y[1,0] >= 1
+Bounds
+ x[0,0] free
+ x[0,1] free
+ x[1,0] free
+ x[1,1] free
+ y[0,0] free
+ y[1,0] free
+ Constant = 1
+End

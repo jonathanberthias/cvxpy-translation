@@ -1,0 +1,38 @@
+CVXPY
+Minimize
+  Sum(Hstack(x, y, reshape(1.0, (1,), F)), None, False)
+Subject To
+ 108: 1.0 <= x
+ 112: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2
+Subject To
+ R0: - C0 <= -1
+ R1: - C1 <= -1
+ R2: - C2 <= -1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + x[1] + y[0] + reshape_1[0]
+Subject To
+ R0: reshape_1[0] = 1
+ 108[0]: x[0] >= 1
+ 108[1]: x[1] >= 1
+ 112[0]: y[0] >= 1
+Bounds
+ x[0] free
+ x[1] free
+ y[0] free
+ reshape_1[0] free
+End

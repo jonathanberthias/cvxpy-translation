@@ -1,0 +1,33 @@
+CVXPY
+Minimize
+  Sum(Vstack(2.0 @ x, 3.0 @ y, 1.0), None, False)
+Subject To
+ 32: 1.0 <= x
+ 36: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  2 C0 + 3 C1
+Subject To
+ R0: - C0 <= -1
+ R1: - C1 <= -1
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  2 x[0] + 3 y[0] + Constant
+Subject To
+ 32[0]: x[0] >= 1
+ 36[0]: y[0] >= 1
+Bounds
+ x[0] free
+ y[0] free
+ Constant = 1
+End
