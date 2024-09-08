@@ -1,0 +1,39 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 129: reshape(x, (2, 2), F) <= [[1.00 1.00]
+ [1.00 1.00]]
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+ R0: C0 <= 1
+ R1: C1 <= 1
+ R2: C2 <= 1
+ R3: C3 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x[0] + x[1] + x[2] + x[3]
+Subject To
+ 129[0,0]: x[0] <= 1
+ 129[0,1]: x[1] <= 1
+ 129[1,0]: x[2] <= 1
+ 129[1,1]: x[3] <= 1
+Bounds
+ x[0] free
+ x[1] free
+ x[2] free
+ x[3] free
+End

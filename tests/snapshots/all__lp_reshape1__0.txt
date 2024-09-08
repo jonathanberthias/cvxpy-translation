@@ -1,0 +1,26 @@
+CVXPY
+Maximize
+  x
+Subject To
+ 11: reshape(x, (1,), F) <= [1.]
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0
+Subject To
+ R0: C0 <= 1
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x
+Subject To
+ 11[0]: x <= 1
+Bounds
+ x free
+End

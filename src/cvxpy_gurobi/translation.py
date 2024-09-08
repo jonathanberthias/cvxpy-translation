@@ -234,16 +234,19 @@ class Translater:
         expr: Any,
         atom_name: str,
         *,
+        desired_shape: tuple[int, ...] | None = None,
         vtype: str = gp.GRB.CONTINUOUS,
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
     ) -> AnyVar:
         """Add a variable constrained to the value of the given gurobipy expression."""
-        shape = _squeeze_shape(_shape(expr))
+        desired_shape = (
+            _squeeze_shape(_shape(expr)) if desired_shape is None else desired_shape
+        )
         self._aux_id += 1
         var = add_variable(
             self.model,
-            shape=shape,
+            shape=desired_shape,
             name=f"{atom_name}_{self._aux_id}",
             vtype=vtype,
             lb=lb,
@@ -427,6 +430,31 @@ class Translater:
         quad = gp.quicksum(squares)
         lin = self.visit(y)
         return quad / lin
+
+    def visit_reshape(self, node: cp.reshape) -> gp.MVar:
+        """Reshape a variable or expression.
+
+        Only MVars have a reshape method, so anything else will be proxied by an MVar.
+        In all cases, the resulting MVar's shape should be exactly the target shape,
+        no dimension squeezing, scalar inference should happen.
+        """
+        (x,) = node.args
+        target_shape = node.shape
+        expr = self.visit(x)
+        if isinstance(expr, gp.Var):
+            expr = gp.MVar.fromvar(expr)
+        elif not isinstance(expr, gp.MVar):
+            expr_shape = _shape(expr)
+            # Force creation of an MVar even if the shape is scalar
+            if expr_shape == ():
+                expr_shape = (1,)
+            expr = self.make_auxilliary_variable_for(
+                expr, "reshape", desired_shape=expr_shape
+            )
+            assert isinstance(expr, gp.MVar)
+        reshaped = expr.reshape(target_shape)
+        assert reshaped.shape == target_shape
+        return reshaped
 
     def visit_special_index(self, node: special_index) -> Any:
         return self.visit(node.args[0])[node.key]
