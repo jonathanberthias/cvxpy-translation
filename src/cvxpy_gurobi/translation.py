@@ -33,15 +33,15 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.binary_operators import DivExpression
     from cvxpy.atoms.affine.binary_operators import MulExpression
     from cvxpy.atoms.affine.binary_operators import multiply
+    from cvxpy.atoms.affine.hstack import Hstack
     from cvxpy.atoms.affine.index import index
     from cvxpy.atoms.affine.index import special_index
     from cvxpy.atoms.affine.promote import Promote
     from cvxpy.atoms.affine.sum import Sum
     from cvxpy.atoms.affine.unary_operators import NegExpression
+    from cvxpy.atoms.affine.vstack import Vstack
     from cvxpy.atoms.elementwise.power import power
     from cvxpy.atoms.quad_over_lin import quad_over_lin
-    from cvxpy.atoms.affine.hstack import Hstack
-    from cvxpy.atoms.affine.vstack import Vstack
     from cvxpy.constraints.nonpos import Inequality
     from cvxpy.constraints.zero import Equality
     from cvxpy.utilities.canonical import Canonical
@@ -312,12 +312,12 @@ class Translater:
         left = self.visit(left)
         right = self.visit(right)
         return left == right
-    
+
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
         args = node.args
         exprs = [self.visit(arg) for arg in args]
         return gp_fn(exprs)
-    
+
     def visit_Hstack(self, node: Hstack) -> Any:
         return self._stack(node, gp.hstack)
 
@@ -480,6 +480,6 @@ class Translater:
             self.vars[var.id] = translate_variable(var, self.model)
             self.model.update()
         return self.vars[var.id]
-    
+
     def visit_Vstack(self, node: Vstack) -> Any:
         return self._stack(node, gp.vstack)
