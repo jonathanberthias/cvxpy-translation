@@ -1,15 +1,15 @@
 CVXPY
-Minimize
+Maximize
   x
 Subject To
- 38: reshape(x, (), F) <= 1.0
+ 36: reshape(x, (1,), F) <= [1.]
 Bounds
  x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0
+  - C0
 Subject To
  R0: C0 <= 1
 Bounds
@@ -17,10 +17,10 @@ Bounds
 End
 ----------------------------------------
 GUROBI
-Minimize
-  x[0]
+Maximize
+  x
 Subject To
- 38: x[0] <= 1
+ 36[0]: x <= 1
 Bounds
- x[0] free
+ x free
 End

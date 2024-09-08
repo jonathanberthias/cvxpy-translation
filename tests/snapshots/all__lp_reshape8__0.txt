@@ -1,30 +1,28 @@
 CVXPY
-Minimize
-  Sum(x, None, False)
+Maximize
+  x
 Subject To
- 51: reshape(x, (2,), F) <= [1. 1.]
+ 48: reshape(x + 1.0, (), F) <= 1.0
 Bounds
- 0.0 <= x
+ x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1
+  - C0
 Subject To
- R0: - C0 <= 0
- R1: - C1 <= 0
- R2: C0 <= 1
- R3: C1 <= 1
+ R0: C0 <= 0
 Bounds
  C0 free
- C1 free
 End
 ----------------------------------------
 GUROBI
-Minimize
-  x[0] + x[1]
+Maximize
+  x[0]
 Subject To
- 51[0]: x[0] <= 1
- 51[1]: x[1] <= 1
+ R0: - x[0] + reshape_1[0] = 1
+ 48: reshape_1[0] <= 1
 Bounds
+ x[0] free
+ reshape_1[0] free
 End

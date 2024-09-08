@@ -1,41 +1,34 @@
 CVXPY
-Minimize
+Maximize
   Sum(x, None, False)
 Subject To
- 107: reshape(x, (4, 1), F) <= [[1.00]
- [1.00]
- [1.00]
- [1.00]]
+ 103: reshape(x + [1. 1.], (1, 2), F) <= [[1. 1.]]
 Bounds
- 0.0 <= x
+ x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1 + C2 + C3
+  - C0 - C1
 Subject To
- R0: - C0 <= 0
- R1: - C1 <= 0
- R2: - C2 <= 0
- R3: - C3 <= 0
- R4: C0 <= 1
- R5: C1 <= 1
- R6: C2 <= 1
- R7: C3 <= 1
+ R0: C0 <= 0
+ R1: C1 <= 0
 Bounds
  C0 free
  C1 free
- C2 free
- C3 free
 End
 ----------------------------------------
 GUROBI
-Minimize
-  x[0] + x[1] + x[2] + x[3]
+Maximize
+  x[0] + x[1]
 Subject To
- 107[0,0]: x[0] <= 1
- 107[1,0]: x[1] <= 1
- 107[2,0]: x[2] <= 1
- 107[3,0]: x[3] <= 1
+ R0: - x[0] + reshape_1[0] = 1
+ R1: - x[1] + reshape_1[1] = 1
+ 103[0,0]: reshape_1[0] <= 1
+ 103[0,1]: reshape_1[1] <= 1
 Bounds
+ x[0] free
+ x[1] free
+ reshape_1[0] free
+ reshape_1[1] free
 End
