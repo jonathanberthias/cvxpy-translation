@@ -1,0 +1,46 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 125: reshape(x + [1. 1. 1. 1.], (4,), F) <= [1. 1. 1. 1.]
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: - C2 <= 0
+ R3: - C3 <= 0
+ R4: C0 <= 0
+ R5: C1 <= 0
+ R6: C2 <= 0
+ R7: C3 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + x[1] + x[2] + x[3]
+Subject To
+ R0: - x[0] + reshape_1[0] = 1
+ R1: - x[1] + reshape_1[1] = 1
+ R2: - x[2] + reshape_1[2] = 1
+ R3: - x[3] + reshape_1[3] = 1
+ 125[0]: reshape_1[0] <= 1
+ 125[1]: reshape_1[1] <= 1
+ 125[2]: reshape_1[2] <= 1
+ 125[3]: reshape_1[3] <= 1
+Bounds
+ reshape_1[0] free
+ reshape_1[1] free
+ reshape_1[2] free
+ reshape_1[3] free
+End

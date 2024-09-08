@@ -1,0 +1,30 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 57: reshape(x, (2,), F) <= [1. 1.]
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: C0 <= 1
+ R3: C1 <= 1
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + x[1]
+Subject To
+ 57[0]: x[0] <= 1
+ 57[1]: x[1] <= 1
+Bounds
+End
