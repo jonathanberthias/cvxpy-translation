@@ -441,7 +441,7 @@ class Translater:
         lin = self.visit(y)
         return quad / lin
 
-    def visit_reshape(self, node: cp.reshape) -> gp.MVar:
+    def visit_reshape(self, node: cp.reshape) -> gp.MVar | npt.NDArray[np.float64]:
         """Reshape a variable or expression.
 
         Only MVars have a reshape method, so anything else will be proxied by an MVar.
@@ -450,6 +450,8 @@ class Translater:
         """
         (x,) = node.args
         target_shape = node.shape
+        if x.is_constant():
+            return x.value.reshape(target_shape)
         expr = self.visit(x)
         if isinstance(expr, gp.Var):
             expr = gp.MVar.fromvar(expr)

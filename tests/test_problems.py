@@ -473,7 +473,8 @@ def reshape() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(2)])
 
     x = cp.Variable(4, name="x")
-    a = x + np.ones(4)
+    c = np.ones(4)
+    a = x + c
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4,)) <= np.ones(4)])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4, 1)) <= np.ones((4, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2)) <= np.ones((2, 2))])
@@ -482,6 +483,7 @@ def reshape() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (4, 1)) <= np.ones((4, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 2)) <= np.ones((2, 2))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 4)) <= np.ones((1, 4))])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2,2)) <= cp.reshape(c, (2,2))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(4)])
 
 
@@ -562,3 +564,7 @@ def reset_id_counter() -> None:
     from cvxpy.lin_ops.lin_utils import ID_COUNTER
 
     ID_COUNTER.count = 1
+
+
+if __name__ == "__main__":
+    list(all_problems())

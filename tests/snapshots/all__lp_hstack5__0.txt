@@ -22,13 +22,12 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  x[0] + y[0] + reshape_1[0]
+  x[0] + y[0] + Constant
 Subject To
- R0: reshape_1[0] = 1
  59[0]: x[0] >= 1
  63[0]: y[0] >= 1
 Bounds
  x[0] free
  y[0] free
- reshape_1[0] free
+ Constant = 1
 End
