@@ -5,6 +5,7 @@ from functools import partial
 from functools import wraps
 from typing import Callable
 from typing import Iterator
+from typing import Literal
 
 import cvxpy as cp
 import numpy as np
@@ -52,6 +53,8 @@ def all_problems() -> Iterator[ProblemTestCase]:
         indexing,
         sum_axis,
         reshape,
+        hstack,
+        vstack,
         attributes,
         invalid_expressions,
     ):
@@ -471,7 +474,8 @@ def reshape() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(2)])
 
     x = cp.Variable(4, name="x")
-    a = x + np.ones(4)
+    c = np.ones(4)
+    a = x + c
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4,)) <= np.ones(4)])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4, 1)) <= np.ones((4, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2)) <= np.ones((2, 2))])
@@ -480,7 +484,63 @@ def reshape() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (4, 1)) <= np.ones((4, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 2)) <= np.ones((2, 2))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 4)) <= np.ones((1, 4))])
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2)) <= cp.reshape(c, (2, 2))]
+    )
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(4)])
+
+
+def _stack(stack_name: Literal["vstack", "hstack"]) -> Iterator[cp.Problem]:
+    stack = getattr(cp, stack_name)
+
+    if stack_name == "hstack":
+        # vstack does not support scalar variables
+        x = cp.Variable(name="x")
+        y = cp.Variable(name="y")
+        yield cp.Problem(cp.Minimize(cp.sum(stack([x]))), [x >= 1])
+        yield cp.Problem(cp.Minimize(cp.sum(stack([x, y, 1]))), [x >= 1, y >= 1])
+        yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x]))), [x >= 1])
+        yield cp.Problem(
+            cp.Minimize(cp.sum(stack([2 * x, 3 * y, 1]))), [x >= 1, y >= 1]
+        )
+
+    x = cp.Variable(1, name="x")
+    y = cp.Variable(1, name="y")
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x]))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x, y, 1]))), [x >= 1, y >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x]))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, 1]))), [x >= 1, y >= 1])
+
+    x = cp.Variable(2, name="x")
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x]))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x]))), [x >= 1])
+    if stack_name == "hstack":
+        yield cp.Problem(cp.Minimize(cp.sum(stack([x, y, 1]))), [x >= 1, y >= 1])
+        yield cp.Problem(
+            cp.Minimize(cp.sum(stack([2 * x, 3 * y, 1]))), [x >= 1, y >= 1]
+        )
+
+    x = cp.Variable((2, 2), name="x")
+    y = (
+        cp.Variable((1, 2), name="y")
+        if stack_name == "vstack"
+        else cp.Variable((2, 1), name="y")
+    )
+    A = np.arange(4).reshape((2, 2))
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x]))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x, y, A]))), [x >= 1, y >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x]))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
+
+
+@group_cases("vstack")
+def vstack() -> Iterator[cp.Problem]:
+    yield from _stack("vstack")
+
+
+@group_cases("hstack")
+def hstack() -> Iterator[cp.Problem]:
+    yield from _stack("hstack")
 
 
 @group_cases("attributes")
@@ -517,3 +577,7 @@ def reset_id_counter() -> None:
     from cvxpy.lin_ops.lin_utils import ID_COUNTER
 
     ID_COUNTER.count = 1
+
+
+if __name__ == "__main__":
+    list(all_problems())

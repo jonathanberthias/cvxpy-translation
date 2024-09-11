@@ -1,0 +1,28 @@
+CVXPY
+Minimize
+  Sum(Hstack(reshape(2.0 @ x, (1,), F)), None, False)
+Subject To
+ 29: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  2 C0
+Subject To
+ R0: - C0 <= -1
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  reshape_1[0]
+Subject To
+ R0: - 2 x + reshape_1[0] = 0
+ 29: x >= 1
+Bounds
+ x free
+ reshape_1[0] free
+End
