@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import partial
 from functools import wraps
-from typing import Callable, Generator
+from typing import Callable
+from typing import Generator
 from typing import Iterator
 from typing import Literal
 
@@ -11,7 +12,8 @@ import cvxpy as cp
 import numpy as np
 import scipy.sparse as sp
 
-from cvxpy_gurobi.translation import CVXPY_VERSION, GUROBIPY_VERSION
+from cvxpy_gurobi.translation import CVXPY_VERSION
+from cvxpy_gurobi.translation import GUROBIPY_VERSION
 
 
 @dataclass(frozen=True)
