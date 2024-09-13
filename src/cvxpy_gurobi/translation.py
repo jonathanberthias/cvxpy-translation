@@ -48,6 +48,7 @@ if TYPE_CHECKING:
 
 
 CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
+GUROBIPY_VERSION = gp.gurobi.version()
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
@@ -122,7 +123,7 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
     """Promote an array of Gurobi objects to the equivalent Gurobi matrixapi object."""
     kind = type(array.flat[0])
     if issubclass(kind, gp.Var):
-        return gp.MVar.fromlist(array)  # type: ignore[arg-type] # annotation is more restrictive than runtime
+        return gp.MVar.fromlist(array)
     # TODO: support other types
     msg = f"Cannot promote array of {kind}"
     raise NotImplementedError(msg)
@@ -319,6 +320,8 @@ class Translater:
         return gp_fn(exprs)
 
     def visit_Hstack(self, node: Hstack) -> Any:
+        if GUROBIPY_VERSION < (11,):
+            raise UnsupportedExpressionError(node)
         return self._stack(node, gp.hstack)
 
     def visit_index(self, node: index) -> Any:
@@ -482,4 +485,6 @@ class Translater:
         return self.vars[var.id]
 
     def visit_Vstack(self, node: Vstack) -> Any:
+        if GUROBIPY_VERSION < (11,):
+            raise UnsupportedExpressionError(node)
         return self._stack(node, gp.vstack)
