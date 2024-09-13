@@ -3,13 +3,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import partial
 from functools import wraps
-from typing import Callable
+from typing import Callable, Generator
 from typing import Iterator
 from typing import Literal
 
 import cvxpy as cp
 import numpy as np
 import scipy.sparse as sp
+
+from cvxpy_gurobi.translation import CVXPY_VERSION, GUROBIPY_VERSION
 
 
 @dataclass(frozen=True)
@@ -37,7 +39,8 @@ def group_cases(
     return dec
 
 
-def all_problems() -> Iterator[ProblemTestCase]:
+def all_problems() -> Generator[ProblemTestCase, None, None]:
+    problem_gen: Callable[[], Generator[ProblemTestCase, None, None]]
     for problem_gen in (
         simple_expressions,
         scalar_linear_constraints,
@@ -53,8 +56,8 @@ def all_problems() -> Iterator[ProblemTestCase]:
         indexing,
         sum_axis,
         reshape,
-        hstack,
-        vstack,
+        hstack if GUROBIPY_VERSION >= (11,) else lambda: iter(()),
+        vstack if GUROBIPY_VERSION >= (11,) else lambda: iter(()),
         attributes,
         invalid_expressions,
     ):
@@ -448,10 +451,13 @@ def reshape() -> Iterator[cp.Problem]:
     a = x + 1
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, ()) <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, 1) <= np.ones(1)])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1) <= np.ones(1)])
+    if CVXPY_VERSION >= (1, 4, 0):
+        # -1 support added in https://github.com/cvxpy/cvxpy/pull/2061
+        yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1) <= np.ones(1)])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(a, ()) <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (1,)) <= np.ones(1)])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1) <= np.ones(1)])
+    if CVXPY_VERSION >= (1, 4, 0):
+        yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1) <= np.ones(1)])
 
     yield cp.Problem(cp.Maximize(x), [cp.vec(x) <= np.ones(1)])
 
@@ -464,11 +470,13 @@ def reshape() -> Iterator[cp.Problem]:
     x = cp.Variable(2, name="x")
     a = x + np.array([1, 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2,)) <= np.ones(2)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, -1) <= np.ones(2)])
+    if CVXPY_VERSION >= (1, 4, 0):
+        yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, -1) <= np.ones(2)])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 1)) <= np.ones((2, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (1, 2)) <= np.ones((1, 2))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2,)) <= np.ones(2)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,)) <= np.ones(2)])
+    if CVXPY_VERSION >= (1, 4, 0):
+        yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,)) <= np.ones(2)])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 1)) <= np.ones((2, 1))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 2)) <= np.ones((1, 2))])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(2)])
@@ -570,6 +578,9 @@ def invalid_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
     yield cp.Problem(cp.Minimize(cp.norm(v, 4)))
     yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
+    if GUROBIPY_VERSION < (11,):
+        yield cp.Problem(cp.Minimize(cp.sum(cp.hstack([x, 1]))))
+        yield cp.Problem(cp.Minimize(cp.sum(cp.vstack([x, 1]))))
 
 
 def reset_id_counter() -> None:
