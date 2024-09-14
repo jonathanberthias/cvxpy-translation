@@ -1,36 +1,32 @@
 CVXPY
 Maximize
-  x + y
+  x
 Subject To
- 98: maximum(x, y, 1.0) <= 3.0
+ 98: maximum(x, 1.0) <= 2.0
 Bounds
  x free
- y free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1
+  - C0
 Subject To
- R0: C0 - C2 <= 0
- R1: C1 - C2 <= 0
- R2: - C2 <= -1
- R3: C2 <= 3
+ R0: C0 - C1 <= 0
+ R1: - C1 <= -1
+ R2: C1 <= 2
 Bounds
  C0 free
  C1 free
- C2 free
 End
 ----------------------------------------
 GUROBI
 Maximize
-  x[0] + y
+  x[0]
 Subject To
- 98: maximum_1 <= 3
+ 98: maximum_1 <= 2
 Bounds
  x[0] free
- y free
  maximum_1 free
 General Constraints
- GC0: maximum_1 = MAX ( x[0] , y , 1 )
+ GC0: maximum_1 = MAX ( x[0] , 1 )
 End

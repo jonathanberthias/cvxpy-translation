@@ -1,9 +1,8 @@
 CVXPY
 Minimize
-  Sum(X, None, False)
+  Sum(X + Y, None, False)
 Subject To
- 146: -Y <= minimum(X, [ 2. -1.])
- 151: Y == 1.0
+ 143: [ 2. -1.] <= minimum(X, Y)
 Bounds
  X free
  Y free
@@ -11,16 +10,14 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1
+  C0 + C1 + C2 + C3
 Subject To
- R0: C4 = 1
- R1: C5 = 1
- R2: - C0 - C2 <= 0
- R3: - C1 - C3 <= 0
- R4: - C2 <= 2
- R5: - C3 <= -1
- R6: C2 - C4 <= 0
- R7: C3 - C5 <= 0
+ R0: - C0 - C4 <= 0
+ R1: - C1 - C5 <= 0
+ R2: - C2 - C4 <= 0
+ R3: - C3 - C5 <= 0
+ R4: C4 <= -2
+ R5: C5 <= 1
 Bounds
  C0 free
  C1 free
@@ -32,12 +29,10 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  X[0] + X[1]
+  X[0] + X[1] + Y[0] + Y[1]
 Subject To
- 146[0]: - Y[0] - minimum_1 <= 0
- 146[1]: - Y[1] - minimum_2 <= 0
- 151[0]: Y[0] = 1
- 151[1]: Y[1] = 1
+ 143[0]: minimum_1 >= 2
+ 143[1]: minimum_2 >= -1
 Bounds
  X[0] free
  X[1] free
@@ -46,6 +41,6 @@ Bounds
  minimum_1 free
  minimum_2 free
 General Constraints
- GC0: minimum_1 = MIN ( X[0] , 2 )
- GC1: minimum_2 = MIN ( X[1] , -1 )
+ GC0: minimum_1 = MIN ( X[0] , Y[0] )
+ GC1: minimum_2 = MIN ( X[1] , Y[1] )
 End

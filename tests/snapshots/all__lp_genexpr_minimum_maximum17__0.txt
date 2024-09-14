@@ -1,46 +1,32 @@
 CVXPY
-Minimize
-  Sum(X + Y, None, False)
+Maximize
+  x
 Subject To
- 124: 1.0 <= minimum(X, Y)
+ 115: maximum(1.0, 2.0) <= 2.0
+ 119: x <= 0.0
 Bounds
- X free
- Y free
+ x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1 + C2 + C3
+  - C0
 Subject To
- R0: - C0 - C4 <= 0
- R1: - C1 - C5 <= 0
- R2: - C2 - C4 <= 0
- R3: - C3 - C5 <= 0
- R4: C4 <= -1
- R5: C5 <= -1
+ R0: <= 0
+ R1: C0 <= 0
 Bounds
  C0 free
- C1 free
- C2 free
- C3 free
- C4 free
- C5 free
 End
 ----------------------------------------
 GUROBI
-Minimize
-  X[0] + X[1] + Y[0] + Y[1]
+Maximize
+  x[0]
 Subject To
- 124[0]: minimum_1 >= 1
- 124[1]: minimum_2 >= 1
+ 115: maximum_1 <= 2
+ 119[0]: x[0] <= 0
 Bounds
- X[0] free
- X[1] free
- Y[0] free
- Y[1] free
- minimum_1 free
- minimum_2 free
+ x[0] free
+ maximum_1 free
 General Constraints
- GC0: minimum_1 = MIN ( X[0] , Y[0] )
- GC1: minimum_2 = MIN ( X[1] , Y[1] )
+ GC0: maximum_1 = MAX ( 2 )
 End

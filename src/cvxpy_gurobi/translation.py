@@ -219,6 +219,7 @@ class Translater:
 
         This is useful for gurobipy functions that only handle variables as their arguments.
         If translating the expression results in a variable, it is returned directly.
+        Constants are also returned directly.
         """
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
@@ -227,6 +228,8 @@ class Translater:
             if _is_scalar_shape(expr.shape):
                 # Extract the underlying variable
                 return expr.item()
+            return expr
+        if node.is_constant():
             return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
@@ -366,7 +369,7 @@ class Translater:
         args = node.args
 
         if _is_scalar_shape(node.shape):
-            varargs = [self.translate_into_scalar(arg) for arg in args]
+            varargs = [self.translate_into_variable(arg) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
         return self.star_apply_and_visit_elementwise(type(node), *args)

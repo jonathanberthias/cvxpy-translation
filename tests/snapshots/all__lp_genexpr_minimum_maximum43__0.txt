@@ -2,7 +2,8 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 291: maximum(X, [[1.00 -2.00]
+ 345: maximum(X + [[1.00 -2.00]
+ [3.00 4.00]], [[1.00 -2.00]
  [3.00 4.00]]) <= 2.0
 Bounds
  X free
@@ -12,10 +13,10 @@ AFTER COMPILATION
 Minimize
   - C0 - C1 - C2 - C3
 Subject To
- R0: C0 - C4 <= 0
- R1: C1 - C5 <= 0
- R2: C2 - C6 <= 0
- R3: C3 - C7 <= 0
+ R0: C0 - C4 <= -1
+ R1: C1 - C5 <= -3
+ R2: C2 - C6 <= 2
+ R3: C3 - C7 <= -4
  R4: - C4 <= -1
  R5: - C5 <= -3
  R6: - C6 <= 2
@@ -39,22 +40,30 @@ GUROBI
 Maximize
   X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
- 291[0,0]: maximum_1 <= 2
- 291[0,1]: maximum_2 <= 2
- 291[1,0]: maximum_3 <= 2
- 291[1,1]: maximum_4 <= 2
+ R0: - X[0,0] + index_1 = 1
+ R1: - X[0,1] + index_3 = -2
+ R2: - X[1,0] + index_5 = 3
+ R3: - X[1,1] + index_7 = 4
+ 345[0,0]: maximum_2 <= 2
+ 345[0,1]: maximum_4 <= 2
+ 345[1,0]: maximum_6 <= 2
+ 345[1,1]: maximum_8 <= 2
 Bounds
  X[0,0] free
  X[0,1] free
  X[1,0] free
  X[1,1] free
- maximum_1 free
+ index_1 free
  maximum_2 free
- maximum_3 free
+ index_3 free
  maximum_4 free
+ index_5 free
+ maximum_6 free
+ index_7 free
+ maximum_8 free
 General Constraints
- GC0: maximum_1 = MAX ( X[0,0] , 1 )
- GC1: maximum_2 = MAX ( X[0,1] , -2 )
- GC2: maximum_3 = MAX ( X[1,0] , 3 )
- GC3: maximum_4 = MAX ( X[1,1] , 4 )
+ GC0: maximum_2 = MAX ( index_1 , 1 )
+ GC1: maximum_4 = MAX ( index_3 , -2 )
+ GC2: maximum_6 = MAX ( index_5 , 3 )
+ GC3: maximum_8 = MAX ( index_7 , 4 )
 End

@@ -2,34 +2,28 @@ CVXPY
 Minimize
   Sum(X, None, False)
 Subject To
- 231: -Y <= minimum(X, [[1.00 -2.00]
+ 229: -1.0 <= minimum(X, [[1.00 -2.00]
  [3.00 4.00]])
- 236: Y == 1.0
 Bounds
  X free
- Y free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
   C0 + C1 + C2 + C3
 Subject To
- R0: C8 = 1
- R1: C9 = 1
- R2: C10 = 1
- R3: C11 = 1
- R4: - C0 - C4 <= 0
- R5: - C1 - C5 <= 0
- R6: - C2 - C6 <= 0
- R7: - C3 - C7 <= 0
- R8: - C4 <= 1
- R9: - C5 <= 3
- R10: - C6 <= -2
- R11: - C7 <= 4
- R12: C4 - C8 <= 0
- R13: C5 - C9 <= 0
- R14: C6 - C10 <= 0
- R15: C7 - C11 <= 0
+ R0: - C0 - C4 <= 0
+ R1: - C1 - C5 <= 0
+ R2: - C2 - C6 <= 0
+ R3: - C3 - C7 <= 0
+ R4: - C4 <= 1
+ R5: - C5 <= 3
+ R6: - C6 <= -2
+ R7: - C7 <= 4
+ R8: C4 <= 1
+ R9: C5 <= 1
+ R10: C6 <= 1
+ R11: C7 <= 1
 Bounds
  C0 free
  C1 free
@@ -39,33 +33,21 @@ Bounds
  C5 free
  C6 free
  C7 free
- C8 free
- C9 free
- C10 free
- C11 free
 End
 ----------------------------------------
 GUROBI
 Minimize
   X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
- 231[0,0]: - Y[0,0] - minimum_1 <= 0
- 231[0,1]: - Y[0,1] - minimum_2 <= 0
- 231[1,0]: - Y[1,0] - minimum_3 <= 0
- 231[1,1]: - Y[1,1] - minimum_4 <= 0
- 236[0,0]: Y[0,0] = 1
- 236[0,1]: Y[0,1] = 1
- 236[1,0]: Y[1,0] = 1
- 236[1,1]: Y[1,1] = 1
+ 229[0,0]: minimum_1 >= -1
+ 229[0,1]: minimum_2 >= -1
+ 229[1,0]: minimum_3 >= -1
+ 229[1,1]: minimum_4 >= -1
 Bounds
  X[0,0] free
  X[0,1] free
  X[1,0] free
  X[1,1] free
- Y[0,0] free
- Y[0,1] free
- Y[1,0] free
- Y[1,1] free
  minimum_1 free
  minimum_2 free
  minimum_3 free
