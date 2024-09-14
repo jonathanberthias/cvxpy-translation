@@ -302,11 +302,13 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x + y), [cp.minimum(x, y) >= 1])
     yield cp.Problem(cp.Minimize(x + y), [cp.minimum(x, y, 3) >= 1])
     yield cp.Problem(cp.Minimize(x), [cp.minimum(1, 2) <= 1, x >= 0])
+    yield cp.Problem(cp.Minimize(x), [cp.minimum(x + 1, 2) >= 1])
 
     yield cp.Problem(cp.Maximize(x), [cp.maximum(x, 1) <= 2])
     yield cp.Problem(cp.Maximize(x + y), [cp.maximum(x, y) <= 1])
     yield cp.Problem(cp.Maximize(x + y), [cp.maximum(x, y, 1) <= 3])
     yield cp.Problem(cp.Maximize(x), [cp.maximum(1, 2) <= 2, x <= 0])
+    yield cp.Problem(cp.Maximize(x), [cp.maximum(x + 1, 1) <= 2])
 
     x = cp.Variable(1, name="x")
     y = cp.Variable(name="y")
@@ -330,12 +332,14 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y) >= A])
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y, A) >= -1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -1])
 
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y) <= 1])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y) <= A])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 2])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 2])
 
     x = cp.Variable((2, 2), name="X")
     y = cp.Variable((2, 2), name="Y")
@@ -348,6 +352,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y, A) >= -1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(A, B) >= -2, x == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -1])
 
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y) <= 1])
@@ -355,6 +360,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(A, B) <= 4, x == 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 2])
 
 
 def _genexpr_norm_problems(
