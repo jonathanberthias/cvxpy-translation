@@ -1,8 +1,9 @@
 CVXPY
-Maximize
+Minimize
   Sum(X + Y, None, False)
 Subject To
- 263: maximum(X, Y) <= 1.0
+ 252: -1.0 <= minimum(X, Y, [[1.00 -2.00]
+ [3.00 4.00]])
 Bounds
  X free
  Y free
@@ -10,20 +11,24 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1 - C2 - C3 - C4 - C5 - C6 - C7
+  C0 + C1 + C2 + C3 + C4 + C5 + C6 + C7
 Subject To
- R0: C0 - C8 <= 0
- R1: C1 - C9 <= 0
- R2: C2 - C10 <= 0
- R3: C3 - C11 <= 0
- R4: C4 - C8 <= 0
- R5: C5 - C9 <= 0
- R6: C6 - C10 <= 0
- R7: C7 - C11 <= 0
- R8: C8 <= 1
- R9: C9 <= 1
- R10: C10 <= 1
- R11: C11 <= 1
+ R0: - C0 - C8 <= 0
+ R1: - C1 - C9 <= 0
+ R2: - C2 - C10 <= 0
+ R3: - C3 - C11 <= 0
+ R4: - C4 - C8 <= 0
+ R5: - C5 - C9 <= 0
+ R6: - C6 - C10 <= 0
+ R7: - C7 - C11 <= 0
+ R8: - C8 <= 1
+ R9: - C9 <= 3
+ R10: - C10 <= -2
+ R11: - C11 <= 4
+ R12: C8 <= 1
+ R13: C9 <= 1
+ R14: C10 <= 1
+ R15: C11 <= 1
 Bounds
  C0 free
  C1 free
@@ -40,13 +45,13 @@ Bounds
 End
 ----------------------------------------
 GUROBI
-Maximize
+Minimize
   X[0,0] + X[0,1] + X[1,0] + X[1,1] + Y[0,0] + Y[0,1] + Y[1,0] + Y[1,1]
 Subject To
- 263[0,0]: maximum_1 <= 1
- 263[0,1]: maximum_2 <= 1
- 263[1,0]: maximum_3 <= 1
- 263[1,1]: maximum_4 <= 1
+ 252[0,0]: minimum_1 >= -1
+ 252[0,1]: minimum_2 >= -1
+ 252[1,0]: minimum_3 >= -1
+ 252[1,1]: minimum_4 >= -1
 Bounds
  X[0,0] free
  X[0,1] free
@@ -56,13 +61,13 @@ Bounds
  Y[0,1] free
  Y[1,0] free
  Y[1,1] free
- maximum_1 free
- maximum_2 free
- maximum_3 free
- maximum_4 free
+ minimum_1 free
+ minimum_2 free
+ minimum_3 free
+ minimum_4 free
 General Constraints
- GC0: maximum_1 = MAX ( X[0,0] , Y[0,0] )
- GC1: maximum_2 = MAX ( X[0,1] , Y[0,1] )
- GC2: maximum_3 = MAX ( X[1,0] , Y[1,0] )
- GC3: maximum_4 = MAX ( X[1,1] , Y[1,1] )
+ GC0: minimum_1 = MIN ( X[0,0] , Y[0,0] , 1 )
+ GC1: minimum_2 = MIN ( X[0,1] , Y[0,1] , -2 )
+ GC2: minimum_3 = MIN ( X[1,0] , Y[1,0] , 3 )
+ GC3: minimum_4 = MIN ( X[1,1] , Y[1,1] , 4 )
 End

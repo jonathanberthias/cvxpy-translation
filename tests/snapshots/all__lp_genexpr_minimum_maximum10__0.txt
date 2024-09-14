@@ -1,36 +1,32 @@
 CVXPY
 Minimize
-  x + y
+  x
 Subject To
- 72: 1.0 <= minimum(x, y, 3.0)
+ 72: 1.0 <= minimum(x, 2.0)
 Bounds
  x free
- y free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1
+  C0
 Subject To
- R0: - C0 - C2 <= 0
- R1: - C1 - C2 <= 0
- R2: - C2 <= 3
- R3: C2 <= -1
+ R0: - C0 - C1 <= 0
+ R1: - C1 <= 2
+ R2: C1 <= -1
 Bounds
  C0 free
  C1 free
- C2 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  x[0] + y
+  x[0]
 Subject To
  72: minimum_1 >= 1
 Bounds
  x[0] free
- y free
  minimum_1 free
 General Constraints
- GC0: minimum_1 = MIN ( x[0] , y , 3 )
+ GC0: minimum_1 = MIN ( x[0] , 2 )
 End

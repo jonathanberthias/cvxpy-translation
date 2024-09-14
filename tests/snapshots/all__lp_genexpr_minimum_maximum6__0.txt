@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x + y
 Subject To
- 44: maximum(x, y, 1.0) <= 3.0
+ 44: maximum(x, y) <= 1.0
 Bounds
  x free
  y free
@@ -14,8 +14,7 @@ Minimize
 Subject To
  R0: C0 - C2 <= 0
  R1: C1 - C2 <= 0
- R2: - C2 <= -1
- R3: C2 <= 3
+ R2: C2 <= 1
 Bounds
  C0 free
  C1 free
@@ -26,11 +25,11 @@ GUROBI
 Maximize
   x + y
 Subject To
- 44: maximum_1 <= 3
+ 44: maximum_1 <= 1
 Bounds
  x free
  y free
  maximum_1 free
 General Constraints
- GC0: maximum_1 = MAX ( x , y , 1 )
+ GC0: maximum_1 = MAX ( x , y )
 End
