@@ -1,0 +1,45 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 220: maximum(X + [ 2. -1.], [ 2. -1.]) <= 2.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1
+Subject To
+ R0: C0 - C2 <= -2
+ R1: C1 - C3 <= 1
+ R2: - C2 <= -2
+ R3: - C3 <= 1
+ R4: C2 <= 2
+ R5: C3 <= 2
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0] + X[1]
+Subject To
+ R0: - X[0] + index_1 = 2
+ R1: - X[1] + index_3 = -1
+ 220[0]: maximum_2 <= 2
+ 220[1]: maximum_4 <= 2
+Bounds
+ X[0] free
+ X[1] free
+ index_1 free
+ maximum_2 free
+ index_3 free
+ maximum_4 free
+General Constraints
+ GC0: maximum_2 = MAX ( index_1 , 2 )
+ GC1: maximum_4 = MAX ( index_3 , -1 )
+End

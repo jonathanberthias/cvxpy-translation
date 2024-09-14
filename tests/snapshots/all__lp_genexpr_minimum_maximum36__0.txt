@@ -1,0 +1,69 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 284: -1.0 <= minimum(X + [[1.00 -2.00]
+ [3.00 4.00]], [[1.00 -2.00]
+ [3.00 4.00]])
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1 + C2 + C3
+Subject To
+ R0: - C0 - C4 <= 1
+ R1: - C1 - C5 <= 3
+ R2: - C2 - C6 <= -2
+ R3: - C3 - C7 <= 4
+ R4: - C4 <= 1
+ R5: - C5 <= 3
+ R6: - C6 <= -2
+ R7: - C7 <= 4
+ R8: C4 <= 1
+ R9: C5 <= 1
+ R10: C6 <= 1
+ R11: C7 <= 1
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ R0: - X[0,0] + index_1 = 1
+ R1: - X[0,1] + index_3 = -2
+ R2: - X[1,0] + index_5 = 3
+ R3: - X[1,1] + index_7 = 4
+ 284[0,0]: minimum_2 >= -1
+ 284[0,1]: minimum_4 >= -1
+ 284[1,0]: minimum_6 >= -1
+ 284[1,1]: minimum_8 >= -1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ index_1 free
+ minimum_2 free
+ index_3 free
+ minimum_4 free
+ index_5 free
+ minimum_6 free
+ index_7 free
+ minimum_8 free
+General Constraints
+ GC0: minimum_2 = MIN ( index_1 , 1 )
+ GC1: minimum_4 = MIN ( index_3 , -2 )
+ GC2: minimum_6 = MIN ( index_5 , 3 )
+ GC3: minimum_8 = MIN ( index_7 , 4 )
+End
