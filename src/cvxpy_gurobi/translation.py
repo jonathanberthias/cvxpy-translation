@@ -211,7 +211,6 @@ class Translater:
         self,
         node: cp.Expression,
         *,
-        coerce_constants: bool = True,
         vtype: str = gp.GRB.CONTINUOUS,
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
@@ -220,6 +219,7 @@ class Translater:
 
         This is useful for gurobipy functions that only handle variables as their arguments.
         If translating the expression results in a variable, it is returned directly.
+        Constants are also returned directly.
         """
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
@@ -229,7 +229,7 @@ class Translater:
                 # Extract the underlying variable
                 return expr.item()
             return expr
-        if not coerce_constants and node.is_constant():
+        if node.is_constant():
             return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
@@ -369,7 +369,7 @@ class Translater:
         args = node.args
 
         if _is_scalar_shape(node.shape):
-            varargs = [self.translate_into_variable(arg, coerce_constants=False) for arg in args]
+            varargs = [self.translate_into_variable(arg) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
         return self.star_apply_and_visit_elementwise(type(node), *args)
