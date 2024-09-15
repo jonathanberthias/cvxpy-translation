@@ -24,13 +24,11 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  AddExpression_1
+  x + y
 Subject To
- R0: - x - y + AddExpression_1 = 0
  61: x >= 1
  65: y >= 1
 Bounds
  x free
  y free
- AddExpression_1 free
 End
