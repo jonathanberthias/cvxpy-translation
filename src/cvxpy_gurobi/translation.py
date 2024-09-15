@@ -479,6 +479,8 @@ class Translater:
 
     def visit_Sum(self, node: Sum) -> Any:
         expr = self.visit(node.args[0])
+        if _is_scalar_shape(_shape(expr)):
+            return expr
         return expr.sum(axis=node.axis)
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
