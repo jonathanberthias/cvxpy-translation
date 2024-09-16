@@ -1,0 +1,24 @@
+CVXPY
+Minimize
+  Sum(x + 1.0, None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+ R0: - C0 <= 0
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + Constant
+Subject To
+Bounds
+ Constant = 1
+End

@@ -56,6 +56,7 @@ def all_problems() -> Generator[ProblemTestCase, None, None]:
         genexpr_norm2,
         genexpr_norminf,
         indexing,
+        sum_scalar,
         sum_axis,
         reshape,
         hstack if GUROBIPY_VERSION >= (11,) else lambda: iter(()),
@@ -442,6 +443,21 @@ def indexing() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x[:])))
     yield cp.Problem(cp.Minimize(cp.sum(y[:])))
     yield cp.Problem(cp.Minimize(cp.sum(m[:, :])))
+
+
+@group_cases("sum_scalar")
+def sum_scalar() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(x)))
+    yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
+
+    x = cp.Variable(1, name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(x)))
+    yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
+
+    x = cp.Variable((1, 1), name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(x)))
+    yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
 
 
 @group_cases("sum_axis")

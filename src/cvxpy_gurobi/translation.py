@@ -89,6 +89,10 @@ def _is_scalar_shape(shape: tuple[int, ...]) -> bool:
     return prod(shape) == 1
 
 
+def _is_scalar(expr: Any) -> bool:
+    return _is_scalar_shape(_shape(expr))
+
+
 def _squeeze_shape(shape: tuple[int, ...]) -> tuple[int, ...]:
     return tuple(d for d in shape if d != 1)
 
@@ -479,6 +483,8 @@ class Translater:
 
     def visit_Sum(self, node: Sum) -> Any:
         expr = self.visit(node.args[0])
+        if _is_scalar(expr):
+            return expr
         return expr.sum(axis=node.axis)
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
