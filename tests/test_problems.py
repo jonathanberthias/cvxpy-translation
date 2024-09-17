@@ -93,7 +93,7 @@ def simple_expressions() -> Iterator[cp.Problem]:
 
     yield cp.Problem(cp.Minimize(-x), [x <= 1])
     yield cp.Problem(cp.Minimize(-x + 1), [x <= 1])
-    yield cp.Problem(cp.Minimize(1 - x), [x<=1])
+    yield cp.Problem(cp.Minimize(1 - x), [x <= 1])
 
     yield cp.Problem(cp.Minimize(x / 2))
     yield cp.Problem(cp.Minimize(x / 2 + 1))
