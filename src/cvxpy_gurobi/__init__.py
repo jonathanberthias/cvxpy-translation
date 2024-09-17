@@ -182,8 +182,7 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
                 continue
             if isinstance(problem.objective, cp.Minimize) and (
                 isinstance(constr, Equality)
-                or isinstance(constr, Inequality)
-                and not constr.expr.is_concave()
+                or (isinstance(constr, Inequality) and constr.args[1].is_constant())
             ):
                 dual *= -1
             dual_vars[constr.constr_id] = dual

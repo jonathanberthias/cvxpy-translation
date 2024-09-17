@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 58: [[0.00 1.00]
+ 68: [[0.00 1.00]
  [2.00 3.00]] @ x == 1.0
 Bounds
  x free
@@ -23,8 +23,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 58[0]: x[1] = 1
- 58[1]: 2 x[0] + 3 x[1] = 1
+ 68[0]: x[1] = 1
+ 68[1]: 2 x[0] + 3 x[1] = 1
 Bounds
  x[0] free
  x[1] free

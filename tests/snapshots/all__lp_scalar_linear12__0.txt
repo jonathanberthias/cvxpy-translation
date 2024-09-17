@@ -2,7 +2,8 @@ CVXPY
 Minimize
   x
 Subject To
- 83: 1.0 <= 2.0 @ x + y
+ 95: 1.0 <= 2.0 @ x + y
+ 99: y == 0.0
 Bounds
  x free
  y free
@@ -12,7 +13,8 @@ AFTER COMPILATION
 Minimize
   C0
 Subject To
- R0: - 2 C0 - C1 <= -1
+ R0: C1 = 0
+ R1: - 2 C0 - C1 <= -1
 Bounds
  C0 free
  C1 free
@@ -22,7 +24,8 @@ GUROBI
 Minimize
   x
 Subject To
- 83: 2 x + y >= 1
+ 95: 2 x + y >= 1
+ 99: y = 0
 Bounds
  x free
  y free

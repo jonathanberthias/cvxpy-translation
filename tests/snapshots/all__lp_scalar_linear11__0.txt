@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 77: 1.0 <= 2.0 @ x
+ 89: 1.0 <= 2.0 @ x
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Minimize
   x
 Subject To
- 77: 2 x >= 1
+ 89: 2 x >= 1
 Bounds
  x free
 End

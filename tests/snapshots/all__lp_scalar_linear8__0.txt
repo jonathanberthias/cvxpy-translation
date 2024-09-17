@@ -3,6 +3,7 @@ Minimize
   x
 Subject To
  62: 1.0 <= x + y
+ 66: y == 0.0
 Bounds
  x free
  y free
@@ -12,7 +13,8 @@ AFTER COMPILATION
 Minimize
   C0
 Subject To
- R0: - C0 - C1 <= -1
+ R0: C1 = 0
+ R1: - C0 - C1 <= -1
 Bounds
  C0 free
  C1 free
@@ -23,6 +25,7 @@ Minimize
   x
 Subject To
  62: x + y >= 1
+ 66: y = 0
 Bounds
  x free
  y free

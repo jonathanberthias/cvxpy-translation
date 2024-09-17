@@ -1,8 +1,9 @@
 CVXPY
-Minimize
+Maximize
   x
 Subject To
- 67: x + y <= 1.0
+ 71: x + y <= 1.0
+ 75: y == 0.0
 Bounds
  x free
  y free
@@ -10,19 +11,21 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0
+  - C0
 Subject To
- R0: C0 + C1 <= 1
+ R0: C1 = 0
+ R1: C0 + C1 <= 1
 Bounds
  C0 free
  C1 free
 End
 ----------------------------------------
 GUROBI
-Minimize
+Maximize
   x
 Subject To
- 67: x + y <= 1
+ 71: x + y <= 1
+ 75: y = 0
 Bounds
  x free
  y free

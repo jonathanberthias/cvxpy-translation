@@ -3,13 +3,14 @@ Minimize
   x + -x
 Subject To
 Bounds
- x free
+ 0.0 <= x
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  0 C0
+ 
 Subject To
+ R0: - C0 <= 0
 Bounds
  C0 free
 End
@@ -19,5 +20,4 @@ Minimize
   0 x
 Subject To
 Bounds
- x free
 End

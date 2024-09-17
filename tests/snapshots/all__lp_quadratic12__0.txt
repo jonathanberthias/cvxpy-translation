@@ -2,6 +2,7 @@ CVXPY
 Minimize
   power(x + -y, 2.0) + x + y
 Subject To
+ 41: y == 0.0
 Bounds
  x free
  y free
@@ -12,6 +13,7 @@ Minimize
   C1 + C2 + [ 2 C0 ^2 ] / 2 
 Subject To
  R0: - C0 + C1 - C2 = 0
+ R1: C2 = 0
 Bounds
  C0 free
  C1 free
@@ -22,6 +24,7 @@ GUROBI
 Minimize
   x + y + [ 2 x ^2 - 4 x * y + 2 y ^2 ] / 2 
 Subject To
+ 41: y = 0
 Bounds
  x free
  y free

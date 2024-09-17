@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(X + Y, None, False)
 Subject To
- 252: -1.0 <= minimum(X, Y, [[1.00 -2.00]
+ 252: -2.0 <= minimum(X, Y, [[1.00 -2.00]
  [3.00 4.00]])
 Bounds
  X free
@@ -25,10 +25,10 @@ Subject To
  R9: - C9 <= 3
  R10: - C10 <= -2
  R11: - C11 <= 4
- R12: C8 <= 1
- R13: C9 <= 1
- R14: C10 <= 1
- R15: C11 <= 1
+ R12: C8 <= 2
+ R13: C9 <= 2
+ R14: C10 <= 2
+ R15: C11 <= 2
 Bounds
  C0 free
  C1 free
@@ -48,10 +48,10 @@ GUROBI
 Minimize
   X[0,0] + X[0,1] + X[1,0] + X[1,1] + Y[0,0] + Y[0,1] + Y[1,0] + Y[1,1]
 Subject To
- 252[0,0]: minimum_1 >= -1
- 252[0,1]: minimum_2 >= -1
- 252[1,0]: minimum_3 >= -1
- 252[1,1]: minimum_4 >= -1
+ 252[0,0]: minimum_1 >= -2
+ 252[0,1]: minimum_2 >= -2
+ 252[1,0]: minimum_3 >= -2
+ 252[1,1]: minimum_4 >= -2
 Bounds
  X[0,0] free
  X[0,1] free

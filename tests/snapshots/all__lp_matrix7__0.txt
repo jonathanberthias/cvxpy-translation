@@ -2,8 +2,9 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 66: [[0.00 1.00]
+ 76: [[0.00 1.00]
  [2.00 3.00]] @ x + y == 1.0
+ 81: y == 0.0
 Bounds
  x free
  y free
@@ -15,6 +16,8 @@ Minimize
 Subject To
  R0: C1 + C2 = 1
  R1: 2 C0 + 3 C1 + C3 = 1
+ R2: C2 = 0
+ R3: C3 = 0
 Bounds
  C0 free
  C1 free
@@ -26,8 +29,10 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 66[0]: x[1] + y[0] = 1
- 66[1]: 2 x[0] + 3 x[1] + y[1] = 1
+ 76[0]: x[1] + y[0] = 1
+ 76[1]: 2 x[0] + 3 x[1] + y[1] = 1
+ 81[0]: y[0] = 0
+ 81[1]: y[1] = 0
 Bounds
  x[0] free
  x[1] free

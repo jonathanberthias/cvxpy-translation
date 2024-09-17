@@ -2,7 +2,8 @@ CVXPY
 Minimize
   Sum(x, None, False)
 Subject To
- 51: 0.0 <= x + y + Promote(1.0, (2,))
+ 56: 0.0 <= x + y + Promote(1.0, (2,))
+ 61: y == 0.0
 Bounds
  x free
  y free
@@ -12,8 +13,10 @@ AFTER COMPILATION
 Minimize
   C0 + C1
 Subject To
- R0: - C0 - C2 <= 1
- R1: - C1 - C3 <= 1
+ R0: C2 = 0
+ R1: C3 = 0
+ R2: - C0 - C2 <= 1
+ R3: - C1 - C3 <= 1
 Bounds
  C0 free
  C1 free
@@ -25,8 +28,10 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 51[0]: x[0] + y[0] >= -1
- 51[1]: x[1] + y[1] >= -1
+ 56[0]: x[0] + y[0] >= -1
+ 56[1]: x[1] + y[1] >= -1
+ 61[0]: y[0] = 0
+ 61[1]: y[1] = 0
 Bounds
  x[0] free
  x[1] free
