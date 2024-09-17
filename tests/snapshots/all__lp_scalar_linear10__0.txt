@@ -2,7 +2,8 @@ CVXPY
 Minimize
   x
 Subject To
- 72: x + y == 1.0
+ 80: x + y == 1.0
+ 84: y == 0.0
 Bounds
  x free
  y free
@@ -13,6 +14,7 @@ Minimize
   C0
 Subject To
  R0: C0 + C1 = 1
+ R1: C1 = 0
 Bounds
  C0 free
  C1 free
@@ -22,7 +24,8 @@ GUROBI
 Minimize
   x
 Subject To
- 72: x + y = 1
+ 80: x + y = 1
+ 84: y = 0
 Bounds
  x free
  y free

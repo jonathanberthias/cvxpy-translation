@@ -3,7 +3,7 @@ Maximize
   Sum(X, None, False)
 Subject To
  291: maximum(X, [[1.00 -2.00]
- [3.00 4.00]]) <= 2.0
+ [3.00 4.00]]) <= 4.0
 Bounds
  X free
 End
@@ -20,10 +20,10 @@ Subject To
  R5: - C5 <= -3
  R6: - C6 <= 2
  R7: - C7 <= -4
- R8: C4 <= 2
- R9: C5 <= 2
- R10: C6 <= 2
- R11: C7 <= 2
+ R8: C4 <= 4
+ R9: C5 <= 4
+ R10: C6 <= 4
+ R11: C7 <= 4
 Bounds
  C0 free
  C1 free
@@ -39,10 +39,10 @@ GUROBI
 Maximize
   X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
- 291[0,0]: maximum_1 <= 2
- 291[0,1]: maximum_2 <= 2
- 291[1,0]: maximum_3 <= 2
- 291[1,1]: maximum_4 <= 2
+ 291[0,0]: maximum_1 <= 4
+ 291[0,1]: maximum_2 <= 4
+ 291[1,0]: maximum_3 <= 4
+ 291[1,1]: maximum_4 <= 4
 Bounds
  X[0,0] free
  X[0,1] free

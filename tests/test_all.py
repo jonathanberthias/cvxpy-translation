@@ -68,6 +68,7 @@ def test_backfill(case: ProblemTestCase) -> None:
     cvxpy_gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
     our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
+    assert our_model.Status == gp.GRB.Status.OPTIMAL
 
     quiet_solve(problem)
     cp_sol: Solution = problem.solution

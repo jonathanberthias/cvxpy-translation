@@ -2,14 +2,17 @@ CVXPY
 Minimize
   -x
 Subject To
+ 24: x <= 1.0
 Bounds
- x free
+ 0.0 <= x
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
   - C0
 Subject To
+ R0: - C0 <= 0
+ R1: C0 <= 1
 Bounds
  C0 free
 End
@@ -18,6 +21,6 @@ GUROBI
 Minimize
   - x
 Subject To
+ 24: x <= 1
 Bounds
- x free
 End

@@ -2,15 +2,19 @@ CVXPY
 Minimize
   x + -y
 Subject To
+ 14: y <= 1.0
 Bounds
- x free
- y free
+ 0.0 <= x
+ 0.0 <= y
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
   C0 - C1
 Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: C1 <= 1
 Bounds
  C0 free
  C1 free
@@ -20,7 +24,6 @@ GUROBI
 Minimize
   x - y
 Subject To
+ 14: y <= 1
 Bounds
- x free
- y free
 End

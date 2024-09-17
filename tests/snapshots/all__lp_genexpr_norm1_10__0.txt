@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  norm1(x) + norm1([ 1. -1.])
+  norm1(x) + norm1([ 1.00001 -0.99999])
 Subject To
 Bounds
  x free

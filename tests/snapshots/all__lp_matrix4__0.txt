@@ -3,6 +3,7 @@ Minimize
   Sum(x, None, False)
 Subject To
  42: 1.0 <= x + y
+ 47: y == 0.0
 Bounds
  x free
  y free
@@ -12,8 +13,10 @@ AFTER COMPILATION
 Minimize
   C0 + C1
 Subject To
- R0: - C0 - C2 <= -1
- R1: - C1 - C3 <= -1
+ R0: C2 = 0
+ R1: C3 = 0
+ R2: - C0 - C2 <= -1
+ R3: - C1 - C3 <= -1
 Bounds
  C0 free
  C1 free
@@ -27,6 +30,8 @@ Minimize
 Subject To
  42[0]: x[0] + y[0] >= 1
  42[1]: x[1] + y[1] >= 1
+ 47[0]: y[0] = 0
+ 47[1]: y[1] = 0
 Bounds
  x[0] free
  x[1] free

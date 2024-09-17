@@ -75,8 +75,8 @@ def all_valid_problems() -> Iterator[ProblemTestCase]:
 
 @group_cases("simple")
 def simple_expressions() -> Iterator[cp.Problem]:
-    x = cp.Variable(name="x")
-    y = cp.Variable(name="y")
+    x = cp.Variable(name="x", nonneg=True)
+    y = cp.Variable(name="y", nonneg=True)
 
     yield cp.Problem(cp.Minimize(x))
     yield cp.Problem(cp.Minimize(x + 1))
@@ -85,15 +85,15 @@ def simple_expressions() -> Iterator[cp.Problem]:
 
     yield cp.Problem(cp.Minimize(x - x))
     yield cp.Problem(cp.Minimize(x - 1))
-    yield cp.Problem(cp.Minimize(x - y))
+    yield cp.Problem(cp.Minimize(x - y), [y <= 1])
 
     yield cp.Problem(cp.Minimize(2 * x))
     yield cp.Problem(cp.Minimize(2 * x + 1))
     yield cp.Problem(cp.Minimize(2 * x + y))
 
-    yield cp.Problem(cp.Minimize(-x))
-    yield cp.Problem(cp.Minimize(-x + 1))
-    yield cp.Problem(cp.Minimize(1 - x))
+    yield cp.Problem(cp.Minimize(-x), [x <= 1])
+    yield cp.Problem(cp.Minimize(-x + 1), [x <= 1])
+    yield cp.Problem(cp.Minimize(1 - x), [x<=1])
 
     yield cp.Problem(cp.Minimize(x / 2))
     yield cp.Problem(cp.Minimize(x / 2 + 1))
@@ -119,12 +119,12 @@ def scalar_linear_constraints() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x), [x >= 1, y >= 1])
     yield cp.Problem(cp.Minimize(x), [x == 1, y == 1])
 
-    yield cp.Problem(cp.Minimize(x), [x + y >= 1])
-    yield cp.Problem(cp.Minimize(x), [x + y <= 1])
-    yield cp.Problem(cp.Minimize(x), [x + y == 1])
+    yield cp.Problem(cp.Minimize(x), [x + y >= 1, y == 0])
+    yield cp.Problem(cp.Maximize(x), [x + y <= 1, y == 0])
+    yield cp.Problem(cp.Minimize(x), [x + y == 1, y == 0])
 
     yield cp.Problem(cp.Minimize(x), [2 * x >= 1])
-    yield cp.Problem(cp.Minimize(x), [2 * x + y >= 1])
+    yield cp.Problem(cp.Minimize(x), [2 * x + y >= 1, y == 0])
 
 
 @group_cases("matrix")
@@ -138,16 +138,16 @@ def matrix_constraints() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [x >= 1, x <= 2])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [x == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [x == 1, y == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [x + y >= 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [x + y + 1 >= 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [x + y >= 1, y == 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [x + y + 1 >= 0, y == 0])
 
     yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y + 1 == 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y == 1, y == 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y + 1 == 0, y == 0])
 
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y == 1, y == 0])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0, y == 0])
 
 
 @group_cases("quadratic")
@@ -167,7 +167,7 @@ def quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize((2 * x) ** 2 + y**2))
     yield cp.Problem(cp.Minimize((x + y) ** 2))
     yield cp.Problem(cp.Minimize((x - y) ** 2))
-    yield cp.Problem(cp.Minimize((x - y) ** 2 + x + y))
+    yield cp.Problem(cp.Minimize((x - y) ** 2 + x + y), [y == 0])
 
 
 @group_cases("matrix_quadratic")
@@ -347,21 +347,21 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     A = np.array([[1, -2], [3, 4]])
     B = np.array([[2, -1], [1, 3]])
 
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -2])
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y) >= 1])
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y) >= A])
-    yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y, A) >= -1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y, A) >= -2])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 2])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(A, B) >= -2, x == 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -2])
 
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= 2])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= 4])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y) <= 1])
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y) <= A])
-    yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 2])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 2])
+    yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 4])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 4])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(A, B) <= 4, x == 1])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 2])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 4])
 
 
 def _genexpr_norm_problems(
@@ -380,7 +380,8 @@ def _genexpr_norm_problems(
     yield cp.Problem(cp.Maximize(x), [norm(x) <= 1])
 
     x = cp.Variable(2, name="x")
-    A = np.array([1, -1])
+    # Slightly off from [1, -1] to avoid symmetric solutions
+    A = np.array([1.00001, -0.99999])
     yield cp.Problem(cp.Minimize(norm(x)))
     yield cp.Problem(cp.Minimize(norm(x - A)))
     yield cp.Problem(cp.Minimize(norm(x) + norm(A)))
