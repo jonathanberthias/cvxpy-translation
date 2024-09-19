@@ -215,25 +215,26 @@ class Translater:
         self,
         node: cp.Expression,
         *,
+        scalar: bool = False,
         vtype: str = gp.GRB.CONTINUOUS,
         lb: float = -gp.GRB.INFINITY,
         ub: float = gp.GRB.INFINITY,
-    ) -> AnyVar:
+    ) -> AnyVar | npt.NDArray[np.float64] | float:
         """Translate a CVXPY expression, and return a gurobipy variable constrained to its value.
 
         This is useful for gurobipy functions that only handle variables as their arguments.
         If translating the expression results in a variable, it is returned directly.
         Constants are also returned directly.
+        If scalar is True, the result is guaranteed to be a scalar, otherwise its shape will be
+        the shape of whatever gets generated while translating the node.
         """
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
-        if isinstance(expr, gp.MVar):
-            if _is_scalar_shape(expr.shape):
-                # Extract the underlying variable
+        if isinstance(expr, (gp.MVar, np.ndarray)):
+            if scalar:
+                # Extract the underlying variable - will raise an error if the shape is not scalar
                 return expr.item()
-            return expr
-        if node.is_constant():
             return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
@@ -300,7 +301,7 @@ class Translater:
         if isinstance(arg, cp.Constant):
             return np.abs(arg.value)
         if node.shape == ():
-            var = self.translate_into_variable(arg)
+            var = self.translate_into_variable(arg, scalar=True)
             assert isinstance(var, gp.Var)
             return self.make_auxilliary_variable_for(gp.abs_(var), "abs", lb=0)
         return self.apply_and_visit_elementwise(cp.abs, arg)
@@ -350,21 +351,22 @@ class Translater:
         gp_fn: Callable[[list[gp.Var]], Any],
         np_fn: Callable[[Any], float],
         name: str,
-    ) -> gp.Var | float:
+    ) -> Any:
         (arg,) = node.args
         if isinstance(arg, cp.Constant):
             return np_fn(arg.value)
-        var = self.translate_into_variable(arg)
-        if isinstance(var, gp.Var):
-            # min/max of a single variable is the variable itself
-            return var
-        # type ignore: gp_fn will return a scalar expression so this will make a Var, not an MVar
-        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)  # type: ignore[return-value]
+        if _is_scalar_shape(arg.shape):
+            # min/max of a scalar is itself
+            return self.visit(arg)
 
-    def visit_max(self, node: cp.max) -> gp.Var | float:
+        var = self.translate_into_variable(arg)
+        assert isinstance(var, gp.MVar)  # other cases were handled above
+        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)
+
+    def visit_max(self, node: cp.max) -> Any:
         return self._min_max(node, gp_fn=gp.max_, np_fn=np.max, name="max")
 
-    def visit_min(self, node: cp.min) -> gp.Var | float:
+    def visit_min(self, node: cp.min) -> Any:
         return self._min_max(node, gp_fn=gp.min_, np_fn=np.min, name="min")
 
     def _minimum_maximum(
@@ -373,7 +375,7 @@ class Translater:
         args = node.args
 
         if _is_scalar_shape(node.shape):
-            varargs = [self.translate_into_variable(arg) for arg in args]
+            varargs = [self.translate_into_variable(arg, scalar=True) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
         return self.star_apply_and_visit_elementwise(type(node), *args)

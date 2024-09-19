@@ -24,13 +24,11 @@ End
 ----------------------------------------
 GUROBI
 Maximize
-  AddExpression_1
+  x[0] + y
 Subject To
- R0: - x[0] - y + AddExpression_1 = 0
  95[0]: x[0] <= 1
  99: y <= 1
 Bounds
  x[0] free
  y free
- AddExpression_1 free
 End
