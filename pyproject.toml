@@ -58,17 +58,20 @@ dependencies = [
 ]
 installer = "uv"
 [tool.hatch.envs.default.scripts]
-pip = "{env:HATCH_UV} pip {args}"
-# convenience script to update the snapshots, it actually runs inside the snapshots env
-update-snapshots = "hatch run snapshots:update {args}"
+tests = [
+  "versions",
+  "pytest {args:tests}",
+]
 versions = [
   "python --version",
-  "pip freeze | grep gurobipy",
-  "pip freeze | grep cvxpy-base",
+  "{env:HATCH_UV} pip freeze",
 ]
+# convenience script to update the snapshots, it actually runs inside the snapshots env
+update-snapshots = "hatch run snapshots:update {args}"
 
 [tool.hatch.envs.latest]
 description = "Dependencies at their most up-to-date versions"
+python = "3.12"
 extra-dependencies = [
   "cvxpy-base==1.5.3",
   "gurobipy==11.0.3",
