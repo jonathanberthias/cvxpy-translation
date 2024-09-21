@@ -36,8 +36,8 @@ dependencies = [
   # "cvxpy" must be available but we don't list it
   # as a dependency because cvxpy-base is sufficient
   "gurobipy",
-  "numpy",
-  "scipy",
+  "numpy>=1.23.0",
+  "scipy>=1.4.0",
 ]
 [project.urls]
 Documentation = "https://github.com/jonathanberthias/cvxpy-gurobi#readme"
