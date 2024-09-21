@@ -52,8 +52,8 @@ build.hooks.vcs.version-file = "src/cvxpy_gurobi/_version.py"
 [tool.hatch.envs.default]
 description = "Base environment for other envs to inherit from"
 dependencies = [
-  "pytest==8.3.3",
-  "pytest-insta==0.3.0",
+  "pytest==7.4.4",
+  "pytest-insta==0.2.0",
   "pytest-xdist==3.6.1",
 ]
 installer = "uv"
@@ -83,6 +83,18 @@ extra-dependencies = [
 description = "The environment used to generate the snapshot LP files"
 template = "latest"
 scripts = { update = "pytest --insta update {args:tests}" }
+
+[tool.hatch.envs.oldest]
+description = "The oldest supported set of dependencies, for testing purposes"
+env-vars = { UV_RESOLUTION = "lowest-direct" }
+python = "3.8"
+extra-dependencies = [
+  # we have to set a version here since cvxpy is not listed as a dependency
+  # note that we don't use cvxpy-base because it was added in 1.1.16
+  "cvxpy>=1.1.2",
+  # bundled license is expired on older versions of gurobipy
+  "gurobipy>=10",
+]
 
 [tool.hatch.envs.hatch-test]
 extra-dependencies = [
