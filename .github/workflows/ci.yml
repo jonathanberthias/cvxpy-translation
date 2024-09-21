@@ -42,4 +42,4 @@ jobs:
         run: pipx install hatch
 
       - name: Run tests
-        run: hatch test --cover
+        run: hatch run latest:tests
