@@ -29,17 +29,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        include:
+          - env: "latest"
+            python: "3.12"
+          - env: "oldest"
+            python: "3.8"
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: ${{ matrix.python }}
           cache: pip
 
       - name: Install hatch
         run: pipx install hatch
 
       - name: Run tests
-        run: hatch run latest:tests
+        run: hatch -e ${{ matrix.env }} run tests

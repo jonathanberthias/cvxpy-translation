@@ -40,7 +40,8 @@ Validator: TypeAlias = Callable[[cp.Problem], None]
 
 def validate(problem: cp.Problem, *, dual: bool) -> None:
     assert problem.value == 1.0
-    assert problem.var_dict["x"].value == 1.0
+    x = next(v for v in problem.variables() if v.name() == "x")
+    assert x.value == 1.0
     assert problem.status == cp.OPTIMAL
     assert problem.solver_stats is not None
     assert problem.solver_stats.solve_time is not None
