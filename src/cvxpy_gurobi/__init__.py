@@ -167,7 +167,11 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
     }
     status = gurobi_conif.GUROBI.STATUS_MAP[model.Status]
     if status not in SOLUTION_PRESENT:
-        return failure_solution(status, attr)
+        if CVXPY_VERSION >= (1, 2, 0):
+            # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
+            return failure_solution(status, attr)
+        else:
+            return failure_solution(status)
 
     primal_vars = {}
     dual_vars = {}
