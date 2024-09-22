@@ -170,8 +170,7 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
         if CVXPY_VERSION >= (1, 2, 0):
             # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
             return failure_solution(status, attr)
-        else:
-            return failure_solution(status)
+        return failure_solution(status)
 
     primal_vars = {}
     dual_vars = {}
