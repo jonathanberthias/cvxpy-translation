@@ -346,6 +346,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     reset_id_counter()
     x = cp.Variable(2, name="X")
     y = cp.Variable(2, name="Y")
+    z = cp.Variable(name="z")
     A = np.array([2, -1])
 
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -1])
@@ -354,6 +355,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x + y)), [cp.minimum(x, y, A) >= -1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, z, 1) >= 0, z == 1])
 
     reset_id_counter()
 
@@ -363,6 +365,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x + y)), [cp.maximum(x, y, A) <= 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 2])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 2])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, z, 1) <= 2, z == 1])
 
     reset_id_counter()
     x = cp.Variable((2, 2), name="X")
@@ -377,6 +380,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, A) >= -y, y == 2])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(A, B) >= -2, x == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x + A, A) >= -2])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.minimum(x, z, 1) >= 0, z == 1])
 
     reset_id_counter()
 
@@ -387,6 +391,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, A) <= y, y == 4])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(A, B) <= 4, x == 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x + A, A) <= 4])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.maximum(x, z, 1) <= 2, z == 1])
 
 
 def _genexpr_norm_problems(
