@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(X, None, False)
 Subject To
- 128: -1.0 <= minimum(X, [ 2. -1.])
+ 8: -1.0 <= minimum(X, [ 2. -1.])
 Bounds
  X free
 End
@@ -28,8 +28,8 @@ GUROBI
 Minimize
   X[0] + X[1]
 Subject To
- 128[0]: minimum_1 >= -1
- 128[1]: minimum_2 >= -1
+ 8[0]: minimum_1 >= -1
+ 8[1]: minimum_2 >= -1
 Bounds
  X[0] free
  X[1] free

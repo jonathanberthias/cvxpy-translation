@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 243: max(X + [ 1. -2.], None, False) <= 1.0
+ 50: max(X + [ 1. -2.], None, False) <= 1.0
 Bounds
  X free
 End
@@ -26,7 +26,7 @@ Maximize
 Subject To
  R0: - X[0] + AddExpression_1[0] = 1
  R1: - X[1] + AddExpression_1[1] = -2
- 243: max_2 <= 1
+ 50: max_2 <= 1
 Bounds
  X[0] free
  X[1] free

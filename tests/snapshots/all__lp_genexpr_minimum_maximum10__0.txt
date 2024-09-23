@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 72: 1.0 <= minimum(x, 2.0)
+ 6: 1.0 <= minimum(x, 2.0)
 Bounds
  x free
 End
@@ -23,7 +23,7 @@ GUROBI
 Minimize
   x[0]
 Subject To
- 72: minimum_1 >= 1
+ 6: minimum_1 >= 1
 Bounds
  x[0] free
  minimum_1 free

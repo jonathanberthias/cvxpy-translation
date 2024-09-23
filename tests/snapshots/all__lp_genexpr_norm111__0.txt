@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x @ [ 1.00001 -0.99999], None, False)
 Subject To
- 40: norm1(x) <= 1.4142135623730951
+ 14: norm1(x) <= 1.4142135623730951
 Bounds
  x free
 End
@@ -27,7 +27,7 @@ GUROBI
 Maximize
   1.00001 x[0] - 0.99999 x[1]
 Subject To
- 40: norm1_1 <= 1.414213562373095
+ 14: norm1_1 <= 1.414213562373095
 Bounds
  x[0] free
  x[1] free

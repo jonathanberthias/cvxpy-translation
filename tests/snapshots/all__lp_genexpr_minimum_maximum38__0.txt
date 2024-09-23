@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X + Y, None, False)
 Subject To
- 299: maximum(X, Y) <= 1.0
+ 14: maximum(X, Y) <= 1.0
 Bounds
  X free
  Y free
@@ -43,10 +43,10 @@ GUROBI
 Maximize
   X[0,0] + X[0,1] + X[1,0] + X[1,1] + Y[0,0] + Y[0,1] + Y[1,0] + Y[1,1]
 Subject To
- 299[0,0]: maximum_1 <= 1
- 299[0,1]: maximum_2 <= 1
- 299[1,0]: maximum_3 <= 1
- 299[1,1]: maximum_4 <= 1
+ 14[0,0]: maximum_1 <= 1
+ 14[0,1]: maximum_2 <= 1
+ 14[1,0]: maximum_3 <= 1
+ 14[1,1]: maximum_4 <= 1
 Bounds
  X[0,0] free
  X[0,1] free

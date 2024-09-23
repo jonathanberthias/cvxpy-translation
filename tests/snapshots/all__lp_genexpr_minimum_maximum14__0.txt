@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 98: maximum(x, 1.0) <= 2.0
+ 4: maximum(x, 1.0) <= 2.0
 Bounds
  x free
 End
@@ -23,7 +23,7 @@ GUROBI
 Maximize
   x[0]
 Subject To
- 98: maximum_1 <= 2
+ 4: maximum_1 <= 2
 Bounds
  x[0] free
  maximum_1 free

@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 251: max(X, None, False) + max([ 1. -2.], None, False) <= 1.0
+ 58: max(X, None, False) + max([ 1. -2.], None, False) <= 1.0
 Bounds
  X free
 End
@@ -24,7 +24,7 @@ GUROBI
 Maximize
   X[0] + X[1]
 Subject To
- 251: max_1 <= 0
+ 58: max_1 <= 0
 Bounds
  X[0] free
  X[1] free

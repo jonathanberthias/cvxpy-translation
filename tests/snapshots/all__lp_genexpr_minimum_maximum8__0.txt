@@ -2,8 +2,8 @@ CVXPY
 Maximize
   x
 Subject To
- 55: maximum(1.0, 2.0) <= 2.0
- 59: x <= 0.0
+ 21: maximum(1.0, 2.0) <= 2.0
+ 25: x <= 0.0
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Maximize
   x
 Subject To
- 55: maximum_1 <= 2
- 59: x <= 0
+ 21: maximum_1 <= 2
+ 25: x <= 0
 Bounds
  x free
  maximum_1 free

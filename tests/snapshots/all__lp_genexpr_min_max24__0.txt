@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 204: max(X, None, False) <= 1.0
+ 11: max(X, None, False) <= 1.0
 Bounds
  X free
 End
@@ -24,7 +24,7 @@ GUROBI
 Maximize
   X[0] + X[1]
 Subject To
- 204: max_1 <= 1
+ 11: max_1 <= 1
 Bounds
  X[0] free
  X[1] free

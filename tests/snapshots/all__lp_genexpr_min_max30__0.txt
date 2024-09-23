@@ -2,7 +2,7 @@ CVXPY
 Maximize
   min(X, None, False)
 Subject To
- 259: X <= 1.0
+ 7: X <= 1.0
 Bounds
  X free
 End
@@ -31,10 +31,10 @@ GUROBI
 Maximize
   min_1
 Subject To
- 259[0,0]: X[0,0] <= 1
- 259[0,1]: X[0,1] <= 1
- 259[1,0]: X[1,0] <= 1
- 259[1,1]: X[1,1] <= 1
+ 7[0,0]: X[0,0] <= 1
+ 7[0,1]: X[0,1] <= 1
+ 7[1,0]: X[1,0] <= 1
+ 7[1,1]: X[1,1] <= 1
 Bounds
  X[0,0] free
  X[0,1] free

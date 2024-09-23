@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(Vstack(x), None, False)
 Subject To
- 44: 1.0 <= x
+ 7: 1.0 <= x
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Minimize
   x[0] + x[1]
 Subject To
- 44[0]: x[0] >= 1
- 44[1]: x[1] >= 1
+ 7[0]: x[0] >= 1
+ 7[1]: x[1] >= 1
 Bounds
  x[0] free
  x[1] free

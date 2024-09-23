@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 220: maximum(X + [ 2. -1.], [ 2. -1.]) <= 2.0
+ 48: maximum(X + [ 2. -1.], [ 2. -1.]) <= 2.0
 Bounds
  X free
 End
@@ -30,8 +30,8 @@ Maximize
 Subject To
  R0: - X[0] + index_1 = 2
  R1: - X[1] + index_3 = -1
- 220[0]: maximum_2 <= 2
- 220[1]: maximum_4 <= 2
+ 48[0]: maximum_2 <= 2
+ 48[1]: maximum_4 <= 2
 Bounds
  X[0] free
  X[1] free

@@ -2,8 +2,8 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 351: max(X + Y, None, False) <= 1.0
- 356: Y == 1.0
+ 38: max(X + Y, None, False) <= 1.0
+ 43: Y == 1.0
 Bounds
  X free
  Y free
@@ -42,11 +42,11 @@ Subject To
  R1: - X[0,1] - Y[0,1] + AddExpression_1[0,1] = 0
  R2: - X[1,0] - Y[1,0] + AddExpression_1[1,0] = 0
  R3: - X[1,1] - Y[1,1] + AddExpression_1[1,1] = 0
- 351: max_2 <= 1
- 356[0,0]: Y[0,0] = 1
- 356[0,1]: Y[0,1] = 1
- 356[1,0]: Y[1,0] = 1
- 356[1,1]: Y[1,1] = 1
+ 38: max_2 <= 1
+ 43[0,0]: Y[0,0] = 1
+ 43[0,1]: Y[0,1] = 1
+ 43[1,0]: Y[1,0] = 1
+ 43[1,1]: Y[1,1] = 1
 Bounds
  X[0,0] free
  X[0,1] free

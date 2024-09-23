@@ -2,8 +2,8 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 219: max(X, None, False) + max(Y, None, False) <= 1.0
- 224: Y == 1.0
+ 26: max(X, None, False) + max(Y, None, False) <= 1.0
+ 31: Y == 1.0
 Bounds
  X free
  Y free
@@ -33,9 +33,9 @@ GUROBI
 Maximize
   X[0] + X[1]
 Subject To
- 219: max_1 + max_2 <= 1
- 224[0]: Y[0] = 1
- 224[1]: Y[1] = 1
+ 26: max_1 + max_2 <= 1
+ 31[0]: Y[0] = 1
+ 31[1]: Y[1] = 1
 Bounds
  X[0] free
  X[1] free

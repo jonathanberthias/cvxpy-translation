@@ -2,7 +2,7 @@ CVXPY
 Minimize
   max(X, None, False)
 Subject To
- 318: 1.0 <= X
+ 5: 1.0 <= X
 Bounds
  X free
 End
@@ -31,10 +31,10 @@ GUROBI
 Minimize
   max_1
 Subject To
- 318[0,0]: X[0,0] >= 1
- 318[0,1]: X[0,1] >= 1
- 318[1,0]: X[1,0] >= 1
- 318[1,1]: X[1,1] >= 1
+ 5[0,0]: X[0,0] >= 1
+ 5[0,1]: X[0,1] >= 1
+ 5[1,0]: X[1,0] >= 1
+ 5[1,1]: X[1,1] >= 1
 Bounds
  X[0,0] free
  X[0,1] free

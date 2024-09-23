@@ -2,8 +2,8 @@ CVXPY
 Maximize
   min(x + y, None, False)
 Subject To
- 95: x <= 1.0
- 99: y <= 1.0
+ 29: x <= 1.0
+ 33: y <= 1.0
 Bounds
  x free
  y free
@@ -26,8 +26,8 @@ GUROBI
 Maximize
   x[0] + y
 Subject To
- 95[0]: x[0] <= 1
- 99: y <= 1
+ 29[0]: x[0] <= 1
+ 33: y <= 1
 Bounds
  x[0] free
  y free

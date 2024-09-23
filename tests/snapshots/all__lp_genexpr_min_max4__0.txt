@@ -2,7 +2,7 @@ CVXPY
 Minimize
   max(x, None, False)
 Subject To
- 38: 1.0 <= x
+ 4: 1.0 <= x
 Bounds
  x free
 End
@@ -22,7 +22,7 @@ GUROBI
 Minimize
   x
 Subject To
- 38: x >= 1
+ 4: x >= 1
 Bounds
  x free
 End

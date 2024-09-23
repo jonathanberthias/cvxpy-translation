@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x + y
 Subject To
- 110: maximum(x, y, 1.0) <= 3.0
+ 16: maximum(x, y, 1.0) <= 3.0
 Bounds
  x free
  y free
@@ -26,7 +26,7 @@ GUROBI
 Maximize
   x[0] + y
 Subject To
- 110: maximum_1 <= 3
+ 16: maximum_1 <= 3
 Bounds
  x[0] free
  y free
