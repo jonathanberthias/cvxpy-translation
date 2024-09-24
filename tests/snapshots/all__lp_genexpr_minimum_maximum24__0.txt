@@ -1,41 +1,49 @@
 CVXPY
-Maximize
+Minimize
   Sum(X, None, False)
 Subject To
- 6: maximum(X, [ 2. -1.]) <= 2.0
+ 59: 0.0 <= minimum(X, z, 1.0)
+ 63: z == 1.0
 Bounds
  X free
+ z free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1
+  C0 + C1
 Subject To
- R0: C0 - C2 <= 0
- R1: C1 - C3 <= 0
- R2: - C2 <= -2
- R3: - C3 <= 1
- R4: C2 <= 2
- R5: C3 <= 2
+ R0: C4 = 1
+ R1: - C0 - C2 <= 0
+ R2: - C1 - C3 <= 0
+ R3: - C2 - C4 <= 0
+ R4: - C3 - C4 <= 0
+ R5: - C2 <= 1
+ R6: - C3 <= 1
+ R7: C2 <= 0
+ R8: C3 <= 0
 Bounds
  C0 free
  C1 free
  C2 free
  C3 free
+ C4 free
 End
 ----------------------------------------
 GUROBI
-Maximize
+Minimize
   X[0] + X[1]
 Subject To
- 6[0]: maximum_1 <= 2
- 6[1]: maximum_2 <= 2
+ 59[0]: minimum_1 >= 0
+ 59[1]: minimum_2 >= 0
+ 63: z = 1
 Bounds
  X[0] free
  X[1] free
- maximum_1 free
- maximum_2 free
+ z free
+ minimum_1 free
+ minimum_2 free
 General Constraints
- GC0: maximum_1 = MAX ( X[0] , 2 )
- GC1: maximum_2 = MAX ( X[1] , -1 )
+ GC0: minimum_1 = MIN ( X[0] , z , 1 )
+ GC1: minimum_2 = MIN ( X[1] , z , 1 )
 End

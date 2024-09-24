@@ -1,0 +1,58 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 47: maximum([[1.00 -2.00]
+ [3.00 4.00]], [[2.00 -1.00]
+ [1.00 3.00]]) <= 4.0
+ 52: X == 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+ R0: C0 = 1
+ R1: C1 = 1
+ R2: C2 = 1
+ R3: C3 = 1
+ R4: <= 2
+ R5: <= 1
+ R6: <= 5
+ R7: <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ 47[0,0]: maximum_1 <= 4
+ 47[0,1]: maximum_2 <= 4
+ 47[1,0]: maximum_3 <= 4
+ 47[1,1]: maximum_4 <= 4
+ 52[0,0]: X[0,0] = 1
+ 52[0,1]: X[0,1] = 1
+ 52[1,0]: X[1,0] = 1
+ 52[1,1]: X[1,1] = 1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ maximum_1 free
+ maximum_2 free
+ maximum_3 free
+ maximum_4 free
+General Constraints
+ GC0: maximum_1 = MAX ( 2 )
+ GC1: maximum_2 = MAX ( -1 )
+ GC2: maximum_3 = MAX ( 3 )
+ GC3: maximum_4 = MAX ( 4 )
+End

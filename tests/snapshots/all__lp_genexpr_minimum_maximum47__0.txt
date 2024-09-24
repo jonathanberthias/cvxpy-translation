@@ -1,0 +1,69 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 67: maximum(X, z, 1.0) <= 2.0
+ 71: z == 1.0
+Bounds
+ X free
+ z free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+ R0: C8 = 1
+ R1: C0 - C4 <= 0
+ R2: C1 - C5 <= 0
+ R3: C2 - C6 <= 0
+ R4: C3 - C7 <= 0
+ R5: - C4 + C8 <= 0
+ R6: - C5 + C8 <= 0
+ R7: - C6 + C8 <= 0
+ R8: - C7 + C8 <= 0
+ R9: - C4 <= -1
+ R10: - C5 <= -1
+ R11: - C6 <= -1
+ R12: - C7 <= -1
+ R13: C4 <= 2
+ R14: C5 <= 2
+ R15: C6 <= 2
+ R16: C7 <= 2
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+ C6 free
+ C7 free
+ C8 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+ 67[0,0]: maximum_1 <= 2
+ 67[0,1]: maximum_2 <= 2
+ 67[1,0]: maximum_3 <= 2
+ 67[1,1]: maximum_4 <= 2
+ 71: z = 1
+Bounds
+ X[0,0] free
+ X[0,1] free
+ X[1,0] free
+ X[1,1] free
+ z free
+ maximum_1 free
+ maximum_2 free
+ maximum_3 free
+ maximum_4 free
+General Constraints
+ GC0: maximum_1 = MAX ( X[0,0] , z , 1 )
+ GC1: maximum_2 = MAX ( X[0,1] , z , 1 )
+ GC2: maximum_3 = MAX ( X[1,0] , z , 1 )
+ GC3: maximum_4 = MAX ( X[1,1] , z , 1 )
+End

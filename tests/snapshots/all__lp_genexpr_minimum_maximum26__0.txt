@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X + Y, None, False)
 Subject To
- 21: maximum(X, Y) <= [ 2. -1.]
+ 14: maximum(X, Y) <= 1.0
 Bounds
  X free
  Y free
@@ -16,8 +16,8 @@ Subject To
  R1: C1 - C5 <= 0
  R2: C2 - C4 <= 0
  R3: C3 - C5 <= 0
- R4: C4 <= 2
- R5: C5 <= -1
+ R4: C4 <= 1
+ R5: C5 <= 1
 Bounds
  C0 free
  C1 free
@@ -31,8 +31,8 @@ GUROBI
 Maximize
   X[0] + X[1] + Y[0] + Y[1]
 Subject To
- 21[0]: maximum_1 <= 2
- 21[1]: maximum_2 <= -1
+ 14[0]: maximum_1 <= 1
+ 14[1]: maximum_2 <= 1
 Bounds
  X[0] free
  X[1] free
