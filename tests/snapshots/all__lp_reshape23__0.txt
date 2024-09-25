@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 141: reshape(x + [1. 1. 1. 1.], (4,), F) <= [1. 1. 1. 1.]
+ 31: reshape(x + [1. 1. 1. 1.], (4,), F) <= [1. 1. 1. 1.]
 Bounds
  x free
 End
@@ -30,10 +30,10 @@ Subject To
  R1: - x[1] + reshape_1[1] = 1
  R2: - x[2] + reshape_1[2] = 1
  R3: - x[3] + reshape_1[3] = 1
- 141[0]: reshape_1[0] <= 1
- 141[1]: reshape_1[1] <= 1
- 141[2]: reshape_1[2] <= 1
- 141[3]: reshape_1[3] <= 1
+ 31[0]: reshape_1[0] <= 1
+ 31[1]: reshape_1[1] <= 1
+ 31[2]: reshape_1[2] <= 1
+ 31[3]: reshape_1[3] <= 1
 Bounds
  x[0] free
  x[1] free

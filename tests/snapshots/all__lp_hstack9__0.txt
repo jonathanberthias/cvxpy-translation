@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(Hstack(Promote(2.0, (2,)) @ x), None, False)
 Subject To
- 100: 1.0 <= x
+ 16: 1.0 <= x
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ GUROBI
 Minimize
   2 x[0] + 2 x[1]
 Subject To
- 100[0]: x[0] >= 1
- 100[1]: x[1] >= 1
+ 16[0]: x[0] >= 1
+ 16[1]: x[1] >= 1
 Bounds
  x[0] free
  x[1] free

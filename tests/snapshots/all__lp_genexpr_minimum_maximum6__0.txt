@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x + y
 Subject To
- 44: maximum(x, y) <= 1.0
+ 10: maximum(x, y) <= 1.0
 Bounds
  x free
  y free
@@ -25,7 +25,7 @@ GUROBI
 Maximize
   x + y
 Subject To
- 44: maximum_1 <= 1
+ 10: maximum_1 <= 1
 Bounds
  x free
  y free

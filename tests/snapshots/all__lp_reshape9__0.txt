@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 53: reshape(x, (1,), F) <= [1.]
+ 16: reshape(x, (1,), F) <= [1.]
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Maximize
   x[0]
 Subject To
- 53[0]: x[0] <= 1
+ 16[0]: x[0] <= 1
 Bounds
  x[0] free
 End

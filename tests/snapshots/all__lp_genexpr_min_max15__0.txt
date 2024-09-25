@@ -2,8 +2,8 @@ CVXPY
 Minimize
   max(x + y, None, False)
 Subject To
- 127: 1.0 <= x
- 131: 1.0 <= y
+ 27: 1.0 <= x
+ 31: 1.0 <= y
 Bounds
  x free
  y free
@@ -26,8 +26,8 @@ GUROBI
 Minimize
   x[0] + y
 Subject To
- 127[0]: x[0] >= 1
- 131: y >= 1
+ 27[0]: x[0] >= 1
+ 31: y >= 1
 Bounds
  x[0] free
  y free

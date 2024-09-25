@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 25: norm1(x) <= 1.0
+ 12: norm1(x) <= 1.0
 Bounds
  x free
 End
@@ -23,7 +23,7 @@ GUROBI
 Maximize
   x[0]
 Subject To
- 25: norm1_1 <= 1
+ 12: norm1_1 <= 1
 Bounds
  x[0] free
 General Constraints

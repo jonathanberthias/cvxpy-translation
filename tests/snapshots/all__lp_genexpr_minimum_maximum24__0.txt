@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 178: maximum(X, [ 2. -1.]) <= 2.0
+ 6: maximum(X, [ 2. -1.]) <= 2.0
 Bounds
  X free
 End
@@ -28,8 +28,8 @@ GUROBI
 Maximize
   X[0] + X[1]
 Subject To
- 178[0]: maximum_1 <= 2
- 178[1]: maximum_2 <= 2
+ 6[0]: maximum_1 <= 2
+ 6[1]: maximum_2 <= 2
 Bounds
  X[0] free
  X[1] free

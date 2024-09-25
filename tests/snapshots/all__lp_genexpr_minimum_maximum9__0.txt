@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 65: maximum(x + 1.0, 1.0) <= 2.0
+ 31: maximum(x + 1.0, 1.0) <= 2.0
 Bounds
  x free
 End
@@ -24,7 +24,7 @@ Maximize
   x
 Subject To
  R0: - x + AddExpression_1 = 1
- 65: maximum_2 <= 2
+ 31: maximum_2 <= 2
 Bounds
  x free
  AddExpression_1 free

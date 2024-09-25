@@ -2,8 +2,8 @@ CVXPY
 Maximize
   Sum(X, None, False)
 Subject To
- 207: maximum(X, [ 2. -1.]) <= Y
- 212: Y == 2.0
+ 35: maximum(X, [ 2. -1.]) <= Y
+ 40: Y == 2.0
 Bounds
  X free
  Y free
@@ -34,10 +34,10 @@ GUROBI
 Maximize
   X[0] + X[1]
 Subject To
- 207[0]: maximum_1 - Y[0] <= 0
- 207[1]: maximum_2 - Y[1] <= 0
- 212[0]: Y[0] = 2
- 212[1]: Y[1] = 2
+ 35[0]: maximum_1 - Y[0] <= 0
+ 35[1]: maximum_2 - Y[1] <= 0
+ 40[0]: Y[0] = 2
+ 40[1]: Y[1] = 2
 Bounds
  X[0] free
  X[1] free

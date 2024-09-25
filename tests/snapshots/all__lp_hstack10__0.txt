@@ -2,8 +2,8 @@ CVXPY
 Minimize
   Sum(Hstack(x, y, reshape(1.0, (1,), F)), None, False)
 Subject To
- 108: 1.0 <= x
- 112: 1.0 <= y
+ 24: 1.0 <= x
+ 28: 1.0 <= y
 Bounds
  x free
  y free
@@ -26,9 +26,9 @@ GUROBI
 Minimize
   x[0] + x[1] + y[0] + Constant
 Subject To
- 108[0]: x[0] >= 1
- 108[1]: x[1] >= 1
- 112[0]: y[0] >= 1
+ 24[0]: x[0] >= 1
+ 24[1]: x[1] >= 1
+ 28[0]: y[0] >= 1
 Bounds
  x[0] free
  x[1] free

@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(X + Y, None, False)
 Subject To
- 237: 1.0 <= minimum(X, Y)
+ 16: 1.0 <= minimum(X, Y)
 Bounds
  X free
  Y free
@@ -43,10 +43,10 @@ GUROBI
 Minimize
   X[0,0] + X[0,1] + X[1,0] + X[1,1] + Y[0,0] + Y[0,1] + Y[1,0] + Y[1,1]
 Subject To
- 237[0,0]: minimum_1 >= 1
- 237[0,1]: minimum_2 >= 1
- 237[1,0]: minimum_3 >= 1
- 237[1,1]: minimum_4 >= 1
+ 16[0,0]: minimum_1 >= 1
+ 16[0,1]: minimum_2 >= 1
+ 16[1,0]: minimum_3 >= 1
+ 16[1,1]: minimum_4 >= 1
 Bounds
  X[0,0] free
  X[0,1] free

@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 172: reshape(x, (4,), F) <= [0. 1. 2. 3.]
+ 62: reshape(x, (4,), F) <= [0. 1. 2. 3.]
 Bounds
  x free
 End
@@ -26,10 +26,10 @@ GUROBI
 Maximize
   x[0] + x[1] + x[2] + x[3]
 Subject To
- 172[0]: x[0] <= 0
- 172[1]: x[1] <= 1
- 172[2]: x[2] <= 2
- 172[3]: x[3] <= 3
+ 62[0]: x[0] <= 0
+ 62[1]: x[1] <= 1
+ 62[2]: x[2] <= 2
+ 62[3]: x[3] <= 3
 Bounds
  x[0] free
  x[1] free

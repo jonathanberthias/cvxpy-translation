@@ -2,7 +2,7 @@ CVXPY
 Minimize
   max(x, None, False) + 1.0
 Subject To
- 44: 1.0 <= x
+ 10: 1.0 <= x
 Bounds
  x free
 End
@@ -22,7 +22,7 @@ GUROBI
 Minimize
   x + Constant
 Subject To
- 44: x >= 1
+ 10: x >= 1
 Bounds
  x free
  Constant = 1

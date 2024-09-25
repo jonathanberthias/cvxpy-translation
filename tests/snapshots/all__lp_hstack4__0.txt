@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(Hstack(x), None, False)
 Subject To
- 52: 1.0 <= x
+ 7: 1.0 <= x
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ GUROBI
 Minimize
   x[0]
 Subject To
- 52[0]: x[0] >= 1
+ 7[0]: x[0] >= 1
 Bounds
  x[0] free
 End

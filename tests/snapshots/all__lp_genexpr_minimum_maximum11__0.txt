@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x + y
 Subject To
- 78: 1.0 <= minimum(x, y)
+ 12: 1.0 <= minimum(x, y)
 Bounds
  x free
  y free
@@ -25,7 +25,7 @@ GUROBI
 Minimize
   x[0] + y
 Subject To
- 78: minimum_1 >= 1
+ 12: minimum_1 >= 1
 Bounds
  x[0] free
  y free

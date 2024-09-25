@@ -2,8 +2,8 @@ CVXPY
 Minimize
   Sum(X, None, False)
 Subject To
- 172: 1.0 <= min(X + Y, None, False)
- 177: Y == 1.0
+ 40: 1.0 <= min(X + Y, None, False)
+ 45: Y == 1.0
 Bounds
  X free
  Y free
@@ -32,9 +32,9 @@ Minimize
 Subject To
  R0: - X[0] - Y[0] + AddExpression_1[0] = 0
  R1: - X[1] - Y[1] + AddExpression_1[1] = 0
- 172: min_2 >= 1
- 177[0]: Y[0] = 1
- 177[1]: Y[1] = 1
+ 40: min_2 >= 1
+ 45[0]: Y[0] = 1
+ 45[1]: Y[1] = 1
 Bounds
  X[0] free
  X[1] free
