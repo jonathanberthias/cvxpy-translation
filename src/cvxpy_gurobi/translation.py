@@ -106,7 +106,7 @@ def iterzip_subexpressions(
             if _shape(expr) == ():
                 idx_exprs.append(expr)
             elif _is_scalar(expr):
-                item = expr[*(0,)*len(_shape(expr))]
+                item = expr[(0,) * len(idx)]
                 idx_exprs.append(item)
             else:
                 idx_exprs.append(expr[idx])
