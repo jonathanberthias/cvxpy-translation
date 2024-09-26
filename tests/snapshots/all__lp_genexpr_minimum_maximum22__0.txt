@@ -2,8 +2,8 @@ CVXPY
 Minimize
   Sum(X, None, False)
 Subject To
- 38: -Y <= minimum(X, [ 2. -1.])
- 43: Y == 1.0
+ 39: -Y <= minimum(X, [ 2. -1.])
+ 44: Y == 1.0
 Bounds
  X free
  Y free
@@ -34,10 +34,10 @@ GUROBI
 Minimize
   X[0] + X[1]
 Subject To
- 38[0]: - Y[0] - minimum_1 <= 0
- 38[1]: - Y[1] - minimum_2 <= 0
- 43[0]: Y[0] = 1
- 43[1]: Y[1] = 1
+ 39[0]: - Y[0] - minimum_1 <= 0
+ 39[1]: - Y[1] - minimum_2 <= 0
+ 44[0]: Y[0] = 1
+ 44[1]: Y[1] = 1
 Bounds
  X[0] free
  X[1] free

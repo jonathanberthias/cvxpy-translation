@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(X, None, False)
 Subject To
- 51: -1.0 <= minimum(X + [ 2. -1.], [ 2. -1.])
+ 52: -1.0 <= minimum(X + [ 2. -1.], [ 2. -1.])
 Bounds
  X free
 End
@@ -30,8 +30,8 @@ Minimize
 Subject To
  R0: - X[0] + index_1 = 2
  R1: - X[1] + index_3 = -1
- 51[0]: minimum_2 >= -1
- 51[1]: minimum_4 >= -1
+ 52[0]: minimum_2 >= -1
+ 52[1]: minimum_4 >= -1
 Bounds
  X[0] free
  X[1] free

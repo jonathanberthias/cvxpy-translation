@@ -1,30 +1,35 @@
 CVXPY
-Maximize
-  Sum(X + Y, None, False)
+Minimize
+  Sum(X, None, False)
 Subject To
- 21: maximum(X, Y) <= [[1.00 -2.00]
- [3.00 4.00]]
+ 70: 0.0 <= minimum(X, z, 1.0)
+ 74: z == 1.0
 Bounds
  X free
- Y free
+ z free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1 - C2 - C3 - C4 - C5 - C6 - C7
+  C0 + C1 + C2 + C3
 Subject To
- R0: C0 - C8 <= 0
- R1: C1 - C9 <= 0
- R2: C2 - C10 <= 0
- R3: C3 - C11 <= 0
- R4: C4 - C8 <= 0
- R5: C5 - C9 <= 0
- R6: C6 - C10 <= 0
- R7: C7 - C11 <= 0
- R8: C8 <= 1
- R9: C9 <= 3
- R10: C10 <= -2
- R11: C11 <= 4
+ R0: C8 = 1
+ R1: - C0 - C4 <= 0
+ R2: - C1 - C5 <= 0
+ R3: - C2 - C6 <= 0
+ R4: - C3 - C7 <= 0
+ R5: - C4 - C8 <= 0
+ R6: - C5 - C8 <= 0
+ R7: - C6 - C8 <= 0
+ R8: - C7 - C8 <= 0
+ R9: - C4 <= 1
+ R10: - C5 <= 1
+ R11: - C6 <= 1
+ R12: - C7 <= 1
+ R13: C4 <= 0
+ R14: C5 <= 0
+ R15: C6 <= 0
+ R16: C7 <= 0
 Bounds
  C0 free
  C1 free
@@ -35,35 +40,30 @@ Bounds
  C6 free
  C7 free
  C8 free
- C9 free
- C10 free
- C11 free
 End
 ----------------------------------------
 GUROBI
-Maximize
-  X[0,0] + X[0,1] + X[1,0] + X[1,1] + Y[0,0] + Y[0,1] + Y[1,0] + Y[1,1]
+Minimize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
- 21[0,0]: maximum_1 <= 1
- 21[0,1]: maximum_2 <= -2
- 21[1,0]: maximum_3 <= 3
- 21[1,1]: maximum_4 <= 4
+ 70[0,0]: minimum_1 >= 0
+ 70[0,1]: minimum_2 >= 0
+ 70[1,0]: minimum_3 >= 0
+ 70[1,1]: minimum_4 >= 0
+ 74: z = 1
 Bounds
  X[0,0] free
  X[0,1] free
  X[1,0] free
  X[1,1] free
- Y[0,0] free
- Y[0,1] free
- Y[1,0] free
- Y[1,1] free
- maximum_1 free
- maximum_2 free
- maximum_3 free
- maximum_4 free
+ z free
+ minimum_1 free
+ minimum_2 free
+ minimum_3 free
+ minimum_4 free
 General Constraints
- GC0: maximum_1 = MAX ( X[0,0] , Y[0,0] )
- GC1: maximum_2 = MAX ( X[0,1] , Y[0,1] )
- GC2: maximum_3 = MAX ( X[1,0] , Y[1,0] )
- GC3: maximum_4 = MAX ( X[1,1] , Y[1,1] )
+ GC0: minimum_1 = MIN ( X[0,0] , z , 1 )
+ GC1: minimum_2 = MIN ( X[0,1] , z , 1 )
+ GC2: minimum_3 = MIN ( X[1,0] , z , 1 )
+ GC3: minimum_4 = MIN ( X[1,1] , z , 1 )
 End

@@ -82,7 +82,7 @@ extra-dependencies = [
 [tool.hatch.envs.snapshots]
 description = "The environment used to generate the snapshot LP files"
 template = "latest"
-scripts = { update = "pytest --insta update {args:tests}" }
+scripts = { update = "pytest --insta update {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes"

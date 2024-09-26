@@ -2,7 +2,7 @@ CVXPY
 Minimize
   Sum(X + Y, None, False)
 Subject To
- 31: -1.0 <= minimum(X, Y, [ 2. -1.])
+ 32: -1.0 <= minimum(X, Y, [ 2. -1.])
 Bounds
  X free
  Y free
@@ -33,8 +33,8 @@ GUROBI
 Minimize
   X[0] + X[1] + Y[0] + Y[1]
 Subject To
- 31[0]: minimum_1 >= -1
- 31[1]: minimum_2 >= -1
+ 32[0]: minimum_1 >= -1
+ 32[1]: minimum_2 >= -1
 Bounds
  X[0] free
  X[1] free

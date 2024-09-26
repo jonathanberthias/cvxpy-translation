@@ -101,7 +101,16 @@ def iterzip_subexpressions(
     *exprs: Any, shape: tuple[int, ...]
 ) -> Iterator[tuple[Any, ...]]:
     for idx in np.ndindex(shape):
-        yield tuple(expr[idx] for expr in exprs)
+        idx_exprs = []
+        for expr in exprs:
+            if _shape(expr) == ():
+                idx_exprs.append(expr)
+            elif _is_scalar(expr):
+                item = expr[(0,) * len(idx)]
+                idx_exprs.append(item)
+            else:
+                idx_exprs.append(expr[idx])
+        yield tuple(idx_exprs)
 
 
 def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
