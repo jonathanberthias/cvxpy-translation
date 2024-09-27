@@ -59,6 +59,7 @@ __all__ = (
 )
 
 CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
+GUROBIPY_VERSION = gp.gurobi.version()
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
