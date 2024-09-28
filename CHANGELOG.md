@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Newly supported atoms
+
+- `cp.quad_form` expressions are handled, both when the vector is a variable
+  and when the PSD matrix is a variable (#60).
+
 ## [1.0.0] - 2024-09-28
 
 ### Newly supported atoms

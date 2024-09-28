@@ -1,0 +1,26 @@
+CVXPY
+Minimize
+  QuadForm(x, [[4.00 6.00]
+ [6.00 10.00]])
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 8 C0 ^2 + 24 C0 * C1 + 20 C1 ^2 ] / 2 
+Subject To
+Bounds
+ C0 free
+ C1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+ [ 8 x[0] ^2 + 24 x[0] * x[1] + 20 x[1] ^2 ] / 2 
+Subject To
+Bounds
+ x[0] free
+ x[1] free
+End

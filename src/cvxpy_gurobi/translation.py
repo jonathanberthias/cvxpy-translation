@@ -454,6 +454,12 @@ class Translater:
         # FIXME: should we do something here?
         return self.visit(node.args[0])
 
+    def visit_QuadForm(self, node: cp.QuadForm) -> Any:
+        vec, psd_mat = node.args
+        vec = self.visit(vec)
+        psd_mat = self.visit(psd_mat)
+        return vec @ psd_mat @ vec
+
     def visit_quad_over_lin(self, node: quad_over_lin) -> Any:
         x, y = node.args
         x = self.visit(x)
