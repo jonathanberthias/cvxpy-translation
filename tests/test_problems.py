@@ -196,7 +196,8 @@ def quad_form() -> Iterator[cp.Problem]:
     _A = np.arange(4).reshape((2, 2))
     A = _A.T @ _A
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
-    yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
+    if GUROBIPY_VERSION >= (11,):
+        yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
 
     x = np.arange(1, 3)
     # Can't constrain to PSD=True because Gurobi does not solve PSD problems
