@@ -1,0 +1,29 @@
+CVXPY
+Minimize
+  [1. 2.] @ A @ [1. 2.]
+Subject To
+Bounds
+ 0.0 <= A
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + 2 C1 + 2 C2 + 4 C3
+Subject To
+ R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: - C2 <= 0
+ R3: - C3 <= 0
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  A[0,0] + 2 A[0,1] + 2 A[1,0] + 4 A[1,1]
+Subject To
+Bounds
+End

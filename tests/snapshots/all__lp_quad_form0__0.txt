@@ -1,0 +1,23 @@
+CVXPY
+Minimize
+  QuadForm(x, [[1.]])
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 ] / 2 
+Subject To
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Minimize
+ [ 2 x[0] ^2 ] / 2 
+Subject To
+Bounds
+ x[0] free
+End

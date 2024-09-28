@@ -49,6 +49,7 @@ def all_problems() -> Generator[ProblemTestCase, None, None]:
         quadratic_expressions,
         matrix_constraints,
         matrix_quadratic_expressions,
+        quad_form,
         genexpr_abs,
         genexpr_min_max,
         genexpr_minimum_maximum,
@@ -182,6 +183,25 @@ def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(x)), [cp.sum_squares(x) <= 1])
     yield cp.Problem(cp.Minimize(cp.sum_squares(A @ x)))
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
+
+
+@group_cases("quad_form")
+def quad_form() -> Iterator[cp.Problem]:
+    x = cp.Variable((1,), name="x")
+    A = np.array([[1]])
+    yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
+
+    x = cp.Variable(2, name="x")
+    y = np.array([1, 2])
+    _A = np.arange(4).reshape((2, 2))
+    A = _A.T @ _A
+    yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
+    yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
+
+    x = np.arange(1, 3)
+    # Can't constrain to PSD=True because Gurobi does not solve PSD problems
+    A = cp.Variable((2, 2), name="A", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
 @group_cases("genexpr_abs")
