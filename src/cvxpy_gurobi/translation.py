@@ -16,8 +16,6 @@ import gurobipy as gp
 import numpy as np
 import numpy.typing as npt
 
-from cvxpy_gurobi import GUROBIPY_VERSION
-
 if TYPE_CHECKING:
     from typing import TypeAlias
 
@@ -48,6 +46,9 @@ if TYPE_CHECKING:
     from cvxpy.constraints.zero import Equality
     from cvxpy.utilities.canonical import Canonical
 
+
+CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
+GUROBIPY_VERSION = gp.gurobi.version()
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]

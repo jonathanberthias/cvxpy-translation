@@ -12,7 +12,7 @@ import cvxpy as cp
 import numpy as np
 import scipy.sparse as sp
 
-from cvxpy_gurobi import CVXPY_VERSION
+from cvxpy_gurobi.translation import CVXPY_VERSION
 from cvxpy_gurobi.translation import GUROBIPY_VERSION
 
 
