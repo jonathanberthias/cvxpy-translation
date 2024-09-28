@@ -22,6 +22,7 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_gurobi._version import __version__
 from cvxpy_gurobi._version import __version_tuple__
+from cvxpy_gurobi.translation import CVXPY_VERSION
 from cvxpy_gurobi.translation import InvalidNormError
 from cvxpy_gurobi.translation import InvalidPowerError
 from cvxpy_gurobi.translation import Translater
@@ -58,7 +59,6 @@ __all__ = (
     "UnsupportedExpressionError",
 )
 
-CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
