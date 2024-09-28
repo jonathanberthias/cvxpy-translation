@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [1.0.0] - 2024-09-28
+
 ### Newly supported atoms
 
 - CVXPY atoms that have an equivalent generalized expression in
@@ -72,3 +74,4 @@ In this release, the following elements are already covered:
 
 
 [0.1.0]: https://github.com/jonathanberthias/cvxpy-gurobi/compare/7d97aaf...v0.1.0
+[1.0.0]: https://github.com/jonathanberthias/cvxpy-gurobi/compare/v0.1.0...v1.0.0
