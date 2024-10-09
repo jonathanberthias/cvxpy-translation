@@ -53,7 +53,7 @@ build.hooks.vcs.version-file = "src/cvxpy_gurobi/_version.py"
 description = "Base environment for other envs to inherit from"
 dependencies = [
   "pytest==7.4.4",
-  "pytest-insta==0.2.0",
+  "pytest-insta==0.3.0",
   "pytest-xdist==3.6.1",
 ]
 installer = "uv"
