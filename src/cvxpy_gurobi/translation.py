@@ -322,6 +322,9 @@ class Translater:
     def visit_Constant(self, const: cp.Constant) -> Any:
         return const.value
 
+    def visit_Parameter(self, param: cp.Parameter) -> Any:
+        return param.value
+
     def visit_DivExpression(self, node: DivExpression) -> Any:
         return self.visit(node.args[0]) / self.visit(node.args[1])
 
