@@ -80,6 +80,10 @@ class InvalidNormError(UnsupportedExpressionError):
         "Unsupported norm: {node}, only 1-norm, 2-norm and inf-norm are supported"
     )
 
+class InvalidParameterError(UnsupportedExpressionError):
+    msg_template = "Unsupported parameter: {node} parameter is not set, only set parameters are supported"
+
+
 
 def _shape(expr: Any) -> tuple[int, ...]:
     return getattr(expr, "shape", ())
@@ -323,7 +327,12 @@ class Translater:
         return const.value
 
     def visit_Parameter(self, param: cp.Parameter) -> Any:
-        return param.value
+        value = param.value
+
+        if value is None:
+            raise InvalidParameterError(param)
+
+        return value
 
     def visit_DivExpression(self, node: DivExpression) -> Any:
         return self.visit(node.args[0]) / self.visit(node.args[1])
