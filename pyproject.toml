@@ -90,10 +90,10 @@ env-vars = { UV_RESOLUTION = "lowest-direct" }
 python = "3.8"
 extra-dependencies = [
   # we have to set a version here since cvxpy is not listed as a dependency
-  # note that we don't use cvxpy-base because it was added in 1.1.16
-  "cvxpy>=1.1.2",
+  # we use cvxpy-base to avoid installing unnecessary dependencies
+  "cvxpy-base>=1.2.0",
   # bundled license is expired on older versions of gurobipy
-  "gurobipy>=10",
+  "gurobipy>=11",
 ]
 
 [tool.hatch.envs.hatch-test]
