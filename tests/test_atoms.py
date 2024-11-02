@@ -22,3 +22,14 @@ def test_failing_atoms(case: test_problems.ProblemTestCase) -> None:
     translater = Translater(gp.Model())
     with pytest.raises(cvxpy_gurobi.UnsupportedExpressionError):
         translater.visit(case.problem.objective.expr)
+
+
+def test_parameter() -> None:
+    translater = Translater(gp.Model())
+    p = cp.Parameter()
+    # Non-happy path raises
+    with pytest.raises(cvxpy_gurobi.InvalidParameterError):
+        translater.visit(p)
+    # Happy path succeeds
+    p.value = 1
+    translater.visit(p)
