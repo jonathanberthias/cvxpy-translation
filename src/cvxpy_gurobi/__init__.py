@@ -24,8 +24,8 @@ from cvxpy_gurobi._version import __version__
 from cvxpy_gurobi._version import __version_tuple__
 from cvxpy_gurobi.translation import CVXPY_VERSION
 from cvxpy_gurobi.translation import InvalidNormError
-from cvxpy_gurobi.translation import InvalidPowerError
 from cvxpy_gurobi.translation import InvalidParameterError
+from cvxpy_gurobi.translation import InvalidPowerError
 from cvxpy_gurobi.translation import Translater
 from cvxpy_gurobi.translation import UnsupportedConstraintError
 from cvxpy_gurobi.translation import UnsupportedError

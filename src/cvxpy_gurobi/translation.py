@@ -80,9 +80,9 @@ class InvalidNormError(UnsupportedExpressionError):
         "Unsupported norm: {node}, only 1-norm, 2-norm and inf-norm are supported"
     )
 
+
 class InvalidParameterError(UnsupportedExpressionError):
     msg_template = "Unsupported parameter: {node} parameter is not set, only set parameters are supported"
-
 
 
 def _shape(expr: Any) -> tuple[int, ...]:
