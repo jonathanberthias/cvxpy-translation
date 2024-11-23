@@ -73,7 +73,7 @@ update-snapshots = "hatch run snapshots:update {args}"
 description = "Dependencies at their most up-to-date versions"
 python = "3.12"
 extra-dependencies = [
-  "cvxpy-base==1.5.3",
+  "cvxpy-base==1.6.0",
   "gurobipy==11.0.3",
   "numpy==2.1.3",
   "scipy==1.14.1",
