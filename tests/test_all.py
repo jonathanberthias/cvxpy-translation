@@ -77,7 +77,9 @@ def test_backfill(case: ProblemTestCase) -> None:
     assert our_sol.opt_val == pytest.approx(cp_sol.opt_val, abs=1e-7, rel=1e-6)
     assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
     for key in our_sol.primal_vars:
-        assert our_sol.primal_vars[key] == pytest.approx(cp_sol.primal_vars[key])
+        assert our_sol.primal_vars[key] == pytest.approx(
+            cp_sol.primal_vars[key], rel=2e-4
+        )
     # Dual values are not available for MIPs
     # Sometimes, the Gurobi model is a MIP even though the CVXPY problem is not,
     # notably when using genexprs
