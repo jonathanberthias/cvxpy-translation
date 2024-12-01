@@ -1,11 +1,16 @@
 # Changelog
 
-## Unreleased
+## [1.1.0] - 2024-12-01
 
 ### Newly supported atoms
 
 - `cp.quad_form` expressions are handled, both when the vector is a variable and
   when the PSD matrix is a variable (#60).
+- `cp.Parameter`s that have a value assigned are treated like constants (#67)
+
+### Dependencies
+
+Add support for CVXPY 1.6 and Gurobi 12.
 
 ## [1.0.0] - 2024-09-28
 
