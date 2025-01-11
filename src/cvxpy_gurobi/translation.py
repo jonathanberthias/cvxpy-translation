@@ -490,7 +490,10 @@ class Translater:
         (x,) = node.args
         target_shape = node.shape
         if x.is_constant():
-            return x.value.reshape(target_shape)
+            try:
+                return x.value.reshape(target_shape)
+            except AttributeError:
+                return np.reshape(x, target_shape)
         expr = self.visit(x)
         if isinstance(expr, gp.Var):
             expr = gp.MVar.fromvar(expr)
