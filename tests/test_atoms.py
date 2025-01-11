@@ -38,7 +38,7 @@ def test_parameter() -> None:
 def test_parameter_reshape() -> None:
     """Parameter.value is not necessarily a numpy/scipy array,
     so reshaping is not always straightforward.
-    
+
     See https://github.com/jonathanberthias/cvxpy-gurobi/issues/76
     """
     translater = Translater(gp.Model())
