@@ -33,3 +33,15 @@ def test_parameter() -> None:
     # Happy path succeeds
     p.value = 1
     translater.visit(p)
+
+
+def test_parameter_reshape() -> None:
+    """Parameter.value is not necessarily a numpy/scipy array,
+    so reshaping is not always straightforward.
+
+    See https://github.com/jonathanberthias/cvxpy-gurobi/issues/76
+    """
+    translater = Translater(gp.Model())
+    p = cp.Parameter()
+    p.value = 1
+    translater.visit(cp.reshape(p, (1,)))
