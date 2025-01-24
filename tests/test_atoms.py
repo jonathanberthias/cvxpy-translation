@@ -44,4 +44,4 @@ def test_parameter_reshape() -> None:
     translater = Translater(gp.Model())
     p = cp.Parameter()
     p.value = 1
-    translater.visit(cp.reshape(p, (1,)))
+    translater.visit(cp.reshape(p, (1,), order="C"))

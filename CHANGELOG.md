@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Reshaping a constant with a Python scalar value no longer errors due to missing `reshape` method (#77)
+
 ## [1.1.0] - 2024-12-01
 
 ### Newly supported atoms
