@@ -11,7 +11,7 @@ testing for 3.13 now that Gurobi supports it.
 
 - Reshaping a constant with a Python scalar value no longer errors due to
   missing `reshape` method
-  ([#77](https://github.com/jonathanberthias/cvxpy-gurobi/pull/77)) Thanks to
+  ([#77](https://github.com/jonathanberthias/cvxpy-gurobi/pull/77)). Thanks to
   Halil Sen for reporting the bug!
 
 ### New
@@ -27,7 +27,7 @@ testing for 3.13 now that Gurobi supports it.
   when the PSD matrix is a variable
   ([#60](https://github.com/jonathanberthias/cvxpy-gurobi/pull/60)).
 - `cp.Parameter`s that have a value assigned are treated like constants
-  ([#67](https://github.com/jonathanberthias/cvxpy-gurobi/pull/67)) Thanks to
+  ([#67](https://github.com/jonathanberthias/cvxpy-gurobi/pull/67)). Thanks to
   Halil Sen for contributing this feature!
 
 ### Dependencies
@@ -124,3 +124,7 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-gurobi/compare/7d97aaf...v0.1.0
 [1.0.0]:
   https://github.com/jonathanberthias/cvxpy-gurobi/compare/v0.1.0...v1.0.0
+[1.1.0]:
+  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.0.0...v1.1.0
+[1.1.1]:
+  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.1.0...v1.1.1
