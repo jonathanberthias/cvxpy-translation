@@ -24,7 +24,7 @@ jobs:
       matrix:
         include:
           - env: "latest"
-            python: "3.12"
+            python: "3.13"
           - env: "oldest"
             python: "3.8"
 
