@@ -29,6 +29,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -71,7 +72,7 @@ update-snapshots = "hatch run snapshots:update {args}"
 
 [tool.hatch.envs.latest]
 description = "Dependencies at their most up-to-date versions"
-python = "3.12"
+python = "3.13"
 extra-dependencies = [
   "cvxpy-base==1.6.0",
   "gurobipy==12.0.1",
