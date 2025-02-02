@@ -35,9 +35,14 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     problem = case.problem
     cvxpy_lines = lp_from_cvxpy(problem)
 
-    quiet_solve(problem)
-    generated_model = problem.solver_stats.extra_stats
-    cvxpy_gurobi_lines = lp_from_gurobi(generated_model, tmp_path)
+    try:
+        quiet_solve(problem)
+    except cp.SolverError as e:
+        # The Gurobi interface in cvxpy can't solve some problems
+        cvxpy_gurobi_lines = [str(e)]
+    else:
+        generated_model = problem.solver_stats.extra_stats
+        cvxpy_gurobi_lines = lp_from_gurobi(generated_model, tmp_path)
 
     model = cvxpy_gurobi.build_model(problem)
     gurobi_lines = lp_from_gurobi(model, tmp_path)
@@ -69,8 +74,15 @@ def test_backfill(case: ProblemTestCase) -> None:
     our_sol: Solution = problem.solution
     our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
     assert our_model.Status == gp.GRB.Status.OPTIMAL
+    assert our_sol.opt_val is not None
+    assert our_sol.primal_vars
 
-    quiet_solve(problem)
+    try:
+        quiet_solve(problem)
+    except cp.SolverError:
+        # The problem can't be solved through CVXPY, so we can't compare solutions
+        return
+
     cp_sol: Solution = problem.solution
 
     assert our_sol.status == cp_sol.status

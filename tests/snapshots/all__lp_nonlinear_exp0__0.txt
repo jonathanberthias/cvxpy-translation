@@ -1,0 +1,24 @@
+CVXPY
+Minimize
+  exp(x)
+Subject To
+ 5: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['GUROBI']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+GUROBI
+Minimize
+  exp_1
+Subject To
+ 5: x >= 1
+Bounds
+ x free
+ exp_1 free
+General Constraints
+\ exp_1 = exp(x)
+ GC0: exp_1 = NL : ( EXP , -1 , -1 ) ( VARIABLE , x , 0 )
+End

@@ -65,16 +65,19 @@ pre-compiled by CVXPY, meaning the model is not exactly the same as the one you
 have written. This is great for solvers with low-level APIs, such as SCS or
 OSQP, but `gurobipy` allows you to express your models at a higher-level.
 
-Providing the raw model to Gurobi is a better idea in general since the Gurobi
-solver is able to compile the problem with a better accuracy. The chosen
-algorithm can also be different depending on the way it is modelled, potentially
-leading to better performance.
+Providing the raw model to Gurobi can be a better idea in general to let the
+Gurobi solver use its own heuristics. The chosen algorithm can be different
+depending on the way it is modelled, potentially leading to better performance.
 
 In addition, CVXPY does not give access to the model before solving it. CVXPY
 must therefore make some choices for you, such as setting `QCPDual` to 1 on all
 non-MIP models. Having access to the model can help if you want to handle the
 call to `.optimize()` in a non-standard way, e.g. by sending it to an async
 loop.
+
+Another feature is the ability to use the latest features of Gurobi, such as
+non-linear expressions, which are not yet supported by the Gurobi interface in
+CVXPY.
 
 ### Example
 
