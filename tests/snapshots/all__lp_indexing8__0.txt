@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(m(array([0]), slice(None, None, None)), None, False)
+  Sum(m[[0], :], None, False)
 Subject To
 Bounds
  0.0 <= m

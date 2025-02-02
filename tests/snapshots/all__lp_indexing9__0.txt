@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(x[ True False], None, False)
+  Sum(x[True, False], None, False)
 Subject To
 Bounds
  0.0 <= x
