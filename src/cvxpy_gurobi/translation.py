@@ -49,6 +49,7 @@ if TYPE_CHECKING:
 
 CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
 GUROBIPY_VERSION = gp.gurobi.version()
+GUROBI_MAJOR = GUROBIPY_VERSION[0]
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
@@ -342,6 +343,13 @@ class Translater:
         left = self.visit(left)
         right = self.visit(right)
         return left == right
+
+    def visit_exp(self, node: cp.exp):
+        (arg,) = node.args
+        expr = self.visit(arg)
+        return self.make_auxilliary_variable_for(
+            gp.nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
+        )
 
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
         args = node.args

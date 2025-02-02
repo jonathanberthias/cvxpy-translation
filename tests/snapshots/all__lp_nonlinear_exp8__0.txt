@@ -1,0 +1,29 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 22: exp(x) <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['GUROBI']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+GUROBI
+Maximize
+  x[0] + x[1]
+Subject To
+ 22[0]: exp_1[0] <= 1
+ 22[1]: exp_1[1] <= 1
+Bounds
+ x[0] free
+ x[1] free
+ exp_1[0] free
+ exp_1[1] free
+General Constraints
+\ exp_1[0] = exp(x[0])
+ GC0: exp_1[0] = NL : ( EXP , -1 , -1 ) ( VARIABLE , x[0] , 0 )
+\ exp_1[1] = exp(x[1])
+ GC1: exp_1[1] = NL : ( EXP , -1 , -1 ) ( VARIABLE , x[1] , 0 )
+End

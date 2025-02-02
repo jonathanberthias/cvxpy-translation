@@ -13,6 +13,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from cvxpy_gurobi.translation import CVXPY_VERSION
+from cvxpy_gurobi.translation import GUROBI_MAJOR
 from cvxpy_gurobi.translation import GUROBIPY_VERSION
 
 
@@ -24,7 +25,7 @@ class ProblemTestCase:
 
 
 def group_cases(
-    group: str, *, invalid_reason: str | None = None
+    group: str, *, available: bool = True, invalid_reason: str | None = None
 ) -> Callable[
     [Callable[[], Iterator[cp.Problem]]], Callable[[], Iterator[ProblemTestCase]]
 ]:
@@ -33,8 +34,9 @@ def group_cases(
     ) -> Callable[[], Iterator[ProblemTestCase]]:
         @wraps(iter_fn)
         def inner() -> Iterator[ProblemTestCase]:
-            for problem in iter_fn():
-                yield ProblemTestCase(problem, group, invalid_reason=invalid_reason)
+            if available:
+                for problem in iter_fn():
+                    yield ProblemTestCase(problem, group, invalid_reason=invalid_reason)
 
         return inner
 
@@ -60,8 +62,9 @@ def all_problems() -> Generator[ProblemTestCase, None, None]:
         sum_scalar,
         sum_axis,
         reshape,
-        hstack if GUROBIPY_VERSION >= (11,) else lambda: iter(()),
-        vstack if GUROBIPY_VERSION >= (11,) else lambda: iter(()),
+        hstack,
+        vstack,
+        nonlinear_exp,
         attributes,
         invalid_expressions,
     ):
@@ -628,14 +631,35 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
 
 
-@group_cases("vstack")
+@group_cases("vstack", available=GUROBI_MAJOR >= 11)
 def vstack() -> Iterator[cp.Problem]:
     yield from _stack("vstack")
 
 
-@group_cases("hstack")
+@group_cases("hstack", available=GUROBI_MAJOR >= 11)
 def hstack() -> Iterator[cp.Problem]:
     yield from _stack("hstack")
+
+
+@group_cases("nonlinear_exp", available=GUROBI_MAJOR >= 12)
+def nonlinear_exp() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x")
+    yield cp.Problem(cp.Minimize(cp.exp(x)), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.exp(x + 1)), [x >= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.exp(x) <= 1])
+
+    reset_id_counter()
+    x = cp.Variable(1, name="x")
+    yield cp.Problem(cp.Minimize(cp.exp(x)), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.exp(x + 1)), [x >= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.exp(x) <= 1])
+
+    reset_id_counter()
+    x = cp.Variable(2, name="x")
+    t = np.array([1, 2])
+    yield cp.Problem(cp.Minimize(cp.sum(cp.exp(x))), [x >= 1])
+    yield cp.Problem(cp.Minimize(cp.sum(cp.exp(x + t))), [x >= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.exp(x) <= 1])
 
 
 @group_cases("attributes")
