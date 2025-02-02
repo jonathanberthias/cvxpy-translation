@@ -56,7 +56,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
         )
     )
 
-    if cvxpy_gurobi.CVXPY_VERSION[:2] == (1, 5):
+    if cvxpy_gurobi.CVXPY_VERSION[:2] == (1, 6):
         assert snapshot() == output
     else:
         # don't update snapshots nor delete them
