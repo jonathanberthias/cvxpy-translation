@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### New
+
+- Add support for `cp.exp` through the non-linear expressions added in Gurobi 12
+  ([#86](https://github.com/jonathanberthias/cvxpy-gurobi/pull/86))
+
 ## [1.1.1] - 2025-02-01
 
 This small release fixes a bug with manually set parameter values and adds
