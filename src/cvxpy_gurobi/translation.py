@@ -15,6 +15,7 @@ import cvxpy as cp
 import gurobipy as gp
 import numpy as np
 import numpy.typing as npt
+from gurobipy import nlfunc
 
 if TYPE_CHECKING:
     from typing import TypeAlias
@@ -348,7 +349,7 @@ class Translater:
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            gp.nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
+            nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
         )
 
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
@@ -372,6 +373,20 @@ class Translater:
             upper >= lower
             if _should_reverse_inequality(lower, upper)
             else lower <= upper
+        )
+
+    def visit_log(self, node: cp.log) -> Any:
+        (arg,) = node.args
+        expr = self.visit(arg)
+        return self.make_auxilliary_variable_for(
+            nlfunc.log(expr), "log", desired_shape=_shape(expr)
+        )
+
+    def visit_log1p(self, node: cp.log1p) -> Any:
+        (arg,) = node.args
+        expr = self.visit(arg)
+        return self.make_auxilliary_variable_for(
+            nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
         )
 
     def _min_max(

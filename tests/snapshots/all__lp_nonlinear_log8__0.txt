@@ -1,0 +1,29 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 21: 1.0 <= log(x)
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['GUROBI']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+GUROBI
+Minimize
+  x[0] + x[1]
+Subject To
+ 21[0]: log_1[0] >= 1
+ 21[1]: log_1[1] >= 1
+Bounds
+ x[0] free
+ x[1] free
+ log_1[0] free
+ log_1[1] free
+General Constraints
+\ log_1[0] = log(x[0])
+ GC0: log_1[0] = NL : ( LOG , -1 , -1 ) ( VARIABLE , x[0] , 0 )
+\ log_1[1] = log(x[1])
+ GC1: log_1[1] = NL : ( LOG , -1 , -1 ) ( VARIABLE , x[1] , 0 )
+End
