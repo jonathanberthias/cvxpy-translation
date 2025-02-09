@@ -4,7 +4,8 @@
 
 ### New
 
-- Add support for `cp.exp`, `cp.log` and `cp.log1p` through the non-linear expressions added in Gurobi 12
+- Add support for `cp.exp`, `cp.log` and `cp.log1p` through the non-linear
+  expressions added in Gurobi 12
   ([#86](https://github.com/jonathanberthias/cvxpy-gurobi/pull/86))
 
 ## [1.1.1] - 2025-02-01
