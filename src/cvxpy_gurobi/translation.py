@@ -348,7 +348,7 @@ class Translater:
         right = self.visit(right)
         return left == right
 
-    def visit_exp(self, node: cp.exp):
+    def visit_exp(self, node: cp.exp) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtom(node)
         (arg,) = node.args
@@ -380,7 +380,7 @@ class Translater:
             else lower <= upper
         )
 
-    def visit_log(self, node: cp.log) -> Any:
+    def visit_log(self, node: cp.log) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtom(node)
         (arg,) = node.args
@@ -389,7 +389,7 @@ class Translater:
             gp.nlfunc.log(expr), "log", desired_shape=_shape(expr)
         )
 
-    def visit_log1p(self, node: cp.log1p) -> Any:
+    def visit_log1p(self, node: cp.log1p) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtom(node)
         (arg,) = node.args
