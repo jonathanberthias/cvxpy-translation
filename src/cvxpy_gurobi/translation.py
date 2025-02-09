@@ -83,7 +83,9 @@ class InvalidNormError(UnsupportedExpressionError):
 
 
 class InvalidNonlinearAtomError(UnsupportedExpressionError):
-    msg_template = "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
+    msg_template = (
+        "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
+    )
 
 
 class InvalidParameterError(UnsupportedExpressionError):
