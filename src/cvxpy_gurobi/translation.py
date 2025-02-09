@@ -82,8 +82,14 @@ class InvalidNormError(UnsupportedExpressionError):
     )
 
 
+class InvalidNonlinearAtomError(UnsupportedExpressionError):
+    msg_template = (
+        "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
+    )
+
+
 class InvalidParameterError(UnsupportedExpressionError):
-    msg_template = "Unsupported parameter: {node} parameter is not set, only set parameters are supported"
+    msg_template = "Unsupported parameter: value for {node} is not set"
 
 
 def _shape(expr: Any) -> tuple[int, ...]:
@@ -344,7 +350,9 @@ class Translater:
         right = self.visit(right)
         return left == right
 
-    def visit_exp(self, node: cp.exp):
+    def visit_exp(self, node: cp.exp) -> AnyVar:
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtomError(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
@@ -372,6 +380,24 @@ class Translater:
             upper >= lower
             if _should_reverse_inequality(lower, upper)
             else lower <= upper
+        )
+
+    def visit_log(self, node: cp.log) -> AnyVar:
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtomError(node)
+        (arg,) = node.args
+        expr = self.visit(arg)
+        return self.make_auxilliary_variable_for(
+            gp.nlfunc.log(expr), "log", desired_shape=_shape(expr)
+        )
+
+    def visit_log1p(self, node: cp.log1p) -> AnyVar:
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtomError(node)
+        (arg,) = node.args
+        expr = self.visit(arg)
+        return self.make_auxilliary_variable_for(
+            gp.nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
         )
 
     def _min_max(

@@ -1,0 +1,24 @@
+CVXPY
+Maximize
+  log(x)
+Subject To
+ 5: x <= 2.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['GUROBI']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+GUROBI
+Maximize
+  log_1
+Subject To
+ 5: x <= 2
+Bounds
+ x free
+ log_1 free
+General Constraints
+\ log_1 = log(x)
+ GC0: log_1 = NL : ( LOG , -1 , -1 ) ( VARIABLE , x , 0 )
+End

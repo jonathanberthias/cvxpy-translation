@@ -65,6 +65,7 @@ def all_problems() -> Generator[ProblemTestCase, None, None]:
         hstack,
         vstack,
         nonlinear_exp,
+        nonlinear_log,
         attributes,
         invalid_expressions,
     ):
@@ -660,6 +661,26 @@ def nonlinear_exp() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(cp.exp(x))), [x >= 1])
     yield cp.Problem(cp.Minimize(cp.sum(cp.exp(x + t))), [x >= 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.exp(x) <= 1])
+
+
+@group_cases("nonlinear_log", available=GUROBI_MAJOR >= 12)
+def nonlinear_log() -> Iterator[cp.Problem]:
+    x = cp.Variable(name="x")
+    yield cp.Problem(cp.Maximize(cp.log(x)), [x <= 2])
+    yield cp.Problem(cp.Maximize(cp.log1p(x)), [x <= 2])
+    yield cp.Problem(cp.Minimize(x), [cp.log(x) >= -1])
+
+    reset_id_counter()
+    x = cp.Variable(1, name="x")
+    yield cp.Problem(cp.Maximize(cp.log(x)), [x <= 0.5])
+    yield cp.Problem(cp.Maximize(cp.log1p(x + 1)), [x <= -0.5])
+    yield cp.Problem(cp.Minimize(x), [cp.log(x) >= 1])
+
+    reset_id_counter()
+    x = cp.Variable(2, name="x")
+    yield cp.Problem(cp.Maximize(cp.sum(cp.log(x))), [x <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(cp.log1p(x))), [x <= -0.5])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.log(x) >= 1])
 
 
 @group_cases("attributes")

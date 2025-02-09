@@ -1,0 +1,25 @@
+CVXPY
+Maximize
+  log1p(x + 1.0)
+Subject To
+ 11: x <= -0.5
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['GUROBI']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+GUROBI
+Maximize
+  log1p_1[0]
+Subject To
+ 11[0]: x[0] <= -0.5
+Bounds
+ x[0] free
+ log1p_1[0] free
+General Constraints
+\ log1p_1[0] = log(2 + x[0])
+ GC0: log1p_1[0] = NL : ( LOG , -1 , -1 ) ( PLUS , -1 , 0 ) 
+  ( CONSTANT , 2 , 1 ) ( VARIABLE , x[0] , 1 )
+End
