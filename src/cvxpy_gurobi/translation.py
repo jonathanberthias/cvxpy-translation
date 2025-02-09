@@ -82,7 +82,7 @@ class InvalidNormError(UnsupportedExpressionError):
     )
 
 
-class InvalidNonlinearAtom(UnsupportedExpressionError):
+class InvalidNonlinearAtomError(UnsupportedExpressionError):
     msg_template = "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
 
 
@@ -350,7 +350,7 @@ class Translater:
 
     def visit_exp(self, node: cp.exp) -> AnyVar:
         if GUROBI_MAJOR < 12:
-            raise InvalidNonlinearAtom(node)
+            raise InvalidNonlinearAtomError(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
@@ -382,7 +382,7 @@ class Translater:
 
     def visit_log(self, node: cp.log) -> AnyVar:
         if GUROBI_MAJOR < 12:
-            raise InvalidNonlinearAtom(node)
+            raise InvalidNonlinearAtomError(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
@@ -391,7 +391,7 @@ class Translater:
 
     def visit_log1p(self, node: cp.log1p) -> AnyVar:
         if GUROBI_MAJOR < 12:
-            raise InvalidNonlinearAtom(node)
+            raise InvalidNonlinearAtomError(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
