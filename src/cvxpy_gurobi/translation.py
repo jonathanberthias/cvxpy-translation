@@ -15,7 +15,6 @@ import cvxpy as cp
 import gurobipy as gp
 import numpy as np
 import numpy.typing as npt
-from gurobipy import nlfunc
 
 if TYPE_CHECKING:
     from typing import TypeAlias
@@ -83,8 +82,12 @@ class InvalidNormError(UnsupportedExpressionError):
     )
 
 
+class InvalidNonlinearAtom(UnsupportedExpressionError):
+    msg_template = "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
+
+
 class InvalidParameterError(UnsupportedExpressionError):
-    msg_template = "Unsupported parameter: {node} parameter is not set, only set parameters are supported"
+    msg_template = "Unsupported parameter: value for {node} is not set"
 
 
 def _shape(expr: Any) -> tuple[int, ...]:
@@ -346,10 +349,12 @@ class Translater:
         return left == right
 
     def visit_exp(self, node: cp.exp):
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtom(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
+            gp.nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
         )
 
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
@@ -376,17 +381,21 @@ class Translater:
         )
 
     def visit_log(self, node: cp.log) -> Any:
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtom(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            nlfunc.log(expr), "log", desired_shape=_shape(expr)
+            gp.nlfunc.log(expr), "log", desired_shape=_shape(expr)
         )
 
     def visit_log1p(self, node: cp.log1p) -> Any:
+        if GUROBI_MAJOR < 12:
+            raise InvalidNonlinearAtom(node)
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
+            gp.nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
         )
 
     def _min_max(
