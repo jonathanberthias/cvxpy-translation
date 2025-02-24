@@ -48,7 +48,6 @@ if TYPE_CHECKING:
     from cvxpy.utilities.canonical import Canonical
 
 
-CVXPY_VERSION: tuple[int]
 try:
     CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
 except importlib.metadata.PackageNotFoundError:
