@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import operator
 from functools import reduce
 from math import prod
@@ -47,7 +48,10 @@ if TYPE_CHECKING:
     from cvxpy.utilities.canonical import Canonical
 
 
-CVXPY_VERSION = tuple(map(int, cp.__version__.split(".")))
+try:
+    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
+except importlib.metadata.PackageNotFoundError:
+    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy-base").split(".")))
 GUROBIPY_VERSION = gp.gurobi.version()
 GUROBI_MAJOR = GUROBIPY_VERSION[0]
 
