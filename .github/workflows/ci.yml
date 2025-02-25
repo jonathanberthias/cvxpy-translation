@@ -11,11 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v5
+      - name: Check
+        uses: astral-sh/ruff-action@v3
 
-      - name: Run linter
-        run: uvx hatch fmt --check
+      - name: Format
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check"
 
   test:
     runs-on: ubuntu-latest
