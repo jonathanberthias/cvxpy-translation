@@ -209,7 +209,7 @@ def _should_reverse_inequality(lower: object, upper: object) -> bool:
 
 
 class Translater:
-    def __init__(self, model: gp.Model):
+    def __init__(self, model: gp.Model) -> None:
         self.model = model
         self.vars: dict[int, AnyVar] = {}
         self._aux_id = 0

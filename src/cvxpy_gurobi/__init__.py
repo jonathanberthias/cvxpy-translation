@@ -23,6 +23,7 @@ from cvxpy.settings import SOLUTION_PRESENT
 from cvxpy_gurobi._version import __version__
 from cvxpy_gurobi._version import __version_tuple__
 from cvxpy_gurobi.translation import CVXPY_VERSION
+from cvxpy_gurobi.translation import InvalidNonlinearAtomError
 from cvxpy_gurobi.translation import InvalidNormError
 from cvxpy_gurobi.translation import InvalidParameterError
 from cvxpy_gurobi.translation import InvalidPowerError
@@ -46,19 +47,20 @@ if TYPE_CHECKING:
 
 
 __all__ = (
+    "GUROBI_TRANSLATION",
+    "InvalidNonlinearAtomError",
+    "InvalidNormError",
+    "InvalidParameterError",
+    "InvalidPowerError",
+    "UnsupportedConstraintError",
+    "UnsupportedError",
+    "UnsupportedExpressionError",
     "__version__",
     "__version_tuple__",
     "backfill_problem",
     "build_model",
-    "InvalidNormError",
-    "InvalidParameterError",
-    "InvalidPowerError",
-    "GUROBI_TRANSLATION",
     "register_solver",
     "solve",
-    "UnsupportedConstraintError",
-    "UnsupportedError",
-    "UnsupportedExpressionError",
 )
 
 
