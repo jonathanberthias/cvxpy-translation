@@ -137,23 +137,29 @@ used.
 
 # Contributing
 
-It is _highly recommended_ to use [Hatch](https://hatch.pypa.io/latest/) for
-development. It will handle all virtual environment management.
+[Hatch](https://hatch.pypa.io/latest/) is used for development. It will handle
+all virtual environment management.
 
-To lint and format the code, run:
+To lint the code, run:
 
 ```sh
-hatch fmt
+ruff check
+```
+
+To format the code, run:
+
+```sh
+ruff format
 ```
 
 For testing, run:
 
 ```sh
-hatch test
+hatch run latest:tests
 ```
 
 This will test the latest version of dependencies. You can also run
-`hatch test --all` to test several combinations of the supported version range.
+`hatch run oldest:tests` to test the minimum required dependency versions.
 
 Make sure any change is tested through a snapshot test. To add a new test case,
 build a simple CVXPY problem in `tests/test_problems.py` in the appropriate

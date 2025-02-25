@@ -197,8 +197,8 @@ def quad_form() -> Iterator[cp.Problem]:
 
     x = cp.Variable(2, name="x")
     y = np.array([1, 2])
-    _A = np.arange(4).reshape((2, 2))
-    A = _A.T @ _A
+    A_ = np.arange(4).reshape((2, 2))
+    A = A_.T @ A_
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
     if GUROBIPY_VERSION >= (11,):
         yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
@@ -716,7 +716,7 @@ def invalid_expressions() -> Iterator[cp.Problem]:
 
 def reset_id_counter() -> None:
     """Reset the counter used to assign constraint and variable ids."""
-    from cvxpy.lin_ops.lin_utils import ID_COUNTER
+    from cvxpy.lin_ops.lin_utils import ID_COUNTER  # noqa: PLC0415
 
     ID_COUNTER.count = 1
 
