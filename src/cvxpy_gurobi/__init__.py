@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import time
 from typing import TYPE_CHECKING
-from typing import Any
 from typing import Dict
 from typing import Iterator
 from typing import Union
@@ -33,17 +32,8 @@ from cvxpy_gurobi.translation import UnsupportedError
 from cvxpy_gurobi.translation import UnsupportedExpressionError
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
-
-    try:
-        from typing import Self
-    except ImportError:
-        try:
-            # Use Self from typing_extensions if available
-            # but we don't want to add it as a dependency
-            from typing_extensions import Self
-        except ImportError:
-            Self: TypeAlias = Any  # type: ignore[no-redef]
+    from typing_extensions import Self
+    from typing_extensions import TypeAlias
 
 
 __all__ = (
@@ -100,7 +90,7 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
         problem, model, compilation_time=compilation.time, solve_time=solve.time
     )
 
-    return problem.value
+    return float(problem.value)  # pyright: ignore[reportArgumentType]
 
 
 def register_solver(name: str = GUROBI_TRANSLATION) -> None:
@@ -153,7 +143,7 @@ def backfill_problem(
         # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
         solver_stats = SolverStats.from_dict(solution.attr, GUROBI_TRANSLATION)
     else:
-        solver_stats = SolverStats(solution.attr, GUROBI_TRANSLATION)
+        solver_stats = SolverStats(solution.attr, GUROBI_TRANSLATION)  # type: ignore[arg-type]
     problem._solver_stats = solver_stats  # noqa: SLF001
 
     if solve_time is not None:
