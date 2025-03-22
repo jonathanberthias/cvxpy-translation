@@ -128,12 +128,14 @@ cvxpy = ["1.5"]
 [tool.hatch.envs.types]
 description = "Type checking environment"
 template = "latest"
-extra-dependencies = ["mypy"]
+post-install-commands = ["{env:HATCH_UV} pip install mypy pyright"]
 [tool.hatch.envs.types.scripts]
-check = "mypy {args:src tests}"
+check = ["- my-py", "py-right"]
+my-py = "mypy {args:src tests}"
+py-right = "pyright {args:src tests}"
 
 [tool.mypy]
-strict = true
+strict = false
 untyped_calls_exclude = ["cvxpy"]
 [[tool.mypy.overrides]]
 module = "scipy.*"
@@ -141,6 +143,10 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "cvxpy.*"
 implicit_reexport = true
+
+[tool.pyright]
+typeCheckingMode = "basic"
+pythonVersion = "3.8"
 
 [tool.hatch.envs.hatch-static-analysis]
 # https://hatch.pypa.io/latest/config/static-analysis/

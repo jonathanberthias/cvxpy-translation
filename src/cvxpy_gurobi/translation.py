@@ -18,18 +18,6 @@ import numpy as np
 import numpy.typing as npt
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
-
-    try:
-        from typing import Self
-    except ImportError:
-        try:
-            # Use Self from typing_extensions if available
-            # but we don't want to add it as a dependency
-            from typing_extensions import Self
-        except ImportError:
-            Self: TypeAlias = Any  # type: ignore[no-redef]
-
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
     from cvxpy.atoms.affine.binary_operators import MulExpression
@@ -46,6 +34,7 @@ if TYPE_CHECKING:
     from cvxpy.constraints.nonpos import Inequality
     from cvxpy.constraints.zero import Equality
     from cvxpy.utilities.canonical import Canonical
+    from typing_extensions import TypeAlias
 
 
 try:
@@ -258,7 +247,7 @@ class Translater:
         if isinstance(expr, (gp.MVar, np.ndarray)):
             if scalar:
                 # Extract the underlying variable - will raise an error if the shape is not scalar
-                return expr.item()
+                return expr.item()  # type: ignore[return-value]
             return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
@@ -357,10 +346,12 @@ class Translater:
     def visit_exp(self, node: cp.exp) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
+        from gurobipy import nlfunc  # noqa: PLC0415
+
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            gp.nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
+            nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
         )
 
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
@@ -389,19 +380,23 @@ class Translater:
     def visit_log(self, node: cp.log) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
+        from gurobipy import nlfunc  # noqa: PLC0415
+
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            gp.nlfunc.log(expr), "log", desired_shape=_shape(expr)
+            nlfunc.log(expr), "log", desired_shape=_shape(expr)
         )
 
     def visit_log1p(self, node: cp.log1p) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
+        from gurobipy import nlfunc  # noqa: PLC0415
+
         (arg,) = node.args
         expr = self.visit(arg)
         return self.make_auxilliary_variable_for(
-            gp.nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
+            nlfunc.log(expr + 1), "log1p", desired_shape=_shape(expr)
         )
 
     def _min_max(
@@ -437,7 +432,7 @@ class Translater:
             varargs = [self.translate_into_variable(arg, scalar=True) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
-        return self.star_apply_and_visit_elementwise(type(node), *args)
+        return self.star_apply_and_visit_elementwise(type(node), *args)  # pyright: ignore[reportArgumentType]
 
     def visit_maximum(self, node: cp.maximum) -> Any:
         return self._minimum_maximum(node, gp_fn=gp.max_, name="maximum")
@@ -472,6 +467,7 @@ class Translater:
         if isinstance(x, cp.Constant):
             return np.linalg.norm(x.value.ravel(), p)
         arg = self.translate_into_variable(x)
+        assert isinstance(arg, (gp.Var, gp.MVar))
         varargs = [arg] if isinstance(arg, gp.Var) else arg.reshape(-1).tolist()
         norm = gp.norm(varargs, p)
         return self.make_auxilliary_variable_for(norm, name, lb=0)
@@ -527,7 +523,7 @@ class Translater:
         """
         (x,) = node.args
         target_shape = node.shape
-        if x.is_constant():
+        if isinstance(x, cp.Constant):
             try:
                 return x.value.reshape(target_shape)
             except AttributeError:
