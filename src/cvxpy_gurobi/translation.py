@@ -432,7 +432,7 @@ class Translater:
             varargs = [self.translate_into_variable(arg, scalar=True) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
-        return self.star_apply_and_visit_elementwise(type(node).__new__, *args)
+        return self.star_apply_and_visit_elementwise(type(node), *args)  # pyright: ignore[reportArgumentType]
 
     def visit_maximum(self, node: cp.maximum) -> Any:
         return self._minimum_maximum(node, gp_fn=gp.max_, name="maximum")
