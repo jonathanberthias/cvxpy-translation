@@ -9,12 +9,12 @@ import gurobipy as gp
 import pytest
 
 import cvxpy_gurobi
-from cvxpy_gurobi.translation import CVXPY_VERSION
+from cvxpy_gurobi import CVXPY_VERSION
 
 if TYPE_CHECKING:
     from typing import TypeAlias
 
-    from cvxpy_gurobi.interface import ParamDict
+    from cvxpy_gurobi import ParamDict
 
 
 @pytest.fixture
