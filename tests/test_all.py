@@ -11,6 +11,7 @@ import gurobipy as gp
 import pytest
 
 import cvxpy_gurobi
+from cvxpy_gurobi.translation import CVXPY_VERSION
 from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
@@ -61,7 +62,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
         )
     )
 
-    if cvxpy_gurobi.CVXPY_VERSION[:2] == (1, 6):
+    if CVXPY_VERSION[:2] == (1, 6):
         assert snapshot() == output
     else:
         # don't update snapshots nor delete them

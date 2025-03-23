@@ -3,6 +3,7 @@ import gurobipy as gp
 from cvxpy import settings as s
 
 import cvxpy_gurobi
+from cvxpy_gurobi.translation import CVXPY_VERSION
 
 
 def test_backfill_unbounded() -> None:
@@ -10,7 +11,7 @@ def test_backfill_unbounded() -> None:
     cvxpy_gurobi.solve(problem)
     model = problem.solver_stats.extra_stats
     assert problem.status == s.UNBOUNDED
-    if cvxpy_gurobi.CVXPY_VERSION >= (1, 2, 0):
+    if CVXPY_VERSION >= (1, 2, 0):
         assert model.Status == gp.GRB.Status.UNBOUNDED
 
 
@@ -20,5 +21,5 @@ def test_backfill_infeasible() -> None:
     cvxpy_gurobi.solve(problem, **{gp.GRB.Param.DualReductions: 0})
     model = problem.solver_stats.extra_stats
     assert problem.status == s.INFEASIBLE
-    if cvxpy_gurobi.CVXPY_VERSION >= (1, 2, 0):
+    if CVXPY_VERSION >= (1, 2, 0):
         assert model.Status == gp.GRB.Status.INFEASIBLE
