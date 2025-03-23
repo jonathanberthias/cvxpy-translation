@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-### New
+## [1.2.0] - 2025-03-23
 
 - Add support for `cp.exp`, `cp.log` and `cp.log1p` through the non-linear
   expressions added in Gurobi 12
@@ -135,3 +135,5 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.0.0...v1.1.0
 [1.1.1]:
   https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.1.0...v1.1.1
+[1.2.0]:
+  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.1.1...v1.2.0
