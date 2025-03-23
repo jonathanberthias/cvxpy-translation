@@ -19,40 +19,12 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
-from cvxpy_gurobi._version import __version__
-from cvxpy_gurobi._version import __version_tuple__
 from cvxpy_gurobi.translation import CVXPY_VERSION
-from cvxpy_gurobi.translation import InvalidNonlinearAtomError
-from cvxpy_gurobi.translation import InvalidNormError
-from cvxpy_gurobi.translation import InvalidParameterError
-from cvxpy_gurobi.translation import InvalidPowerError
 from cvxpy_gurobi.translation import Translater
-from cvxpy_gurobi.translation import UnsupportedConstraintError
-from cvxpy_gurobi.translation import UnsupportedError
-from cvxpy_gurobi.translation import UnsupportedExpressionError
 
 if TYPE_CHECKING:
     from typing_extensions import Self
     from typing_extensions import TypeAlias
-
-
-__all__ = (
-    "GUROBI_TRANSLATION",
-    "InvalidNonlinearAtomError",
-    "InvalidNormError",
-    "InvalidParameterError",
-    "InvalidPowerError",
-    "UnsupportedConstraintError",
-    "UnsupportedError",
-    "UnsupportedExpressionError",
-    "__version__",
-    "__version_tuple__",
-    "backfill_problem",
-    "build_model",
-    "register_solver",
-    "solve",
-)
-
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
