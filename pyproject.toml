@@ -21,7 +21,6 @@ requires-python = ">=3.8"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
@@ -97,34 +96,6 @@ extra-dependencies = [
   "gurobipy>=11",
 ]
 
-[tool.hatch.envs.hatch-test]
-extra-dependencies = [
-  "cvxpy-base=={matrix:cvxpy}.*",
-  "gurobipy=={matrix:gurobipy}.*",
-  "numpy{matrix:numpy:}",
-  "scipy{matrix:scipy:}",
-  "pytest-insta",
-]
-matrix-name-format = "{variable}{value}"
-
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.8"]
-gurobipy = ["10"]
-cvxpy = ["1.3"]
-numpy = ["<2"]
-scipy = ["<1.14"] # cvxpy 1.3 uses scipy features (.A) removed in 1.14
-
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.9"]
-gurobipy = ["11"]
-cvxpy = ["1.4"]
-numpy = ["<2"]
-
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12"]
-gurobipy = ["11"]
-cvxpy = ["1.5"]
-
 [tool.hatch.envs.types]
 description = "Type checking environment"
 template = "latest"
@@ -199,7 +170,11 @@ max-args = 10
 skip-magic-trailing-comma = true
 
 [tool.pytest.ini_options]
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+minversion = "6"
 pythonpath = "tests"
+testpaths = ["tests"]
+xfail_strict = true
 
 [tool.coverage.run]
 source_pkgs = ["cvxpy_gurobi"]

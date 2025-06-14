@@ -534,54 +534,87 @@ def sum_axis() -> Iterator[cp.Problem]:
 def reshape() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     a = x + 1
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, ()) <= 1])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, 1) <= np.ones(1)])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, (), order="F") <= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, 1, order="F") <= np.ones(1)])
     if CVXPY_VERSION >= (1, 4, 0):
         # -1 support added in https://github.com/cvxpy/cvxpy/pull/2061
-        yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1) <= np.ones(1)])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, ()) <= 1])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (1,)) <= np.ones(1)])
+        yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1, order="F") <= np.ones(1)])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (), order="F") <= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (1,), order="F") <= np.ones(1)])
     if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1) <= np.ones(1)])
+        yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1, order="F") <= np.ones(1)])
 
     yield cp.Problem(cp.Maximize(x), [cp.vec(x) <= np.ones(1)])
 
     reset_id_counter()
     x = cp.Variable(1, name="x")
     a = x + 1
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, ()) <= 1])
-    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, ()) <= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, (), order="F") <= 1])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (), order="F") <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.vec(x) <= np.ones(1)])
 
     reset_id_counter()
     x = cp.Variable(2, name="x")
     a = x + np.array([1, 1])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2,)) <= np.ones(2)])
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (2,), order="F") <= np.ones(2)]
+    )
     if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, -1) <= np.ones(2)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 1)) <= np.ones((2, 1))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (1, 2)) <= np.ones((1, 2))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2,)) <= np.ones(2)])
+        yield cp.Problem(
+            cp.Maximize(cp.sum(x)), [cp.reshape(x, -1, order="F") <= np.ones(2)]
+        )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 1), order="F") <= np.ones((2, 1))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (1, 2), order="F") <= np.ones((1, 2))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (2,), order="F") <= np.ones(2)]
+    )
     if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,)) <= np.ones(2)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 1)) <= np.ones((2, 1))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 2)) <= np.ones((1, 2))])
+        yield cp.Problem(
+            cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,), order="F") <= np.ones(2)]
+        )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 1), order="F") <= np.ones((2, 1))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 2), order="F") <= np.ones((1, 2))]
+    )
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(2)])
 
     reset_id_counter()
     x = cp.Variable(4, name="x")
     c = np.ones(4)
     a = x + c
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4,)) <= np.ones(4)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (4, 1)) <= np.ones((4, 1))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2)) <= np.ones((2, 2))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(x, (1, 4)) <= np.ones((1, 4))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (4,)) <= np.ones(4)])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (4, 1)) <= np.ones((4, 1))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 2)) <= np.ones((2, 2))])
-    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 4)) <= np.ones((1, 4))])
     yield cp.Problem(
-        cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2)) <= cp.reshape(c, (2, 2))]
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (4,), order="F") <= np.ones(4)]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (4, 1), order="F") <= np.ones((4, 1))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 2), order="F") <= np.ones((2, 2))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, (1, 4), order="F") <= np.ones((1, 4))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (4,), order="F") <= np.ones(4)]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (4, 1), order="F") <= np.ones((4, 1))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 2), order="F") <= np.ones((2, 2))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (1, 4), order="F") <= np.ones((1, 4))]
+    )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)),
+        [cp.reshape(x, (2, 2), order="F") <= cp.reshape(c, (2, 2), order="F")],
     )
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(4)])
 

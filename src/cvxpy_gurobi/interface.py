@@ -219,7 +219,7 @@ def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr
         for q_constr in model.getQConstrs():
             if q_constr.QCName == name:
                 return q_constr
-        raise
+        raise  # pragme: no cover
     else:
         assert constr is not None
         return constr
