@@ -143,7 +143,7 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
         return gp.MVar.fromlist(array)
     # TODO: support other types
     msg = f"Cannot promote array of {kind}"
-    raise NotImplementedError(msg)
+    raise NotImplementedError(msg)  # pragma: no cover
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:

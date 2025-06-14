@@ -8,5 +8,5 @@ repos:
     rev: v0.11.13
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix, "--show-fixes"]
       - id: ruff-format
