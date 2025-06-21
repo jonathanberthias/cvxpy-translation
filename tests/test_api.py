@@ -8,13 +8,13 @@ import cvxpy as cp
 import gurobipy as gp
 import pytest
 
-import cvxpy_gurobi
-from cvxpy_gurobi.translation import CVXPY_VERSION
+import cvxpy_translation.gurobi
+from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 
 if TYPE_CHECKING:
     from typing import TypeAlias
 
-    from cvxpy_gurobi.interface import ParamDict
+    from cvxpy_translation.gurobi.interface import ParamDict
 
 
 @pytest.fixture
@@ -45,7 +45,9 @@ def validate(problem: cp.Problem, *, dual: bool) -> None:
     assert problem.status == cp.OPTIMAL
     assert problem.solver_stats is not None
     assert problem.solver_stats.solve_time is not None
-    assert problem.solver_stats.solver_name == cvxpy_gurobi.GUROBI_TRANSLATION
+    assert (
+        problem.solver_stats.solver_name == cvxpy_translation.gurobi.GUROBI_TRANSLATION
+    )
     assert isinstance(problem.solver_stats.extra_stats, gp.Model)
     if CVXPY_VERSION >= (1, 4):  # didn't exist before
         assert problem.compilation_time is not None
@@ -64,8 +66,8 @@ def _validate(dual: bool) -> Validator:
 def test_registered_solver(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    cvxpy_gurobi.register_solver()
-    problem.solve(method=cvxpy_gurobi.GUROBI_TRANSLATION, **params)
+    cvxpy_translation.gurobi.register_solver()
+    problem.solve(method=cvxpy_translation.gurobi.GUROBI_TRANSLATION, **params)
     validate(problem)
 
 
@@ -73,15 +75,15 @@ def test_registered_solver_with_env(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
     env = gp.Env(params=params)
-    cvxpy_gurobi.register_solver()
-    problem.solve(method=cvxpy_gurobi.GUROBI_TRANSLATION, env=env)
+    cvxpy_translation.gurobi.register_solver()
+    problem.solve(method=cvxpy_translation.gurobi.GUROBI_TRANSLATION, env=env)
     validate(problem)
 
 
 def test_direct_solve(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    cvxpy_gurobi.solve(problem, **params)
+    cvxpy_translation.gurobi.solve(problem, **params)
     validate(problem)
 
 
@@ -89,14 +91,16 @@ def test_direct_solve_with_env(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
     env = gp.Env(params=params)
-    cvxpy_gurobi.solve(problem, env=env)
+    cvxpy_translation.gurobi.solve(problem, env=env)
     validate(problem)
 
 
 def test_manual(problem: cp.Problem, validate: Validator, params: ParamDict) -> None:
-    model = cvxpy_gurobi.build_model(problem, params=params)
+    model = cvxpy_translation.gurobi.build_model(problem, params=params)
     model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
+    cvxpy_translation.gurobi.backfill_problem(
+        problem, model, compilation_time=1.0, solve_time=1.0
+    )
     validate(problem)
 
 
@@ -104,13 +108,15 @@ def test_manual_with_env(
     problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
     env = gp.Env(params=params)
-    model = cvxpy_gurobi.build_model(problem, env=env)
+    model = cvxpy_translation.gurobi.build_model(problem, env=env)
     model.optimize()
-    cvxpy_gurobi.backfill_problem(problem, model, compilation_time=1.0, solve_time=1.0)
+    cvxpy_translation.gurobi.backfill_problem(
+        problem, model, compilation_time=1.0, solve_time=1.0
+    )
     validate(problem)
 
 
 def test_readme_example():
     problem = cp.Problem(cp.Maximize(cp.Variable(name="x", nonpos=True)))
-    cvxpy_gurobi.solve(problem)
+    cvxpy_translation.gurobi.solve(problem)
     assert problem.value == 0

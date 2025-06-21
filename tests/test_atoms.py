@@ -2,9 +2,9 @@ import cvxpy as cp
 import gurobipy as gp
 import pytest
 
-import cvxpy_gurobi
+import cvxpy_translation.gurobi
 import test_problems
-from cvxpy_gurobi.translation import Translater
+from cvxpy_translation.gurobi.translation import Translater
 
 
 @pytest.mark.xfail(reason="TODO: implement all atoms")
@@ -20,7 +20,7 @@ def test_no_missing_atoms() -> None:
 @pytest.mark.parametrize("case", test_problems.invalid_expressions())
 def test_failing_atoms(case: test_problems.ProblemTestCase) -> None:
     translater = Translater(gp.Model())
-    with pytest.raises(cvxpy_gurobi.UnsupportedExpressionError):
+    with pytest.raises(cvxpy_translation.gurobi.UnsupportedExpressionError):
         translater.visit(case.problem.objective.expr)
 
 
@@ -28,7 +28,7 @@ def test_parameter() -> None:
     translater = Translater(gp.Model())
     p = cp.Parameter()
     # Non-happy path raises
-    with pytest.raises(cvxpy_gurobi.InvalidParameterError):
+    with pytest.raises(cvxpy_translation.gurobi.InvalidParameterError):
         translater.visit(p)
     # Happy path succeeds
     p.value = 1
@@ -39,7 +39,7 @@ def test_parameter_reshape() -> None:
     """Parameter.value is not necessarily a numpy/scipy array,
     so reshaping is not always straightforward.
 
-    See https://github.com/jonathanberthias/cvxpy-gurobi/issues/76
+    See https://github.com/jonathanberthias/cvxpy-translation/issues/76
     """
     translater = Translater(gp.Model())
     p = cp.Parameter()
