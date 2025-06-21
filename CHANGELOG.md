@@ -6,8 +6,8 @@
 
 - Add support for `cp.exp`, `cp.log` and `cp.log1p` through the non-linear
   expressions added in Gurobi 12
-  ([#86](https://github.com/jonathanberthias/cvxpy-gurobi/pull/86),
-  [#87](https://github.com/jonathanberthias/cvxpy-gurobi/pull/87))
+  ([#86](https://github.com/jonathanberthias/cvxpy-translation/pull/86),
+  [#87](https://github.com/jonathanberthias/cvxpy-translation/pull/87))
 
 ## [1.1.1] - 2025-02-01
 
@@ -18,13 +18,13 @@ testing for 3.13 now that Gurobi supports it.
 
 - Reshaping a constant with a Python scalar value no longer errors due to
   missing `reshape` method
-  ([#77](https://github.com/jonathanberthias/cvxpy-gurobi/pull/77)). Thanks to
-  Halil Sen for reporting the bug!
+  ([#77](https://github.com/jonathanberthias/cvxpy-translation/pull/77)). Thanks
+  to Halil Sen for reporting the bug!
 
 ### New
 
 - Add support for Python 3.13
-  ([#81](https://github.com/jonathanberthias/cvxpy-gurobi/pull/81))
+  ([#81](https://github.com/jonathanberthias/cvxpy-translation/pull/81))
 
 ## [1.1.0] - 2024-12-01
 
@@ -32,10 +32,10 @@ testing for 3.13 now that Gurobi supports it.
 
 - `cp.quad_form` expressions are handled, both when the vector is a variable and
   when the PSD matrix is a variable
-  ([#60](https://github.com/jonathanberthias/cvxpy-gurobi/pull/60)).
+  ([#60](https://github.com/jonathanberthias/cvxpy-translation/pull/60)).
 - `cp.Parameter`s that have a value assigned are treated like constants
-  ([#67](https://github.com/jonathanberthias/cvxpy-gurobi/pull/67)). Thanks to
-  Halil Sen for contributing this feature!
+  ([#67](https://github.com/jonathanberthias/cvxpy-translation/pull/67)). Thanks
+  to Halil Sen for contributing this feature!
 
 ### Dependencies
 
@@ -48,56 +48,58 @@ Add support for CVXPY 1.6 and Gurobi 12.
 - CVXPY atoms that have an equivalent generalized expression in `gurobipy` are
   correctly translated. This is done by adding auxilliary variables constrained
   to the value of the arguments of the atom to the problem:
-  - `abs` ([#27](https://github.com/jonathanberthias/cvxpy-gurobi/pull/27),
-    [#30](https://github.com/jonathanberthias/cvxpy-gurobi/pull/30)),
+  - `abs` ([#27](https://github.com/jonathanberthias/cvxpy-translation/pull/27),
+    [#30](https://github.com/jonathanberthias/cvxpy-translation/pull/30)),
   - `min`/`max`
-    ([#31](https://github.com/jonathanberthias/cvxpy-gurobi/pull/31)),
+    ([#31](https://github.com/jonathanberthias/cvxpy-translation/pull/31)),
   - `minimum`/`maximum`
-    ([#34](https://github.com/jonathanberthias/cvxpy-gurobi/pull/34),
-    [#45](https://github.com/jonathanberthias/cvxpy-gurobi/pull/45),
-    [#51](https://github.com/jonathanberthias/cvxpy-gurobi/pull/51),
-    [#58](https://github.com/jonathanberthias/cvxpy-gurobi/pull/58)),
+    ([#34](https://github.com/jonathanberthias/cvxpy-translation/pull/34),
+    [#45](https://github.com/jonathanberthias/cvxpy-translation/pull/45),
+    [#51](https://github.com/jonathanberthias/cvxpy-translation/pull/51),
+    [#58](https://github.com/jonathanberthias/cvxpy-translation/pull/58)),
   - `norm1`/`norm2`/`norm_inf`
-    ([#35](https://github.com/jonathanberthias/cvxpy-gurobi/pull/35),
-    [#36](https://github.com/jonathanberthias/cvxpy-gurobi/pull/36),
-    [#37](https://github.com/jonathanberthias/cvxpy-gurobi/pull/37)).
+    ([#35](https://github.com/jonathanberthias/cvxpy-translation/pull/35),
+    [#36](https://github.com/jonathanberthias/cvxpy-translation/pull/36),
+    [#37](https://github.com/jonathanberthias/cvxpy-translation/pull/37)).
 - `reshape` atoms are handled during translation
-  ([#42](https://github.com/jonathanberthias/cvxpy-gurobi/pull/42)).
+  ([#42](https://github.com/jonathanberthias/cvxpy-translation/pull/42)).
 - The `hstack` and `vstack` atoms are translated into their `gurobipy`
   counterparts, available from Gurobi 11
-  ([#43](https://github.com/jonathanberthias/cvxpy-gurobi/pull/43),
-  [#44](https://github.com/jonathanberthias/cvxpy-gurobi/pull/44)).
+  ([#43](https://github.com/jonathanberthias/cvxpy-translation/pull/43),
+  [#44](https://github.com/jonathanberthias/cvxpy-translation/pull/44)).
 
 ### Fixed
 
 - The `axis` argument to `cp.sum` is no longer ignored
-  ([#39](https://github.com/jonathanberthias/cvxpy-gurobi/pull/39)).
+  ([#39](https://github.com/jonathanberthias/cvxpy-translation/pull/39)).
 - If a scalar expression is given to `cp.sum`, it no longer raises an error
-  ([#48](https://github.com/jonathanberthias/cvxpy-gurobi/pull/48)).
+  ([#48](https://github.com/jonathanberthias/cvxpy-translation/pull/48)).
 - The dual values should be more correct in cases where the sign is reversed
   between `cvxpy` and `gurobipy`
-  ([#50](https://github.com/jonathanberthias/cvxpy-gurobi/pull/50)).
+  ([#50](https://github.com/jonathanberthias/cvxpy-translation/pull/50)).
 
 ### Dependencies
 
 The `numpy` and `scipy` dependencies have lower bounds, set willingly to fairly
-old versions ([#56](https://github.com/jonathanberthias/cvxpy-gurobi/pull/56)).
+old versions
+([#56](https://github.com/jonathanberthias/cvxpy-translation/pull/56)).
 
 ### Testing
 
 - The library is tested in CI against the oldest supported versions and the
   latest releases
-  ([#56](https://github.com/jonathanberthias/cvxpy-gurobi/pull/56)).
+  ([#56](https://github.com/jonathanberthias/cvxpy-translation/pull/56)).
 - All test problems must be feasible and bounded to ensure they have a unique
-  solution ([#50](https://github.com/jonathanberthias/cvxpy-gurobi/pull/50)).
+  solution
+  ([#50](https://github.com/jonathanberthias/cvxpy-translation/pull/50)).
 - Backfilling infeasible and unbounded problems is explicitly tested
-  ([#53](https://github.com/jonathanberthias/cvxpy-gurobi/pull/53)).
+  ([#53](https://github.com/jonathanberthias/cvxpy-translation/pull/53)).
 
 ### Removed
 
 The `variable_map` argument used when filling a `Model` was removed. Instead,
 the variable map is handled by the `Translater` internally
-([#24](https://github.com/jonathanberthias/cvxpy-gurobi/pull/24)). In the
+([#24](https://github.com/jonathanberthias/cvxpy-translation/pull/24)). In the
 future, there will be an official way to provide custom translations which is
 not limited to variables.
 
@@ -128,12 +130,12 @@ In this release, the following elements are already covered:
 - `Variable` (duh)
 
 [0.1.0]:
-  https://github.com/jonathanberthias/cvxpy-gurobi/compare/7d97aaf...v0.1.0
+  https://github.com/jonathanberthias/cvxpy-translation/compare/7d97aaf...v0.1.0
 [1.0.0]:
-  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v0.1.0...v1.0.0
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v0.1.0...v1.0.0
 [1.1.0]:
-  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.0.0...v1.1.0
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v1.0.0...v1.1.0
 [1.1.1]:
-  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.1.0...v1.1.1
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v1.1.0...v1.1.1
 [1.2.0]:
-  https://github.com/jonathanberthias/cvxpy-gurobi/compare/v1.1.1...v1.2.0
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v1.1.1...v1.2.0

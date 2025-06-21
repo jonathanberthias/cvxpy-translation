@@ -19,8 +19,8 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
-from cvxpy_gurobi.translation import CVXPY_VERSION
-from cvxpy_gurobi.translation import Translater
+from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation.gurobi.translation import Translater
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -50,7 +50,7 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
     """Solve a CVXPY problem using Gurobi.
 
     This function can be used to solve CVXPY problems without registering the solver:
-        cvxpy_gurobi.solve(problem)
+        cvxpy_translation.gurobi.solve(problem)
     """
     with _Timer() as compilation:
         model = build_model(problem, params=params, env=env)
@@ -219,7 +219,7 @@ def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr
         for q_constr in model.getQConstrs():
             if q_constr.QCName == name:
                 return q_constr
-        raise  # pragme: no cover
+        raise  # pragma: no cover
     else:
         assert constr is not None
         return constr

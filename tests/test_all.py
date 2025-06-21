@@ -10,8 +10,8 @@ import cvxpy.settings as s
 import gurobipy as gp
 import pytest
 
-import cvxpy_gurobi
-from cvxpy_gurobi.translation import CVXPY_VERSION
+import cvxpy_translation.gurobi
+from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
@@ -45,7 +45,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
         generated_model = problem.solver_stats.extra_stats
         cvxpy_gurobi_lines = lp_from_gurobi(generated_model, tmp_path)
 
-    model = cvxpy_gurobi.build_model(problem)
+    model = cvxpy_translation.gurobi.build_model(problem)
     gurobi_lines = lp_from_gurobi(model, tmp_path)
 
     divider = ["-" * 40]
@@ -71,7 +71,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
 
 def test_backfill(case: ProblemTestCase) -> None:
     problem = case.problem
-    cvxpy_gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
+    cvxpy_translation.gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
     our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
     assert our_model.Status == gp.GRB.Status.OPTIMAL

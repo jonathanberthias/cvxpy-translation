@@ -12,9 +12,9 @@ import cvxpy as cp
 import numpy as np
 import scipy.sparse as sp
 
-from cvxpy_gurobi.translation import CVXPY_VERSION
-from cvxpy_gurobi.translation import GUROBI_MAJOR
-from cvxpy_gurobi.translation import GUROBIPY_VERSION
+from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation.gurobi.translation import GUROBI_MAJOR
+from cvxpy_translation.gurobi.translation import GUROBIPY_VERSION
 
 
 @dataclass(frozen=True)

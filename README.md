@@ -1,7 +1,7 @@
-# CVXPY x GUROBI
+# CVXPY translation
 
-This small library provides an alternative way to solve CVXPY problems with
-Gurobi.
+This small library provides an alternative way to solve CVXPY problems by
+building solver's native models. It currently supports Gurobi.
 
 ## Usage
 
@@ -10,10 +10,10 @@ The library provides a solver that will translate a CVXPY `Problem` into a
 
 ```python
 import cvxpy as cp
-import cvxpy_gurobi
+import cvxpy_translation.gurobi
 
 problem = cp.Problem(cp.Maximize(cp.Variable(name="x", nonpos=True)))
-cvxpy_gurobi.solve(problem)
+cvxpy_translation.gurobi.solve(problem)
 assert problem.value == 0
 ```
 
@@ -21,9 +21,9 @@ The solver can also be registered with CVXPY and used as any other solver:
 
 ```python
 import cvxpy as cp
-from cvxpy_gurobi import GUROBI_TRANSLATION, solver
+from cvxpy_translation.gurobi import GUROBI_TRANSLATION, solver
 
-cvxpy_gurobi.register_solver()
+cvxpy_translatoin.gurobi.register_solver()
 # ^ this is the same as:
 cp.Problem.register_solve_method(GUROBI_TRANSLATION, solver())
 
@@ -33,7 +33,7 @@ problem.solve(method=GUROBI_TRANSLATION)
 This solver is a simple wrapper for the most common use case:
 
 ```python
-from cvxpy_gurobi import build_model, backfill_problem
+from cvxpy_translation.gurobi import build_model, backfill_problem
 
 model = build_model(problem)
 model.optimize()
@@ -55,7 +55,7 @@ enables you to manage how the model will be optimized.
 ## Installation
 
 ```sh
-pip install cvxpy-gurobi
+pip install cvxpy-translation
 ```
 
 ## CVXPY has an interface to Gurobi, why is this needed?
