@@ -23,7 +23,7 @@ The solver can also be registered with CVXPY and used as any other solver:
 import cvxpy as cp
 from cvxpy_translation.gurobi import GUROBI_TRANSLATION, solver
 
-cvxpy_translatoin.gurobi.register_solver()
+cvxpy_translation.gurobi.register_solver()
 # ^ this is the same as:
 cp.Problem.register_solve_method(GUROBI_TRANSLATION, solver())
 
