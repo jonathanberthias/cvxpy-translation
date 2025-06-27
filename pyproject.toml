@@ -94,7 +94,7 @@ python = "3.8"
 extra-dependencies = [
   # we have to set a version here since cvxpy is not listed as a dependency
   # we use cvxpy-base to avoid installing unnecessary dependencies
-  "cvxpy-base>=1.2.0",
+  "cvxpy-base>=1.1.16",
   # bundled license is expired on older versions of gurobipy
   "gurobipy>=11",
 ]
@@ -137,7 +137,9 @@ ignore = [
   "ANN401",  # Any must be used due to poorly typed libraries and very dynamic return types
   "COM812",  # conflicts with formatter
   "CPY",     # no copyright on each file
-  "D",       # let's decide when documentation is needed
+  "D10",     # let's decide when documentation is needed
+  "D203",    # blank-line-before-class
+  "D213",    # multi-line-summary-second-line
   "DOC201",  # return is not documented in docstring
   "E501",    # comments may exceed line length
   "FIX",     # TODOs are fine
