@@ -185,7 +185,9 @@ def add_variable(
 
 
 def _should_reverse_inequality(lower: object, upper: object) -> bool:
-    """When writing an inequality constraint lower <= upper,
+    """Check whether lower <= upper is safe.
+
+    When writing an inequality constraint lower <= upper,
     we get an error if lower is an array and upper is a gurobipy object:
         gurobipy.GurobiError:
             Constraint has no bool value (are you trying "lb <= expr <= ub"?)

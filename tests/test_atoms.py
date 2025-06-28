@@ -38,10 +38,10 @@ def test_parameter() -> None:
 
 
 def test_parameter_reshape() -> None:
-    """Parameter.value is not necessarily a numpy/scipy array,
-    so reshaping is not always straightforward.
+    """From https://github.com/jonathanberthias/cvxpy-translation/issues/76.
 
-    See https://github.com/jonathanberthias/cvxpy-translation/issues/76
+    Parameter.value is not necessarily a numpy/scipy array,
+    so reshaping is not always straightforward.
     """
     translater = Translater(gp.Model())
     p = cp.Parameter()
