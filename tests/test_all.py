@@ -41,6 +41,7 @@ def snapshot(
 
     Yields:
         SnapshotFixture: A fixture that can be used to create snapshots for the test.
+
     """
     path, name = node_path_name(request.node)
     path = path.with_name("snapshots") / case.context.solver.lower() / name
