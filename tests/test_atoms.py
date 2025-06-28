@@ -17,8 +17,10 @@ def test_no_missing_atoms() -> None:
     assert missing == []
 
 
-@pytest.mark.parametrize("case", test_problems.invalid_expressions())
+@pytest.mark.parametrize("case", test_problems.all_invalid_problems())
 def test_failing_atoms(case: test_problems.ProblemTestCase) -> None:
+    if case.skip_reason:
+        pytest.skip(case.skip_reason)
     translater = Translater(gp.Model())
     with pytest.raises(cvxpy_translation.gurobi.UnsupportedExpressionError):
         translater.visit(case.problem.objective.expr)

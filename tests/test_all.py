@@ -4,11 +4,14 @@ import math
 import warnings
 from itertools import chain
 from typing import TYPE_CHECKING
+from typing import Generator
 
 import cvxpy as cp
 import cvxpy.settings as s
 import gurobipy as gp
 import pytest
+from pytest_insta.fixture import SnapshotFixture
+from pytest_insta.utils import node_path_name
 
 import cvxpy_translation.gurobi
 from cvxpy_translation.gurobi.translation import CVXPY_VERSION
@@ -19,16 +22,37 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from cvxpy.reductions.solution import Solution
-    from pytest_insta.fixture import SnapshotFixture
+    from pytest_insta.session import SnapshotSession
 
 
 @pytest.fixture(params=all_valid_problems(), ids=lambda case: case.group)
 def case(request: pytest.FixtureRequest) -> ProblemTestCase:
-    return request.param
+    test_case: ProblemTestCase = request.param
+    if test_case.skip_reason:
+        pytest.skip(test_case.skip_reason)
+    return test_case
+
+
+@pytest.fixture
+def snapshot(
+    request: pytest.FixtureRequest, case: ProblemTestCase
+) -> Generator[SnapshotFixture]:
+    """Replace SnapshotFixture.from_request to inject the solver name in the path.
+
+    Yields:
+        SnapshotFixture: A fixture that can be used to create snapshots for the test.
+
+    """
+    path, name = node_path_name(request.node)
+    path = path.with_name("snapshots") / case.context.solver.lower() / name
+    session: SnapshotSession = request.config._snapshot_session  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+    fixture = SnapshotFixture(session[path], session)
+    with fixture:  # flush created snapshots at the end of the test
+        yield fixture
 
 
 def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) -> None:
-    """Generate LP output for CVXPY and Gurobi..
+    """Generate LP output for CVXPY and Gurobi.
 
     This test requires human intervention to check the differences in the
     generated snapshot files.
