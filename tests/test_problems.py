@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from dataclasses import replace
 from functools import partial
 from functools import wraps
 from typing import Callable
@@ -18,14 +19,31 @@ from cvxpy_translation.gurobi.translation import GUROBIPY_VERSION
 
 
 @dataclass(frozen=True)
+class TestCaseContext:
+    solver: str
+    version: tuple[int, ...]
+    version_major: int
+    cvxpy_version: tuple[int, ...] = CVXPY_VERSION
+
+
+CONTEXTS = (
+    TestCaseContext(
+        solver=cp.GUROBI, version=GUROBIPY_VERSION, version_major=GUROBI_MAJOR
+    ),
+)
+
+
+@dataclass(frozen=True)
 class ProblemTestCase:
     problem: cp.Problem
     group: str
+    context: TestCaseContext
     invalid_reason: str | None = None
+    skip_reason: str | None = None
 
 
 def group_cases(
-    group: str, *, available: bool = True, invalid_reason: str | None = None
+    group: str, *, invalid_reason: str | None = None
 ) -> Callable[
     [Callable[[], Iterator[cp.Problem]]], Callable[[], Iterator[ProblemTestCase]]
 ]:
@@ -34,9 +52,37 @@ def group_cases(
     ) -> Callable[[], Iterator[ProblemTestCase]]:
         @wraps(iter_fn)
         def inner() -> Iterator[ProblemTestCase]:
-            if available:
-                for problem in iter_fn():
-                    yield ProblemTestCase(problem, group, invalid_reason=invalid_reason)
+            for problem in iter_fn():
+                for context in CONTEXTS:
+                    yield ProblemTestCase(
+                        problem=problem,
+                        group=group,
+                        context=context,
+                        invalid_reason=invalid_reason,
+                    )
+
+        return inner
+
+    return dec
+
+
+def skipif(
+    condition: Callable[[ProblemTestCase], bool], reason: str
+) -> Callable[
+    [Callable[[], Iterator[ProblemTestCase]]], Callable[[], Iterator[ProblemTestCase]]
+]:
+    """Mark a group of test cases to skip if the condition is True."""
+
+    def dec(
+        iter_fn: Callable[[], Iterator[ProblemTestCase]],
+    ) -> Callable[[], Iterator[ProblemTestCase]]:
+        @wraps(iter_fn)
+        def inner() -> Iterator[ProblemTestCase]:
+            for case in iter_fn():
+                if condition(case):
+                    yield replace(case, skip_reason=reason)
+                else:
+                    yield case
 
         return inner
 
@@ -665,17 +711,29 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
 
 
-@group_cases("vstack", available=GUROBI_MAJOR >= 11)
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 11,
+    reason="requires Gurobi 11+",
+)
+@group_cases("vstack")
 def vstack() -> Iterator[cp.Problem]:
     yield from _stack("vstack")
 
 
-@group_cases("hstack", available=GUROBI_MAJOR >= 11)
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 11,
+    reason="requires Gurobi 11+",
+)
+@group_cases("hstack")
 def hstack() -> Iterator[cp.Problem]:
     yield from _stack("hstack")
 
 
-@group_cases("nonlinear_exp", available=GUROBI_MAJOR >= 12)
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 12,
+    reason="requires Gurobi 12+",
+)
+@group_cases("nonlinear_exp")
 def nonlinear_exp() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(cp.exp(x)), [x >= 1])
@@ -696,7 +754,11 @@ def nonlinear_exp() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.exp(x) <= 1])
 
 
-@group_cases("nonlinear_log", available=GUROBI_MAJOR >= 12)
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 12,
+    reason="requires Gurobi 12+",
+)
+@group_cases("nonlinear_log")
 def nonlinear_log() -> Iterator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Maximize(cp.log(x)), [x <= 2])

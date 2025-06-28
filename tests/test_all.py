@@ -24,7 +24,18 @@ if TYPE_CHECKING:
 
 @pytest.fixture(params=all_valid_problems(), ids=lambda case: case.group)
 def case(request: pytest.FixtureRequest) -> ProblemTestCase:
-    return request.param
+    test_case: ProblemTestCase = request.param
+    if test_case.skip_reason:
+        pytest.skip(test_case.skip_reason)
+    return test_case
+
+
+@pytest.fixture
+def snapshot(snapshot: SnapshotFixture, case: ProblemTestCase) -> SnapshotFixture:
+    folder = snapshot.ctx.path.parent
+    snapshot.ctx.path = folder / case.context.solver.lower() / snapshot.ctx.path.name
+    snapshot.ctx.path.parent.mkdir(parents=True, exist_ok=True)
+    return snapshot
 
 
 def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) -> None:
