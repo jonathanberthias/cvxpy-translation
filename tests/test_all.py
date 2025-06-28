@@ -37,7 +37,7 @@ def case(request: pytest.FixtureRequest) -> ProblemTestCase:
 def snapshot(
     request: pytest.FixtureRequest, case: ProblemTestCase
 ) -> Generator[SnapshotFixture]:
-    """Replacement for SnapshotFixture.from_request to inject the solver name in the path.
+    """Replace SnapshotFixture.from_request to inject the solver name in the path.
 
     Yields:
         SnapshotFixture: A fixture that can be used to create snapshots for the test.
