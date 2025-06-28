@@ -1,0 +1,37 @@
+CVXPY
+Minimize
+  QuadForm(Hstack(x, [1. 2.]), [[1.00 0.00 0.00 0.00]
+ [0.00 1.00 0.00 0.00]
+ [0.00 0.00 1.00 0.00]
+ [0.00 0.00 0.00 1.00]])
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 + 2 C1 ^2 + 2 C2 ^2 + 2 C3 ^2 ] / 2 
+Subject To
+ R0: - C0 + C4 = 0
+ R1: - C1 + C5 = 0
+ R2: - C2 = -1
+ R3: - C3 = -2
+Bounds
+ C0 free
+ C1 free
+ C2 free
+ C3 free
+ C4 free
+ C5 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  + 5 Constant + [ 2 x[0] ^2 + 2 x[1] ^2 ] / 2 
+Subject To
+Bounds
+ x[0] free
+ x[1] free
+ Constant = 1
+End

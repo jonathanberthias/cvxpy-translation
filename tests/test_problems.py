@@ -6,7 +6,6 @@ from functools import partial
 from functools import wraps
 from typing import Callable
 from typing import Generator
-from typing import Iterator
 from typing import Literal
 
 import cvxpy as cp
@@ -15,43 +14,38 @@ import scipy.sparse as sp
 
 from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import GUROBI_MAJOR
-from cvxpy_translation.gurobi.translation import GUROBIPY_VERSION
 
 
 @dataclass(frozen=True)
-class TestCaseContext:
+class CaseContext:
     solver: str
-    version: tuple[int, ...]
-    version_major: int
-    cvxpy_version: tuple[int, ...] = CVXPY_VERSION
 
 
-CONTEXTS = (
-    TestCaseContext(
-        solver=cp.GUROBI, version=GUROBIPY_VERSION, version_major=GUROBI_MAJOR
-    ),
-)
+CONTEXTS = (CaseContext(solver=cp.GUROBI),)
 
 
 @dataclass(frozen=True)
 class ProblemTestCase:
     problem: cp.Problem
     group: str
-    context: TestCaseContext
+    context: CaseContext
     invalid_reason: str | None = None
     skip_reason: str | None = None
+
+
+_PROBLEM_GENERATOR_NAMES: list[str] = []
 
 
 def group_cases(
     group: str, *, invalid_reason: str | None = None
 ) -> Callable[
-    [Callable[[], Iterator[cp.Problem]]], Callable[[], Iterator[ProblemTestCase]]
+    [Callable[[], Generator[cp.Problem]]], Callable[[], Generator[ProblemTestCase]]
 ]:
     def dec(
-        iter_fn: Callable[[], Iterator[cp.Problem]],
-    ) -> Callable[[], Iterator[ProblemTestCase]]:
+        iter_fn: Callable[[], Generator[cp.Problem]],
+    ) -> Callable[[], Generator[ProblemTestCase]]:
         @wraps(iter_fn)
-        def inner() -> Iterator[ProblemTestCase]:
+        def inner() -> Generator[ProblemTestCase]:
             for problem in iter_fn():
                 for context in CONTEXTS:
                     yield ProblemTestCase(
@@ -61,6 +55,9 @@ def group_cases(
                         invalid_reason=invalid_reason,
                     )
 
+        # Register the generator function to be used later
+        _PROBLEM_GENERATOR_NAMES.append(iter_fn.__name__)
+
         return inner
 
     return dec
@@ -69,15 +66,15 @@ def group_cases(
 def skipif(
     condition: Callable[[ProblemTestCase], bool], reason: str
 ) -> Callable[
-    [Callable[[], Iterator[ProblemTestCase]]], Callable[[], Iterator[ProblemTestCase]]
+    [Callable[[], Generator[ProblemTestCase]]], Callable[[], Generator[ProblemTestCase]]
 ]:
     """Mark a group of test cases to skip if the condition is True."""
 
     def dec(
-        iter_fn: Callable[[], Iterator[ProblemTestCase]],
-    ) -> Callable[[], Iterator[ProblemTestCase]]:
+        iter_fn: Callable[[], Generator[ProblemTestCase]],
+    ) -> Callable[[], Generator[ProblemTestCase]]:
         @wraps(iter_fn)
-        def inner() -> Iterator[ProblemTestCase]:
+        def inner() -> Generator[ProblemTestCase]:
             for case in iter_fn():
                 if condition(case):
                     yield replace(case, skip_reason=reason)
@@ -89,43 +86,24 @@ def skipif(
     return dec
 
 
-def all_problems() -> Generator[ProblemTestCase, None, None]:
-    problem_gen: Callable[[], Generator[ProblemTestCase, None, None]]
-    for problem_gen in (
-        simple_expressions,
-        scalar_linear_constraints,
-        quadratic_expressions,
-        matrix_constraints,
-        matrix_quadratic_expressions,
-        quad_form,
-        genexpr_abs,
-        genexpr_min_max,
-        genexpr_minimum_maximum,
-        genexpr_norm1,
-        genexpr_norm2,
-        genexpr_norminf,
-        indexing,
-        sum_scalar,
-        sum_axis,
-        reshape,
-        hstack,
-        vstack,
-        nonlinear_exp,
-        nonlinear_log,
-        attributes,
-        invalid_expressions,
-    ):
+def all_problems() -> Generator[ProblemTestCase]:
+    for problem_gen_name in _PROBLEM_GENERATOR_NAMES:
         # Make sure order of groups does not matter
         reset_id_counter()
+        problem_gen = globals()[problem_gen_name]
         yield from problem_gen()
 
 
-def all_valid_problems() -> Iterator[ProblemTestCase]:
+def all_valid_problems() -> Generator[ProblemTestCase]:
     yield from (case for case in all_problems() if not case.invalid_reason)
 
 
+def all_invalid_problems() -> Generator[ProblemTestCase]:
+    yield from (case for case in all_problems() if case.invalid_reason)
+
+
 @group_cases("simple")
-def simple_expressions() -> Iterator[cp.Problem]:
+def simple_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)
     y = cp.Variable(name="y", nonneg=True)
 
@@ -155,7 +133,7 @@ def simple_expressions() -> Iterator[cp.Problem]:
 
 
 @group_cases("scalar_linear")
-def scalar_linear_constraints() -> Iterator[cp.Problem]:
+def scalar_linear_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
 
@@ -179,7 +157,7 @@ def scalar_linear_constraints() -> Iterator[cp.Problem]:
 
 
 @group_cases("matrix")
-def matrix_constraints() -> Iterator[cp.Problem]:
+def matrix_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
     y = cp.Variable(2, name="y")
     A = np.arange(4).reshape((2, 2))
@@ -202,7 +180,7 @@ def matrix_constraints() -> Iterator[cp.Problem]:
 
 
 @group_cases("quadratic")
-def quadratic_expressions() -> Iterator[cp.Problem]:
+def quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
 
@@ -222,7 +200,7 @@ def quadratic_expressions() -> Iterator[cp.Problem]:
 
 
 @group_cases("matrix_quadratic")
-def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
+def matrix_quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
     A = 2 * np.eye(2)
     S = 2 * sp.eye(2)
@@ -236,27 +214,44 @@ def matrix_quadratic_expressions() -> Iterator[cp.Problem]:
 
 
 @group_cases("quad_form")
-def quad_form() -> Iterator[cp.Problem]:
+def quad_form() -> Generator[cp.Problem]:
     x = cp.Variable((1,), name="x")
     A = np.array([[1]])
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
     x = cp.Variable(2, name="x")
-    y = np.array([1, 2])
     A_ = np.arange(4).reshape((2, 2))
     A = A_.T @ A_
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
-    if GUROBIPY_VERSION >= (11,):
-        yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
 
     x = np.arange(1, 3)
-    # Can't constrain to PSD=True because Gurobi does not solve PSD problems
     A = cp.Variable((2, 2), name="A", nonneg=True)
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
+    "requires Gurobi 11+",
+)
+@group_cases("quad_form_stack")
+def quad_form_stack() -> Generator[cp.Problem]:
+    x = cp.Variable(2, name="x")
+    y = np.array([1, 2])
+    yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
+
+
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI, "Gurobi cannot handle PSD variables"
+)
+@group_cases("quad_form_psd")
+def quad_form_psd() -> Generator[cp.Problem]:
+    x = np.arange(1, 3)
+    A = cp.Variable((2, 2), name="A", PSD=True)
+    yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
+
+
 @group_cases("genexpr_abs")
-def genexpr_abs() -> Iterator[cp.Problem]:
+def genexpr_abs() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
 
@@ -300,7 +295,7 @@ def genexpr_abs() -> Iterator[cp.Problem]:
 
 
 @group_cases("genexpr_min_max")
-def genexpr_min_max() -> Iterator[cp.Problem]:
+def genexpr_min_max() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
 
@@ -380,7 +375,7 @@ def genexpr_min_max() -> Iterator[cp.Problem]:
 
 
 @group_cases("genexpr_minimum_maximum")
-def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
+def genexpr_minimum_maximum() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     y = cp.Variable(name="y")
 
@@ -467,7 +462,7 @@ def genexpr_minimum_maximum() -> Iterator[cp.Problem]:
 
 def _genexpr_norm_problems(
     norm: Callable[[cp.Expression | float | np.ndarray], cp.Expression],
-) -> Iterator[cp.Problem]:
+) -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(norm(x)))
     yield cp.Problem(cp.Minimize(norm(x - 1)))
@@ -502,12 +497,12 @@ def _genexpr_norm_problems(
 
 
 @group_cases("genexpr_norm1")
-def genexpr_norm1() -> Iterator[cp.Problem]:
+def genexpr_norm1() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm1)
 
 
 @group_cases("genexpr_norm2")
-def genexpr_norm2() -> Iterator[cp.Problem]:
+def genexpr_norm2() -> Generator[cp.Problem]:
     # we use pnorm(p=2) as the norm2 function will automatically
     # use matrix norms but Gurobi only handles vector norms
     # pnorm will only create vector norms
@@ -515,12 +510,12 @@ def genexpr_norm2() -> Iterator[cp.Problem]:
 
 
 @group_cases("genexpr_norminf")
-def genexpr_norminf() -> Iterator[cp.Problem]:
+def genexpr_norminf() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm_inf)
 
 
 @group_cases("indexing")
-def indexing() -> Iterator[cp.Problem]:
+def indexing() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x", nonneg=True)
     m = cp.Variable((2, 2), name="m", nonneg=True)
     y = x + np.array([1, 2])
@@ -553,7 +548,7 @@ def indexing() -> Iterator[cp.Problem]:
 
 
 @group_cases("sum_scalar")
-def sum_scalar() -> Iterator[cp.Problem]:
+def sum_scalar() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)
     yield cp.Problem(cp.Minimize(cp.sum(x)))
     yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
@@ -568,7 +563,7 @@ def sum_scalar() -> Iterator[cp.Problem]:
 
 
 @group_cases("sum_axis")
-def sum_axis() -> Iterator[cp.Problem]:
+def sum_axis() -> Generator[cp.Problem]:
     x = cp.Variable((2, 2), name="x", nonneg=True)
 
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=None) >= 1])
@@ -577,7 +572,7 @@ def sum_axis() -> Iterator[cp.Problem]:
 
 
 @group_cases("reshape")
-def reshape() -> Iterator[cp.Problem]:
+def reshape() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     a = x + 1
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, (), order="F") <= 1])
@@ -665,7 +660,7 @@ def reshape() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(4)])
 
 
-def _stack(stack_name: Literal["vstack", "hstack"]) -> Iterator[cp.Problem]:
+def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     stack = getattr(cp, stack_name)
 
     if stack_name == "hstack":
@@ -712,29 +707,29 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Iterator[cp.Problem]:
 
 
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 11,
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
 )
 @group_cases("vstack")
-def vstack() -> Iterator[cp.Problem]:
+def vstack() -> Generator[cp.Problem]:
     yield from _stack("vstack")
 
 
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 11,
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
 )
 @group_cases("hstack")
-def hstack() -> Iterator[cp.Problem]:
+def hstack() -> Generator[cp.Problem]:
     yield from _stack("hstack")
 
 
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 12,
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",
 )
 @group_cases("nonlinear_exp")
-def nonlinear_exp() -> Iterator[cp.Problem]:
+def nonlinear_exp() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Minimize(cp.exp(x)), [x >= 1])
     yield cp.Problem(cp.Minimize(cp.exp(x + 1)), [x >= 1])
@@ -755,11 +750,11 @@ def nonlinear_exp() -> Iterator[cp.Problem]:
 
 
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI and case.context.version_major < 12,
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",
 )
 @group_cases("nonlinear_log")
-def nonlinear_log() -> Iterator[cp.Problem]:
+def nonlinear_log() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     yield cp.Problem(cp.Maximize(cp.log(x)), [x <= 2])
     yield cp.Problem(cp.Maximize(cp.log1p(x)), [x <= 2])
@@ -779,7 +774,7 @@ def nonlinear_log() -> Iterator[cp.Problem]:
 
 
 @group_cases("attributes")
-def attributes() -> Iterator[cp.Problem]:
+def attributes() -> Generator[cp.Problem]:
     x = cp.Variable(nonpos=True, name="x")
     yield cp.Problem(cp.Maximize(x))
 
@@ -796,7 +791,7 @@ def attributes() -> Iterator[cp.Problem]:
 
 
 @group_cases("invalid", invalid_reason="unsupported expressions")
-def invalid_expressions() -> Iterator[cp.Problem]:
+def invalid_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
     v = cp.Variable(2, name="v")
     yield cp.Problem(cp.Minimize(x**3))
@@ -804,9 +799,17 @@ def invalid_expressions() -> Iterator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
     yield cp.Problem(cp.Minimize(cp.norm(v, 4)))
     yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
-    if GUROBIPY_VERSION < (11,):
-        yield cp.Problem(cp.Minimize(cp.sum(cp.hstack([x, 1]))))
-        yield cp.Problem(cp.Minimize(cp.sum(cp.vstack([x, 1]))))
+
+
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR >= 11,
+    "works in Gurobi 11+",
+)
+@group_cases("invalid_stack", invalid_reason="unsupported stack expressions")
+def invalid_stack_expressions() -> Generator[cp.Problem]:
+    x = cp.Variable(name="x")
+    yield cp.Problem(cp.Minimize(cp.sum(cp.hstack([x, 1]))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.vstack([x, 1]))))
 
 
 def reset_id_counter() -> None:
