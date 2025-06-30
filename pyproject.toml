@@ -99,8 +99,8 @@ extra-dependencies = [
   "cvxpy-base>=1.1.16",
   # bundled license is expired on older versions of gurobipy
   "gurobipy>=11",
-  "cvxpy-translation[pyscipopt]",
 ]
+features = ["gurobi", "scip"]
 
 [tool.hatch.envs.types]
 description = "Type checking environment"
