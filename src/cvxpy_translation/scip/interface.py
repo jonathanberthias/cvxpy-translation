@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
     from typing_extensions import TypeAlias
 
-AnyVar: TypeAlias = Union[scip.Var, scip.MVar]
+AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
 Param: TypeAlias = Union[str, float]
 ParamDict: TypeAlias = Dict[str, Param]
 

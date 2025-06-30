@@ -41,6 +41,7 @@ dependencies = [
 
 [project.optional-dependencies]
 gurobi = ["gurobipy"]
+scip = ["pyscipopt>=5.4.1"]
 
 [project.urls]
 Documentation = "https://github.com/jonathanberthias/cvxpy-translation#readme"
@@ -78,6 +79,7 @@ python = "3.13"
 extra-dependencies = [
   "cvxpy-base==1.6.6",
   "gurobipy==12.0.2",
+  "pyscipopt==5.5.0",
   "numpy==2.3.1",
   "scipy==1.16.0",
 ]
@@ -97,6 +99,7 @@ extra-dependencies = [
   "cvxpy-base>=1.1.16",
   # bundled license is expired on older versions of gurobipy
   "gurobipy>=11",
+  "cvxpy-translation[pyscipopt]",
 ]
 
 [tool.hatch.envs.types]

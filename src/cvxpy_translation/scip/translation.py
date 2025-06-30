@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.metadata
 import operator
 from functools import reduce
+from math import inf
 from math import prod
 from typing import TYPE_CHECKING
 from typing import Any
@@ -41,10 +42,10 @@ try:
     CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
 except importlib.metadata.PackageNotFoundError:
     CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy-base").split(".")))
-SCIP_VERSION = scip.version()
+SCIP_VERSION = scip.__version__
 SCIP_MAJOR = SCIP_VERSION[0]
 
-AnyVar: TypeAlias = Union[scip.Var, scip.MVar]
+AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
 Param: TypeAlias = Union[str, float]
 ParamDict: TypeAlias = Dict[str, Param]
 
@@ -180,9 +181,9 @@ def add_variable(
     model: scip.Model,
     shape: tuple[int, ...],
     name: str,
-    vtype: str = scip.CONTINUOUS,
-    lb: float = -scip.INFINITY,
-    ub: float = scip.INFINITY,
+    vtype: str = "CONTINUOUS",
+    lb: float = -inf,
+    ub: float = inf,
 ) -> AnyVar:
     if shape == ():
         return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
@@ -236,9 +237,9 @@ class Translater:
         node: cp.Expression,
         *,
         scalar: bool = False,
-        vtype: str = scip.CONTINUOUS,
-        lb: float = -scip.INFINITY,
-        ub: float = scip.INFINITY,
+        vtype: str = "CONTINUOUS",
+        lb: float = -inf,
+        ub: float = inf,
     ) -> AnyVar | npt.NDArray[np.float64] | float:
         """Translate a CVXPY expression, and return a SCIP variable constrained to its value.
 
@@ -266,9 +267,9 @@ class Translater:
         atom_name: str,
         *,
         desired_shape: tuple[int, ...] | None = None,
-        vtype: str = scip.CONTINUOUS,
-        lb: float = -scip.INFINITY,
-        ub: float = scip.INFINITY,
+        vtype: str = "CONTINUOUS",
+        lb: float = -inf,
+        ub: float = inf,
     ) -> AnyVar:
         """Add a variable constrained to the value of the given gurobipy expression."""
         desired_shape = (
