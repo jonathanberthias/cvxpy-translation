@@ -4,16 +4,19 @@ import math
 import warnings
 from itertools import chain
 from typing import TYPE_CHECKING
+from typing import Any
 from typing import Generator
 
 import cvxpy as cp
 import cvxpy.settings as s
 import gurobipy as gp
+import pyscipopt as scip
 import pytest
 from pytest_insta.fixture import SnapshotFixture
 from pytest_insta.utils import node_path_name
 
 import cvxpy_translation.gurobi
+import cvxpy_translation.scip
 from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
@@ -63,14 +66,21 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     try:
         quiet_solve(problem)
     except cp.SolverError as e:
-        # The Gurobi interface in cvxpy can't solve some problems
-        cvxpy_gurobi_lines = [str(e)]
+        # The solver interfaces in cvxpy can't solve some problems
+        cvxpy_interface_lines = [str(e)]
     else:
         generated_model = problem.solver_stats.extra_stats
-        cvxpy_gurobi_lines = lp_from_gurobi(generated_model, tmp_path)
+        cvxpy_interface_lines = lp_from_solver(
+            generated_model, case.context.solver, tmp_path
+        )
 
-    model = cvxpy_translation.gurobi.build_model(problem)
-    gurobi_lines = lp_from_gurobi(model, tmp_path)
+    if case.context.solver == cp.GUROBI:
+        model = cvxpy_translation.gurobi.build_model(problem)
+    elif case.context.solver == cp.SCIP:
+        model = cvxpy_translation.scip.build_model(problem)
+    else:
+        pytest.fail(f"Unexpected solver: {case.context.solver}")
+    model_lines = lp_from_solver(model, case.context.solver, tmp_path)
 
     divider = ["-" * 40]
     output = "\n".join(
@@ -79,10 +89,10 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
             cvxpy_lines,
             divider,
             ["AFTER COMPILATION"],
-            cvxpy_gurobi_lines,
+            cvxpy_interface_lines,
             divider,
-            ["GUROBI"],
-            gurobi_lines,
+            [case.context.solver.upper()],
+            model_lines,
         )
     )
 
@@ -94,6 +104,16 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
 
 
 def test_backfill(case: ProblemTestCase) -> None:
+    if case.context.solver == cp.GUROBI:
+        check_backfill_gurobi(case)
+    elif case.context.solver == cp.SCIP:
+        check_backfill_scip(case)
+    else:
+        msg = f"Unsupported solver: {case.context.solver}"
+        raise ValueError(msg)
+
+
+def check_backfill_gurobi(case: ProblemTestCase) -> None:
     problem = case.problem
     cvxpy_translation.gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
     our_sol: Solution = problem.solution
@@ -119,6 +139,49 @@ def test_backfill(case: ProblemTestCase) -> None:
         )
     # Dual values are not available for MIPs
     # Sometimes, the Gurobi model is a MIP even though the CVXPY problem is not,
+    # notably when using genexprs
+    # So we only check the dual values if the model is not a MIP
+    # This is one point where we cannot guarantee that our solution is the same as CVXPY's
+    # if the dual values are important
+    if not our_model.IsMIP:
+        assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
+        for key in our_sol.dual_vars:
+            assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
+    assert set(our_sol.attr) >= set(cp_sol.attr)
+    # In some cases, iteration count can be negative??
+    cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)
+    assert our_sol.attr[s.NUM_ITERS] <= cp_iters
+
+
+@pytest.mark.xfail("backfill not implemented for SCIP yet")
+def check_backfill_scip(case: ProblemTestCase) -> None:
+    problem = case.problem
+    our_model = cvxpy_translation.scip.build_model(problem)
+    our_model.optimize()
+    cvxpy_translation.scip.backfill_problem(problem, our_model)
+    our_sol: Solution = problem.solution
+    assert our_model.Status == "optimal"
+    assert our_sol.opt_val is not None
+    assert our_sol.primal_vars
+
+    try:
+        quiet_solve(problem)
+    except cp.SolverError:
+        # The problem can't be solved through CVXPY, so we can't compare solutions
+        return
+
+    cp_sol: Solution = problem.solution
+
+    assert our_sol.status == cp_sol.status
+    assert our_sol.opt_val == pytest.approx(cp_sol.opt_val, abs=1e-7, rel=1e-6)
+    assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
+    for key in our_sol.primal_vars:
+        assert our_sol.primal_vars[key] == pytest.approx(
+            cp_sol.primal_vars[key], rel=2e-4
+        )
+
+    # Dual values are not available for MIPs
+    # Sometimes, the SCIP model is a MIP even though the CVXPY problem is not,
     # notably when using genexprs
     # So we only check the dual values if the model is not a MIP
     # This is one point where we cannot guarantee that our solution is the same as CVXPY's
@@ -161,10 +224,23 @@ def lp_from_cvxpy(problem: cp.Problem) -> list[str]:
     return out
 
 
+def lp_from_solver(model: Any, solver: str, tmp_path: Path) -> list[str]:
+    if isinstance(model, gp.Model):
+        return lp_from_gurobi(model, tmp_path)
+    if isinstance(model, scip.Model):
+        return lp_from_scip(model)
+    msg = f"Unsupported solver model type: {type(model)} for {solver}"
+    raise ValueError(msg)
+
+
 def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
     out_path = tmp_path / "gurobi.lp"
     model.write(str(out_path))
     return out_path.read_text().splitlines()[1:]
+
+
+def lp_from_scip(model: scip.Model) -> list[str]:
+    raise NotImplementedError
 
 
 def quiet_solve(problem: cp.Problem) -> None:

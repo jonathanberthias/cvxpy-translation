@@ -21,7 +21,7 @@ class CaseContext:
     solver: str
 
 
-CONTEXTS = (CaseContext(solver=cp.GUROBI),)
+CONTEXTS = (CaseContext(solver=cp.GUROBI), CaseContext(solver=cp.SCIP))
 
 
 @dataclass(frozen=True)
@@ -46,8 +46,9 @@ def group_cases(
     ) -> Callable[[], Generator[ProblemTestCase]]:
         @wraps(iter_fn)
         def inner() -> Generator[ProblemTestCase]:
-            for problem in iter_fn():
-                for context in CONTEXTS:
+            for context in CONTEXTS:
+                reset_id_counter()
+                for problem in iter_fn():
                     yield ProblemTestCase(
                         problem=problem,
                         group=group,
@@ -102,6 +103,7 @@ def all_invalid_problems() -> Generator[ProblemTestCase]:
     yield from (case for case in all_problems() if case.invalid_reason)
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("simple")
 def simple_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)
@@ -132,6 +134,7 @@ def simple_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**2 + y**2))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("scalar_linear")
 def scalar_linear_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -156,6 +159,7 @@ def scalar_linear_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x), [2 * x + y >= 1, y == 0])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("matrix")
 def matrix_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
@@ -179,6 +183,7 @@ def matrix_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0, y == 0])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("quadratic")
 def quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -199,6 +204,7 @@ def quadratic_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize((x - y) ** 2 + x + y), [y == 0])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("matrix_quadratic")
 def matrix_quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
@@ -213,6 +219,7 @@ def matrix_quadratic_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("quad_form")
 def quad_form() -> Generator[cp.Problem]:
     x = cp.Variable((1,), name="x")
@@ -229,6 +236,7 @@ def quad_form() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     "requires Gurobi 11+",
@@ -240,6 +248,7 @@ def quad_form_stack() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI, "Gurobi cannot handle PSD variables"
 )
@@ -250,6 +259,7 @@ def quad_form_psd() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_abs")
 def genexpr_abs() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -294,6 +304,7 @@ def genexpr_abs() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(x) + cp.abs(A))))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_min_max")
 def genexpr_min_max() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -374,6 +385,7 @@ def genexpr_min_max() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_minimum_maximum")
 def genexpr_minimum_maximum() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -496,11 +508,13 @@ def _genexpr_norm_problems(
     yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [norm(x) <= 6])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norm1")
 def genexpr_norm1() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm1)
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norm2")
 def genexpr_norm2() -> Generator[cp.Problem]:
     # we use pnorm(p=2) as the norm2 function will automatically
@@ -509,11 +523,13 @@ def genexpr_norm2() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(partial(cp.pnorm, p=2))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norminf")
 def genexpr_norminf() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm_inf)
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("indexing")
 def indexing() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x", nonneg=True)
@@ -547,6 +563,7 @@ def indexing() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(m[:, :])))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("sum_scalar")
 def sum_scalar() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)
@@ -562,6 +579,7 @@ def sum_scalar() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("sum_axis")
 def sum_axis() -> Generator[cp.Problem]:
     x = cp.Variable((2, 2), name="x", nonneg=True)
@@ -571,6 +589,7 @@ def sum_axis() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=1) >= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("reshape")
 def reshape() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -706,6 +725,7 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
@@ -715,6 +735,7 @@ def vstack() -> Generator[cp.Problem]:
     yield from _stack("vstack")
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
@@ -724,6 +745,7 @@ def hstack() -> Generator[cp.Problem]:
     yield from _stack("hstack")
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",
@@ -749,6 +771,7 @@ def nonlinear_exp() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.exp(x) <= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",
@@ -773,6 +796,7 @@ def nonlinear_log() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.log(x) >= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("attributes")
 def attributes() -> Generator[cp.Problem]:
     x = cp.Variable(nonpos=True, name="x")
@@ -790,6 +814,7 @@ def attributes() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(x + n + b), [n <= 1])
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("invalid", invalid_reason="unsupported expressions")
 def invalid_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -801,6 +826,7 @@ def invalid_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
 
 
+@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR >= 11,
     "works in Gurobi 11+",
