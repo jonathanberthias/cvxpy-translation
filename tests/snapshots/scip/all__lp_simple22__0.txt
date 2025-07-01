@@ -1,0 +1,29 @@
+CVXPY
+Minimize
+  x + -y
+Subject To
+ 12: y <= 1.0
+Bounds
+ 0.0 <= x
+ 0.0 <= y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 -1 x_1
+Subject to
+ c1: -1 x_0 <= +0
+ c2: -1 x_1 <= +0
+ c3: +1 x_1 <= +1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x -1 y
+Subject to
+ 12: +1 y <= +1
+Bounds
+End

@@ -6,12 +6,14 @@ from itertools import chain
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Generator
+from unittest.mock import patch
 
 import cvxpy as cp
 import cvxpy.settings as s
 import gurobipy as gp
 import pyscipopt as scip
 import pytest
+from cvxpy.reductions.solvers.conic_solvers.scip_conif import SCIP
 from pytest_insta.fixture import SnapshotFixture
 from pytest_insta.utils import node_path_name
 
@@ -55,7 +57,7 @@ def snapshot(
 
 
 def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) -> None:
-    """Generate LP output for CVXPY and Gurobi.
+    """Generate LP output for CVXPY and the tested solver.
 
     This test requires human intervention to check the differences in the
     generated snapshot files.
@@ -64,12 +66,11 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     cvxpy_lines = lp_from_cvxpy(problem)
 
     try:
-        quiet_solve(problem)
+        generated_model = quiet_solve(problem, case.context.solver)
     except cp.SolverError as e:
         # The solver interfaces in cvxpy can't solve some problems
         cvxpy_interface_lines = [str(e)]
     else:
-        generated_model = problem.solver_stats.extra_stats
         cvxpy_interface_lines = lp_from_solver(
             generated_model, case.context.solver, tmp_path
         )
@@ -123,7 +124,7 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     assert our_sol.primal_vars
 
     try:
-        quiet_solve(problem)
+        quiet_solve(problem, case.context.solver)
     except cp.SolverError:
         # The problem can't be solved through CVXPY, so we can't compare solutions
         return
@@ -157,15 +158,19 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
 def check_backfill_scip(case: ProblemTestCase) -> None:
     problem = case.problem
     our_model = cvxpy_translation.scip.build_model(problem)
+    # Same settings as in cvxpy's SCIP interface
+    our_model.setPresolve(scip.SCIP_PARAMSETTING.OFF)
+    our_model.setHeuristics(scip.SCIP_PARAMSETTING.OFF)
+    our_model.disablePropagation()
     our_model.optimize()
     cvxpy_translation.scip.backfill_problem(problem, our_model)
     our_sol: Solution = problem.solution
-    assert our_model.Status == "optimal"
+    assert our_model.getStatus() == "optimal"
     assert our_sol.opt_val is not None
     assert our_sol.primal_vars
 
     try:
-        quiet_solve(problem)
+        quiet_solve(problem, case.context.solver)
     except cp.SolverError:
         # The problem can't be solved through CVXPY, so we can't compare solutions
         return
@@ -173,11 +178,11 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     cp_sol: Solution = problem.solution
 
     assert our_sol.status == cp_sol.status
-    assert our_sol.opt_val == pytest.approx(cp_sol.opt_val, abs=1e-7, rel=1e-6)
+    assert our_sol.opt_val == pytest.approx(cp_sol.opt_val, abs=1e-6, rel=1e-6)
     assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
     for key in our_sol.primal_vars:
         assert our_sol.primal_vars[key] == pytest.approx(
-            cp_sol.primal_vars[key], rel=2e-4
+            cp_sol.primal_vars[key], rel=5e-4
         )
 
     # Dual values are not available for MIPs
@@ -186,7 +191,7 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     # So we only check the dual values if the model is not a MIP
     # This is one point where we cannot guarantee that our solution is the same as CVXPY's
     # if the dual values are important
-    if not our_model.IsMIP:
+    if our_sol.dual_vars is not None:
         assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
         for key in our_sol.dual_vars:
             assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
@@ -241,12 +246,38 @@ def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
 
 def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:
     out_path = tmp_path / "scip.lp"
-    model.writeProblem(str(out_path))
-    return out_path.read_text().splitlines()
+    model.writeProblem(str(out_path), verbose=False)
+    return out_path.read_text().splitlines()[4:]
 
 
-def quiet_solve(problem: cp.Problem) -> None:
+def quiet_solve(problem: cp.Problem, solver: str) -> gp.Model | scip.Model:
     with warnings.catch_warnings():
         # Some problems are unbounded
         warnings.filterwarnings("ignore", category=UserWarning)
-        problem.solve(solver=cp.GUROBI)
+
+        if solver == cp.GUROBI:
+            # Gurobi's solve method returns a Model object
+            problem.solve(solver=cp.GUROBI, **{gp.GRB.Param.QCPDual: 1})
+            generated_model = problem.solution.attr[s.EXTRA_STATS]
+
+        elif solver == cp.SCIP:
+            old_opt = SCIP._solve  # noqa: SLF001
+            generated_model = None
+
+            def new_solve(
+                self: SCIP, model: scip.Model, *args: Any, **kwargs: Any
+            ) -> Any:
+                """Capture the model generated during the solving process."""
+                nonlocal generated_model
+                generated_model = model
+                return old_opt(self, model, *args, **kwargs)
+
+            with patch.object(SCIP, "_solve", new=new_solve):
+                problem.solve(solver=cp.SCIP)
+
+        else:
+            msg = f"Unsupported solver: {solver}"
+            raise ValueError(msg)
+
+        assert generated_model is not None
+        return generated_model

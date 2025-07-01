@@ -103,7 +103,6 @@ def all_invalid_problems() -> Generator[ProblemTestCase]:
     yield from (case for case in all_problems() if case.invalid_reason)
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("simple")
 def simple_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)

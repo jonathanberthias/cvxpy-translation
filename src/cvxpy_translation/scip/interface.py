@@ -127,6 +127,7 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
     attr = {
         cp_settings.EXTRA_STATS: model,
         cp_settings.SOLVE_TIME: model.getSolvingTime(),
+        cp_settings.NUM_ITERS: model.lpiGetIterations(),
     }
     status = scip_conif.STATUS_MAP[model.getStatus()]
     if status not in SOLUTION_PRESENT:
@@ -179,9 +180,12 @@ def get_constraint_dual(
         constr = get_constraint_by_name(model, constraint_name)
         # CVXPY returns an array of shape (1,) for quadratic constraints
         # and a scalar for linear constraints -__-
-        return np.array(model.getDualsolLinear(constr))
+        try:
+            return np.array(model.getDualsolLinear(constr))
+        except Warning:
+            return None
 
-    return np.zeros(shape)
+    return None
 
 
 def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
