@@ -191,6 +191,7 @@ def _should_reverse_inequality(lower: object, upper: object) -> bool:
     we get an error if lower is an array and upper is a gurobipy object:
         gurobipy.GurobiError:
             Constraint has no bool value (are you trying "lb <= expr <= ub"?)
+
     In that case, we should write upper >= lower instead.
     """
     # gurobipy objects don't have base classes and don't define __module__

@@ -91,7 +91,6 @@ def fill_model(problem: cp.Problem, model: gp.Model) -> None:
     Args:
         problem: The CVXPY problem to convert.
         model: The Gurobi model to which constraints and objectives are added.
-        variable_map: A mapping from CVXPY variable names to Gurobi variables.
 
     """
     Translater(model).visit(problem)

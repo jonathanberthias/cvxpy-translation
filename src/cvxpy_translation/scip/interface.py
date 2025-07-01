@@ -46,16 +46,14 @@ class _Timer:
         self.time = end - self._start
 
 
-def solve(
-    problem: cp.Problem, *, env: scip.Env | None = None, **params: Param
-) -> float:
+def solve(problem: cp.Problem, **params: Param) -> float:
     """Solve a CVXPY problem using SCIP.
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_translation.scip.solve(problem)
     """
     with _Timer() as compilation:
-        model = build_model(problem, params=params, env=env)
+        model = build_model(problem, params=params)
 
     with _Timer() as solve:
         model.optimize()
@@ -76,11 +74,9 @@ def register_solver(name: str = SCIP_TRANSLATION) -> None:
     cp.Problem.register_solve(name, solve)
 
 
-def build_model(
-    problem: cp.Problem, *, env: scip.Env | None = None, params: ParamDict | None = None
-) -> scip.Model:
+def build_model(problem: cp.Problem, *, params: ParamDict | None = None) -> scip.Model:
     """Convert a CVXPY problem to a SCIP model."""
-    model = scip.Model(env=env)
+    model = scip.Model()
     fill_model(problem, model)
     if params:
         set_params(model, params)
@@ -130,10 +126,9 @@ def backfill_problem(
 def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solution:
     attr = {
         cp_settings.EXTRA_STATS: model,
-        cp_settings.SOLVE_TIME: model.Runtime,
-        cp_settings.NUM_ITERS: model.IterCount,
+        cp_settings.SOLVE_TIME: model.getSolvingTime(),
     }
-    status = scip_conif.SCIP.STATUS_MAP[model.Status]
+    status = scip_conif.STATUS_MAP[model.getStatus()]
     if status not in SOLUTION_PRESENT:
         if CVXPY_VERSION >= (1, 2, 0):
             # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
@@ -144,22 +139,19 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
     dual_vars = {}
     for var in problem.variables():
         primal_vars[var.id] = extract_variable_value(model, var.name(), var.shape)
-    # Duals are only available for convex continuous problems
-    # https://www.scip.com/documentation/current/refman/pi.html
-    if not model.IsMIP:
-        for constr in problem.constraints:
-            dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
-            if dual is None:
-                continue
-            if isinstance(problem.objective, cp.Minimize) and (
-                isinstance(constr, Equality)
-                or (isinstance(constr, Inequality) and constr.args[1].is_constant())
-            ):
-                dual *= -1
-            dual_vars[constr.constr_id] = dual
+    for constr in problem.constraints:
+        dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
+        if dual is None:
+            continue
+        if isinstance(problem.objective, cp.Minimize) and (
+            isinstance(constr, Equality)
+            or (isinstance(constr, Inequality) and constr.args[1].is_constant())
+        ):
+            dual *= -1
+        dual_vars[constr.constr_id] = dual
     return Solution(
         status=status,
-        opt_val=model.ObjVal,
+        opt_val=model.getObjVal(),
         primal_vars=primal_vars,
         dual_vars=dual_vars,
         attr=attr,
@@ -169,62 +161,36 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
 def extract_variable_value(
     model: scip.Model, var_name: str, shape: tuple[int, ...]
 ) -> npt.NDArray[np.float64]:
+    var_dict = model.getVarDict()
     if shape == ():
-        v = model.getVarByName(var_name)
-        assert v is not None
-        return np.array(v.X)
+        v = var_dict[var_name]
+        return np.array(v)
 
     value = np.zeros(shape)
     for idx, subvar_name in _matrix_to_scip_names(var_name, shape):
-        subvar = model.getVarByName(subvar_name)
-        assert subvar is not None, subvar_name
-        value[idx] = subvar.X
+        value[idx] = var_dict[subvar_name]
     return value
 
 
 def get_constraint_dual(
     model: scip.Model, constraint_name: str, shape: tuple[int, ...]
 ) -> npt.NDArray[np.float64] | None:
-    # quadratic constraints don't have duals computed by default
-    # https://www.scip.com/documentation/current/refman/qcpi.html
-    has_qcp_duals = model.params.QCPDual
-
     if shape == ():
         constr = get_constraint_by_name(model, constraint_name)
         # CVXPY returns an array of shape (1,) for quadratic constraints
         # and a scalar for linear constraints -__-
-        if isinstance(constr, scip.Constr):
-            return np.array(constr.Pi)
-        assert isinstance(constr, scip.QConstr)
-        if has_qcp_duals:
-            return np.array([constr.QCPi])
-        return None
+        return np.array(model.getDualsolLinear(constr))
 
-    dual = np.zeros(shape)
-    for idx, subconstr_name in _matrix_to_scip_names(constraint_name, shape):
-        subconstr = get_constraint_by_name(model, subconstr_name)
-        if isinstance(subconstr, scip.QConstr):
-            if not has_qcp_duals:
-                # no need to check the other subconstraints, they should all be the same
-                return None
-            dual[idx] = subconstr.QCPi
-        else:
-            dual[idx] = subconstr.Pi
-    return dual
+    return np.zeros(shape)
 
 
-def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constr | scip.QConstr:
-    try:
-        constr = model.getConstrByName(name)
-    except scip.ScipError:
-        # quadratic constraints are not returned by getConstrByName
-        for q_constr in model.getQConstrs():
-            if q_constr.QCName == name:
-                return q_constr
-        raise  # pragma: no cover
-    else:
-        assert constr is not None
-        return constr
+def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
+    constrs = model.getConss(transformed=False)
+    for constr in constrs:
+        if constr.name == name:
+            return constr
+    msg = f"Constraint {name} not found."
+    raise LookupError(msg)
 
 
 def _matrix_to_scip_names(
