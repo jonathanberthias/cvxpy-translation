@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  x / 2.0 + 1.0
+  power(x, 2.0)
 Subject To
 Bounds
  0.0 <= x
@@ -8,7 +8,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  0.5 C0
+ [ 2 C0 ^2 ] / 2 
 Subject To
  R0: - C0 <= 0
 Bounds
@@ -17,8 +17,7 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  0.5 x + Constant
+ [ 2 x ^2 ] / 2 
 Subject To
 Bounds
- Constant = 1
 End

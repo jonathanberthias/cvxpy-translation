@@ -1,27 +1,23 @@
 CVXPY
 Minimize
-  1.0 + -x
+  x / 2.0
 Subject To
- 36: x <= 1.0
 Bounds
  0.0 <= x
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0
+  0.5 C0
 Subject To
  R0: - C0 <= 0
- R1: C0 <= 1
 Bounds
  C0 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  - x + Constant
+  0.5 x
 Subject To
- 36: x <= 1
 Bounds
- Constant = 1
 End

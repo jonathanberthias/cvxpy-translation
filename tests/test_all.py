@@ -228,7 +228,7 @@ def lp_from_solver(model: Any, solver: str, tmp_path: Path) -> list[str]:
     if isinstance(model, gp.Model):
         return lp_from_gurobi(model, tmp_path)
     if isinstance(model, scip.Model):
-        return lp_from_scip(model)
+        return lp_from_scip(model, tmp_path)
     msg = f"Unsupported solver model type: {type(model)} for {solver}"
     raise ValueError(msg)
 
@@ -239,8 +239,10 @@ def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
     return out_path.read_text().splitlines()[1:]
 
 
-def lp_from_scip(model: scip.Model) -> list[str]:
-    raise NotImplementedError
+def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:
+    out_path = tmp_path / "scip.lp"
+    model.writeProblem(str(out_path))
+    return out_path.read_text().splitlines()
 
 
 def quiet_solve(problem: cp.Problem) -> None:

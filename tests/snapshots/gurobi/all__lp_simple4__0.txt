@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  x + -x
+  x + -1.0
 Subject To
 Bounds
  0.0 <= x
@@ -8,7 +8,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
- 
+  C0
 Subject To
  R0: - C0 <= 0
 Bounds
@@ -17,7 +17,8 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  0 x
+  x - Constant
 Subject To
 Bounds
+ Constant = 1
 End

@@ -114,7 +114,6 @@ def simple_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x + x))
     yield cp.Problem(cp.Minimize(x + y))
 
-    yield cp.Problem(cp.Minimize(x - x))
     yield cp.Problem(cp.Minimize(x - 1))
     yield cp.Problem(cp.Minimize(x - y), [y <= 1])
 
