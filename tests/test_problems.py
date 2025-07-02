@@ -132,7 +132,6 @@ def simple_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**2 + y**2))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("scalar_linear")
 def scalar_linear_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")

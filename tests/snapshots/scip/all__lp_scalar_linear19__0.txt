@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 45: 1.0 <= x
+ 49: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 <= -1
+ c2: -1 x_1 <= -1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x
+Subject to
+ 45: +1 x >= +1
+ 49: +1 y >= +1
+Bounds
+ x free
+ y free
+End
