@@ -200,5 +200,5 @@ def _matrix_to_scip_names(
     base_name: str, shape: tuple[int, ...]
 ) -> Iterator[tuple[tuple[int, ...], str]]:
     for idx in np.ndindex(shape):
-        formatted_idx = ",".join(str(i) for i in idx)
-        yield idx, f"{base_name}[{formatted_idx}]"
+        formatted_idx = "_".join(str(i) for i in idx)
+        yield idx, f"{base_name}_{formatted_idx}"
