@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 95: 1.0 <= 2.0 @ x + y
+ 99: y == 0.0
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: +1 x_1 = +0
+ c2: -2 x_0 -1 x_1 <= -1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x
+Subject to
+ 95: +2 x +1 y >= +1
+ 99: +1 y = +0
+Bounds
+ x free
+ y free
+End

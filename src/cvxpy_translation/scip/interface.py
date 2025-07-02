@@ -144,9 +144,8 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
         dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
         if dual is None:
             continue
-        if isinstance(problem.objective, cp.Minimize) and (
-            isinstance(constr, Equality)
-            or (isinstance(constr, Inequality) and constr.args[1].is_constant())
+        if isinstance(constr, Equality) or (
+            isinstance(constr, Inequality) and constr.args[1].is_constant()
         ):
             dual *= -1
         dual_vars[constr.constr_id] = dual

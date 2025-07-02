@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 33: 0.0 <= x
+ 37: x <= 2.0
+ 41: x == 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: +1 x_0 = +1
+ c2: -1 x_0 <= +0
+ c3: +1 x_0 <= +2
+Bounds
+ x_0 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x
+Subject to
+ 33: +1 x >= +0
+ 37: +1 x <= +2
+ 41: +1 x = +1
+Bounds
+ x free
+End

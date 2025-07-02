@@ -5,6 +5,7 @@ import warnings
 from itertools import chain
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Final
 from typing import Generator
 from unittest.mock import patch
 
@@ -28,6 +29,12 @@ if TYPE_CHECKING:
 
     from cvxpy.reductions.solution import Solution
     from pytest_insta.session import SnapshotSession
+
+
+PARAMS: Final = {
+    cp.GUROBI: {gp.GRB.Param.QCPDual: 1},
+    cp.SCIP: {"numerics/feastol": 1e-10, "numerics/dualfeastol": 1e-10},
+}
 
 
 @pytest.fixture(params=all_valid_problems(), ids=lambda case: case.group)
@@ -66,7 +73,9 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     cvxpy_lines = lp_from_cvxpy(problem)
 
     try:
-        generated_model = quiet_solve(problem, case.context.solver)
+        generated_model = quiet_solve(
+            problem, case.context.solver, params=PARAMS[case.context.solver]
+        )
     except cp.SolverError as e:
         # The solver interfaces in cvxpy can't solve some problems
         cvxpy_interface_lines = [str(e)]
@@ -116,7 +125,8 @@ def test_backfill(case: ProblemTestCase) -> None:
 
 def check_backfill_gurobi(case: ProblemTestCase) -> None:
     problem = case.problem
-    cvxpy_translation.gurobi.solve(problem, **{gp.GRB.Param.QCPDual: 1})
+    params = PARAMS[case.context.solver]
+    cvxpy_translation.gurobi.solve(problem, **params)
     our_sol: Solution = problem.solution
     our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
     assert our_model.Status == gp.GRB.Status.OPTIMAL
@@ -124,7 +134,7 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     assert our_sol.primal_vars
 
     try:
-        quiet_solve(problem, case.context.solver)
+        quiet_solve(problem, case.context.solver, params=params)
     except cp.SolverError:
         # The problem can't be solved through CVXPY, so we can't compare solutions
         return
@@ -156,11 +166,13 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
 
 def check_backfill_scip(case: ProblemTestCase) -> None:
     problem = case.problem
+    params = PARAMS[case.context.solver]
     our_model = cvxpy_translation.scip.build_model(problem)
     # Same settings as in cvxpy's SCIP interface
     our_model.setPresolve(scip.SCIP_PARAMSETTING.OFF)
     our_model.setHeuristics(scip.SCIP_PARAMSETTING.OFF)
     our_model.disablePropagation()
+    our_model.setParams(params)
     our_model.optimize()
     cvxpy_translation.scip.backfill_problem(problem, our_model)
     our_sol: Solution = problem.solution
@@ -169,7 +181,7 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     assert our_sol.primal_vars
 
     try:
-        quiet_solve(problem, case.context.solver)
+        quiet_solve(problem, case.context.solver, params=params)
     except cp.SolverError:
         # The problem can't be solved through CVXPY, so we can't compare solutions
         return
@@ -181,19 +193,12 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
     for key in our_sol.primal_vars:
         assert our_sol.primal_vars[key] == pytest.approx(
-            cp_sol.primal_vars[key], rel=5e-4
+            cp_sol.primal_vars[key], abs=1e-5, rel=1e-4
         )
 
-    # Dual values are not available for MIPs
-    # Sometimes, the SCIP model is a MIP even though the CVXPY problem is not,
-    # notably when using genexprs
-    # So we only check the dual values if the model is not a MIP
-    # This is one point where we cannot guarantee that our solution is the same as CVXPY's
-    # if the dual values are important
-    if our_sol.dual_vars is not None:
-        assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
-        for key in our_sol.dual_vars:
-            assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
+    assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
+    for key in our_sol.dual_vars:
+        assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
     assert set(our_sol.attr) >= set(cp_sol.attr)
     # In some cases, iteration count can be negative??
     cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)
@@ -249,14 +254,16 @@ def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:
     return out_path.read_text().splitlines()[4:]
 
 
-def quiet_solve(problem: cp.Problem, solver: str) -> gp.Model | scip.Model:
+def quiet_solve(
+    problem: cp.Problem, solver: str, params: dict
+) -> gp.Model | scip.Model:
     with warnings.catch_warnings():
         # Some problems are unbounded
         warnings.filterwarnings("ignore", category=UserWarning)
 
         if solver == cp.GUROBI:
             # Gurobi's solve method returns a Model object
-            problem.solve(solver=cp.GUROBI, **{gp.GRB.Param.QCPDual: 1})
+            problem.solve(solver=cp.GUROBI, **params)
             generated_model = problem.solution.attr[s.EXTRA_STATS]
 
         elif solver == cp.SCIP:
@@ -272,7 +279,7 @@ def quiet_solve(problem: cp.Problem, solver: str) -> gp.Model | scip.Model:
                 return old_opt(self, model, *args, **kwargs)
 
             with patch.object(SCIP, "_solve", new=new_solve):
-                problem.solve(solver=cp.SCIP)
+                problem.solve(solver=cp.SCIP, **params)
 
         else:
             msg = f"Unsupported solver: {solver}"
