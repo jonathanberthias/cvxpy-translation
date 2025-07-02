@@ -215,7 +215,6 @@ def matrix_quadratic_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum_squares(S @ x)))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("quad_form")
 def quad_form() -> Generator[cp.Problem]:
     x = cp.Variable((1,), name="x")
@@ -232,7 +231,6 @@ def quad_form() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     "requires Gurobi 11+",
@@ -244,9 +242,12 @@ def quad_form_stack() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI, "Gurobi cannot handle PSD variables"
+    lambda case: case.context.solver == cp.SCIP, "SCIP does not support PSD variables"
+)
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI,
+    "Gurobi does not support PSD variables",
 )
 @group_cases("quad_form_psd")
 def quad_form_psd() -> Generator[cp.Problem]:
