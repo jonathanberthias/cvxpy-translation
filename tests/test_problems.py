@@ -180,7 +180,6 @@ def matrix_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0, y == 0])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("quadratic")
 def quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
