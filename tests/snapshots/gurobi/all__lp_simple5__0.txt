@@ -1,24 +1,29 @@
 CVXPY
 Minimize
-  x + -1.0
+  x + -y
 Subject To
+ 12: y <= 1.0
 Bounds
  0.0 <= x
+ 0.0 <= y
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0
+  C0 - C1
 Subject To
  R0: - C0 <= 0
+ R1: - C1 <= 0
+ R2: C1 <= 1
 Bounds
  C0 free
+ C1 free
 End
 ----------------------------------------
 GUROBI
 Minimize
-  x - Constant
+  x - y
 Subject To
+ 12: y <= 1
 Bounds
- Constant = 1
 End

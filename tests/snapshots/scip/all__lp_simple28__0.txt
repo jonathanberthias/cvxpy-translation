@@ -1,26 +1,26 @@
 CVXPY
 Minimize
-  2.0 @ x + y
+  1.0 + -x
 Subject To
+ 34: x <= 1.0
 Bounds
  0.0 <= x
- 0.0 <= y
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  2 C0 + C1
-Subject To
- R0: - C0 <= 0
- R1: - C1 <= 0
+ Obj: -1 x_0
+Subject to
+ c1: -1 x_0 <= +0
+ c2: +1 x_0 <= +1
 Bounds
- C0 free
- C1 free
+ x_0 free
 End
 ----------------------------------------
-GUROBI
+SCIP
 Minimize
-  2 x + y
-Subject To
+ Obj: -1 x +1
+Subject to
+ 34: +1 x <= +1
 Bounds
 End

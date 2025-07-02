@@ -1,8 +1,8 @@
 CVXPY
 Minimize
-  -x
+  -x + 1.0
 Subject To
- 24: x <= 1.0
+ 28: x <= 1.0
 Bounds
  0.0 <= x
 End
@@ -19,8 +19,9 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  - x
+  - x + Constant
 Subject To
- 24: x <= 1
+ 28: x <= 1
 Bounds
+ Constant = 1
 End

@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  power(x, 2.0)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_1 <= +0
+ c2: +1 soc_t_1 -1 x_0 = +1
+ c3: +1 soc_t_2 -1 x_0 = -1
+ c4: +1 soc_t_3 -2 x_1 = +0
+ c5: + [ +1 soc_t_2 * soc_t_2 +1 soc_t_3 * soc_t_3 -1 soc_t_1 * soc_t_1 ] <= +0
+Bounds
+ x_0 free
+ x_1 free
+ soc_t_2 free
+ soc_t_3 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x2
+Subject to
+ c1: +1 x2 + [ -1 x * x ] >= +0
+Bounds
+ x2 free
+End

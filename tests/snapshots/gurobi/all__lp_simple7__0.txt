@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  2.0 @ x
+  2.0 @ x + 1.0
 Subject To
 Bounds
  0.0 <= x
@@ -17,7 +17,8 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  2 x
+  2 x + Constant
 Subject To
 Bounds
+ Constant = 1
 End
