@@ -154,7 +154,6 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     assert our_sol.attr[s.NUM_ITERS] <= cp_iters
 
 
-@pytest.mark.xfail("backfill not implemented for SCIP yet")
 def check_backfill_scip(case: ProblemTestCase) -> None:
     problem = case.problem
     our_model = cvxpy_translation.scip.build_model(problem)
