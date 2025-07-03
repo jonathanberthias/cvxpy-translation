@@ -1,0 +1,44 @@
+CVXPY
+Maximize
+  x + n + b
+Subject To
+ 13: n <= 1.0
+Bounds
+ x <= 0.0
+ n free
+Binaries
+ b
+Generals
+ n
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_2 -1 x_1 -1 x_0
+Subject to
+ c1: +1 x_0 <= +0
+ c2: +1 x_1 <= +1
+Bounds
+ 0 <= x_2 <= 1
+ x_1 free
+ x_0 free
+Binaries
+ x_2
+Generals
+ x_1
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 b +1 n +1 x
+Subject to
+ 13: +1 n <= +1
+Bounds
+ 0 <= b <= 1
+ n free
+ -inf <= x <= 0
+Binaries
+ b
+Generals
+ n
+End

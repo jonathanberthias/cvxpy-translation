@@ -196,9 +196,11 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
             cp_sol.primal_vars[key], abs=1e-5, rel=1e-4
         )
 
-    assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
-    for key in our_sol.dual_vars:
-        assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
+    # CVXPY's SCIP interface does not return dual values for MIPs
+    if not case.problem.is_mixed_integer():
+        assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
+        for key in our_sol.dual_vars:
+            assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
     assert set(our_sol.attr) >= set(cp_sol.attr)
     # In some cases, iteration count can be negative??
     cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)

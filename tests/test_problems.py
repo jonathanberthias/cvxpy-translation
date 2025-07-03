@@ -793,7 +793,6 @@ def nonlinear_log() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.log(x) >= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("attributes")
 def attributes() -> Generator[cp.Problem]:
     x = cp.Variable(nonpos=True, name="x")
