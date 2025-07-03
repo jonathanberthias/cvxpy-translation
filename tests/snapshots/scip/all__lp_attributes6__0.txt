@@ -1,0 +1,24 @@
+CVXPY
+Maximize
+  x
+Subject To
+Bounds
+ x <= 0.0
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0
+Subject to
+ c1: +1 x_0 <= +0
+Bounds
+ x_0 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x
+Subject to
+Bounds
+ -inf <= x <= 0
+End

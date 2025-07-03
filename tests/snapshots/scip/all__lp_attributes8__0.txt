@@ -1,0 +1,28 @@
+CVXPY
+Minimize
+  b
+Subject To
+Bounds
+Binaries
+ b
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+Bounds
+ 0 <= x_0 <= 1
+Binaries
+ x_0
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 b
+Subject to
+Bounds
+ 0 <= b <= 1
+Binaries
+ b
+End
