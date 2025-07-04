@@ -177,14 +177,13 @@ def get_constraint_dual(
 ) -> npt.NDArray[np.float64] | None:
     if shape == ():
         constr = get_constraint_by_name(model, constraint_name)
-        # CVXPY returns an array of shape (1,) for quadratic constraints
-        # and a scalar for linear constraints -__-
-        try:
-            return np.array(model.getDualsolLinear(constr))
-        except Warning:
-            return None
+        return np.array(model.getDualsolLinear(constr))
 
-    return None
+    dual = np.zeros(shape)
+    for idx, subconstr_name in _matrix_to_scip_names(constraint_name, shape):
+        constr = get_constraint_by_name(model, subconstr_name)
+        dual[idx] = model.getDualsolLinear(constr)
+    return dual
 
 
 def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:

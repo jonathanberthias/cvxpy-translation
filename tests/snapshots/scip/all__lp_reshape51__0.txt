@@ -1,0 +1,38 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 25: reshape(x, (1, 4), F) <= [[1. 1. 1. 1.]]
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
+Subject to
+ c1: +1 x_0 <= +1
+ c2: +1 x_1 <= +1
+ c3: +1 x_2 <= +1
+ c4: +1 x_3 <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ 25_0_0: +1 x_0 <= +1
+ 25_0_1: +1 x_1 <= +1
+ 25_0_2: +1 x_2 <= +1
+ 25_0_3: +1 x_3 <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+End
