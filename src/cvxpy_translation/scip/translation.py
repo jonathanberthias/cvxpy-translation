@@ -561,11 +561,15 @@ class Translater:
             except AttributeError:
                 return np.reshape(x, target_shape)
         expr = self.visit(x)
-        if isinstance(expr, scip.Variable):
-            expr = np.array([expr]).view(scip.MatrixVariable)
-        elif isinstance(expr, scip.Expr):
+        if isinstance(expr, scip.Expr):
+            if target_shape == ():
+                return expr
             expr = np.array([expr]).view(scip.MatrixExpr)
-        elif not isinstance(expr, scip.MatrixVariable):
+        elif target_shape == ():
+            assert isinstance(expr, scip.MatrixExpr)
+            assert _is_scalar(expr)
+            return expr.item()
+        elif not isinstance(expr, scip.MatrixExpr):
             expr_shape = _shape(expr)
             # Force creation of a MatrixVariable even if the shape is scalar
             if expr_shape == ():

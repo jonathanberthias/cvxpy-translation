@@ -586,7 +586,6 @@ def sum_axis() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=1) >= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("reshape")
 def reshape() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")

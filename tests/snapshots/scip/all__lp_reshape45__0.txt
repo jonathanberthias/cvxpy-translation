@@ -1,0 +1,31 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 43: reshape(x + [1. 1.], (2, 1), F) <= [[1.00]
+ [1.00]]
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1
+Subject to
+ c1: +1 x_0 <= +0
+ c2: +1 x_1 <= +0
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ 43_0_0: +1 x_0 <= +0
+ 43_1_0: +1 x_1 <= +0
+Bounds
+ x_0 free
+ x_1 free
+End
