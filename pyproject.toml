@@ -59,6 +59,7 @@ dependencies = [
   "pytest==7.4.4",
   "pytest-insta==0.2.0",
   "pytest-xdist==3.6.1",
+  "pytest-cov==5.0.0",
 ]
 installer = "uv"
 [tool.hatch.envs.default.scripts]
