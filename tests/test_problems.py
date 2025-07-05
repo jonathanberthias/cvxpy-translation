@@ -560,7 +560,6 @@ def indexing() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(m[:, :])))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("sum_scalar")
 def sum_scalar() -> Generator[cp.Problem]:
     x = cp.Variable(name="x", nonneg=True)
