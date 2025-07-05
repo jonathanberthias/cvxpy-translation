@@ -576,14 +576,17 @@ def sum_scalar() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x + 1)))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("sum_axis")
 def sum_axis() -> Generator[cp.Problem]:
     x = cp.Variable((2, 2), name="x", nonneg=True)
+    obj = cp.sum(cp.multiply(x, np.arange(1, 5).reshape((2, 2), order="F")))
 
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=None) >= 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=0) >= 1])
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cp.sum(x, axis=1) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=None) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=0) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=1) >= 1])
+    if CVXPY_VERSION >= (1, 6, 6):
+        # axis=-1 support added in 1.6.0, but it's broken until 1.6.6
+        yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=-1) >= 1])
 
 
 @group_cases("reshape")
