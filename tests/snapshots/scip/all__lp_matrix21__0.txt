@@ -1,0 +1,31 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 103: [[np.float64(0.0) np.float64(1.0)]
+ [np.float64(2.0) np.float64(3.0)]] @ x == 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ c1: +1 x_1 = +1
+ c2: +2 x_0 +3 x_1 = +1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ 103_0: +1 x_1 = +1
+ 103_1: +2 x_0 +3 x_1 = +1
+Bounds
+ x_0 free
+ x_1 free
+End

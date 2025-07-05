@@ -177,6 +177,9 @@ def get_constraint_dual(
 ) -> npt.NDArray[np.float64] | None:
     if shape == ():
         constr = get_constraint_by_name(model, constraint_name)
+        if constr.getConshdlrName() == "nonlinear":
+            # dual solutions are not available for nonlinear constraints
+            return None
         return np.array(model.getDualsolLinear(constr))
 
     dual = np.zeros(shape)

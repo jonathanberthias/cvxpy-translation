@@ -1,0 +1,48 @@
+CVXPY
+Minimize
+  quad_over_lin(x, 1.0)
+Subject To
+ 17: quad_over_lin(x, 1.0) <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: +1 x_3 <= +1
+ c2: +1 soc_t_1 -1 x_0 = +1
+ c3: +1 soc_t_2 +1 x_0 = +1
+ c4: +1 soc_t_3 -2 x_1 = +0
+ c5: +1 soc_t_4 -2 x_2 = +0
+ c6: + [ +1 soc_t_2 * soc_t_2 +1 soc_t_3 * soc_t_3 +1 soc_t_4 * soc_t_4 -1 soc_t_1 * soc_t_1 ] <= +0
+ c7: +1 soc_t_5 -1 x_3 = +1
+ c8: +1 soc_t_6 +1 x_3 = +1
+ c9: +1 soc_t_7 -2 x_1 = +0
+ c10: +1 soc_t_8 -2 x_2 = +0
+ c11: + [ +1 soc_t_6 * soc_t_6 +1 soc_t_7 * soc_t_7 +1 soc_t_8 * soc_t_8 -1 soc_t_5 * soc_t_5 ] <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ soc_t_2 free
+ soc_t_3 free
+ soc_t_4 free
+ soc_t_6 free
+ soc_t_7 free
+ soc_t_8 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x3
+Subject to
+ c1: +1 x3 + [ -1 x_0 * x_0 -1 x_1 * x_1 ] >= +0
+ 17: + [ +1 x_0 * x_0 +1 x_1 * x_1 ] <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x3 free
+End

@@ -1,0 +1,37 @@
+CVXPY
+Minimize
+  quad_over_lin([[np.float64(2.0) np.float64(0.0)]
+ [np.float64(0.0) np.float64(2.0)]] @ x, 1.0)
+Subject To
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: +1 soc_t_0 -1 x_0 = +1
+ c2: +1 soc_t_1 +1 x_0 = +1
+ c3: +1 soc_t_2 -4 x_1 = +0
+ c4: +1 soc_t_3 -4 x_2 = +0
+ c5: + [ +1 soc_t_1 * soc_t_1 +1 soc_t_2 * soc_t_2 +1 soc_t_3 * soc_t_3 -1 soc_t_0 * soc_t_0 ] <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ soc_t_1 free
+ soc_t_2 free
+ soc_t_3 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x3
+Subject to
+ c1: +1 x3 + [ -4 x_0 * x_0 -4 x_1 * x_1 ] >= +0
+Bounds
+ x_0 free
+ x_1 free
+ x3 free
+End

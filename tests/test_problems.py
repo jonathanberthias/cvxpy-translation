@@ -156,7 +156,6 @@ def scalar_linear_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x), [2 * x + y >= 1, y == 0])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("matrix")
 def matrix_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
@@ -200,7 +199,6 @@ def quadratic_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize((x - y) ** 2 + x + y), [y == 0])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("matrix_quadratic")
 def matrix_quadratic_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x")
