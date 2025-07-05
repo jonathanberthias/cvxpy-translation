@@ -589,7 +589,12 @@ class Translater:
         expr = self.visit(node.args[0])
         if _is_scalar(expr):
             return expr
-        return expr.sum(axis=node.axis)
+        # axis is broken in PyScipOpt 5.5.0, so we handle it manually
+        if node.axis is None:
+            return expr.sum()
+        # TODO: use numpy.lib.array_utils.normalize_axis_index when we drop support for NumPy < 2.0
+        axis = node.axis + expr.ndim if node.axis < 0 else node.axis
+        return np.apply_along_axis(scip.quicksum, axis, expr).view(scip.MatrixExpr)
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

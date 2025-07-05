@@ -76,7 +76,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
         generated_model = quiet_solve(
             problem, case.context.solver, params=PARAMS[case.context.solver]
         )
-    except cp.SolverError as e:
+    except Exception as e:  # noqa: BLE001
         # The solver interfaces in cvxpy can't solve some problems
         cvxpy_interface_lines = [str(e)]
     else:
@@ -136,10 +136,11 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     try:
         quiet_solve(problem, case.context.solver, params=params)
     except cp.SolverError:
-        # The problem can't be solved through CVXPY, so we can't compare solutions
-        return
+        pytest.skip(f"Problem can't be solved through CVXPY with {case.context.solver}")
 
     cp_sol: Solution = problem.solution
+    if not case.invalid_reason and cp_sol.status not in s.SOLUTION_PRESENT:
+        pytest.skip(f"CVXPY's solution status is unexpected: {cp_sol.status}")
 
     assert our_sol.status == cp_sol.status
     assert our_sol.opt_val == pytest.approx(cp_sol.opt_val, abs=1e-7, rel=1e-6)
@@ -182,9 +183,8 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
 
     try:
         quiet_solve(problem, case.context.solver, params=params)
-    except cp.SolverError:
-        # The problem can't be solved through CVXPY, so we can't compare solutions
-        return
+    except Exception:  # noqa: BLE001
+        pytest.skip(f"Problem can't be solved through CVXPY with {case.context.solver}")
 
     cp_sol: Solution = problem.solution
 

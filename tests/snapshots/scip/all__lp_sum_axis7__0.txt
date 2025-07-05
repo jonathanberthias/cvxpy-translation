@@ -1,0 +1,21 @@
+CVXPY
+Minimize
+  Sum(x @ [[1.00 3.00]
+ [2.00 4.00]], None, False)
+Subject To
+ 25: 1.0 <= Sum(x, -1, False)
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+cannot reshape array of size 1 into shape (2,)
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0_0 +3 x_0_1 +2 x_1_0 +4 x_1_1
+Subject to
+ 25_0: +1 x_0_0 +1 x_0_1 >= +1
+ 25_1: +1 x_1_0 +1 x_1_1 >= +1
+Bounds
+End
