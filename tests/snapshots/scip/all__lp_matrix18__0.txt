@@ -1,0 +1,31 @@
+CVXPY
+Minimize
+  Sum(x, None, False)
+Subject To
+ 68: [[0.00 1.00]
+ [2.00 3.00]] @ x == 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ c1: +1 x_1 = +1
+ c2: +2 x_0 +3 x_1 = +1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ 68_0: +1 x_1 = +1
+ 68_1: +2 x_0 +3 x_1 = +1
+Bounds
+ x_0 free
+ x_1 free
+End

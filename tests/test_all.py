@@ -196,8 +196,14 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
             cp_sol.primal_vars[key], abs=1e-5, rel=1e-4
         )
 
-    # CVXPY's SCIP interface does not return dual values for MIPs
-    if not case.problem.is_mixed_integer():
+    skip_duals = (
+        # CVXPY's SCIP interface does not return dual values for MIPs
+        case.problem.is_mixed_integer()
+        # Dual values are not available for nonlinear constraints
+        # The CVXPY SCIP interface does return dual values but I doubt they are correct
+        or any(c.getConshdlrName() == "nonlinear" for c in our_model.getConss())
+    )
+    if not skip_duals:
         assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
         for key in our_sol.dual_vars:
             assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
