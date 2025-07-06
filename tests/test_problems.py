@@ -28,6 +28,7 @@ CONTEXTS = (CaseContext(solver=cp.GUROBI), CaseContext(solver=cp.SCIP))
 class ProblemTestCase:
     problem: cp.Problem
     group: str
+    idx: int
     context: CaseContext
     invalid_reason: str | None = None
     skip_reason: str | None = None
@@ -48,10 +49,11 @@ def group_cases(
         def inner() -> Generator[ProblemTestCase]:
             for context in CONTEXTS:
                 reset_id_counter()
-                for problem in iter_fn():
+                for idx, problem in enumerate(iter_fn()):
                     yield ProblemTestCase(
                         problem=problem,
                         group=group,
+                        idx=idx,
                         context=context,
                         invalid_reason=invalid_reason,
                     )

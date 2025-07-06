@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import warnings
 from itertools import chain
+from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
@@ -16,7 +17,6 @@ import pyscipopt as scip
 import pytest
 from cvxpy.reductions.solvers.conic_solvers.scip_conif import SCIP
 from pytest_insta.fixture import SnapshotFixture
-from pytest_insta.utils import node_path_name
 
 import cvxpy_translation.gurobi
 import cvxpy_translation.scip
@@ -25,8 +25,6 @@ from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from cvxpy.reductions.solution import Solution
     from pytest_insta.session import SnapshotSession
 
@@ -36,8 +34,15 @@ PARAMS: Final = {
     cp.SCIP: {"numerics/feastol": 1e-10, "numerics/dualfeastol": 1e-10},
 }
 
+SNAPSHOT_DIR: Final = Path(__file__).parent / "snapshots"
 
-@pytest.fixture(params=all_valid_problems(), ids=lambda case: case.group)
+
+def _format_test_id(case: ProblemTestCase) -> str:
+    """Format the test ID used by pytest for a given test case."""
+    return f"{case.context.solver.lower()}_{case.group}_{case.idx:02d}"
+
+
+@pytest.fixture(params=all_valid_problems(), ids=_format_test_id)
 def case(request: pytest.FixtureRequest) -> ProblemTestCase:
     test_case: ProblemTestCase = request.param
     if test_case.skip_reason:
@@ -55,11 +60,9 @@ def snapshot(
         SnapshotFixture: A fixture that can be used to create snapshots for the test.
 
     """
-    path, name = node_path_name(request.node)
-    path = path.with_name("snapshots") / case.context.solver.lower() / name
+    path = SNAPSHOT_DIR / case.context.solver.lower() / "lp"
     session: SnapshotSession = request.config._snapshot_session  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
-    fixture = SnapshotFixture(session[path], session)
-    with fixture:  # flush created snapshots at the end of the test
+    with SnapshotFixture(session[path], session) as fixture:
         yield fixture
 
 
@@ -107,7 +110,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     )
 
     if CVXPY_VERSION[:2] == (1, 6):
-        assert snapshot() == output
+        assert snapshot(f"{case.group}_{case.idx:02d}.txt") == output
     else:
         # don't update snapshots nor delete them
         snapshot.session.strategy = "update-none"
