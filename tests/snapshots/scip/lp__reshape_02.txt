@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 16: reshape(x, (1,), F) <= [1.]
+ 16: reshape(x, (1, 1), F) <= [[1.]]
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ SCIP
 Maximize
  Obj: +1 x
 Subject to
- 16_0: +1 x <= +1
+ 16_0_0: +1 x <= +1
 Bounds
  x free
 End

@@ -1,30 +1,26 @@
 CVXPY
 Maximize
-  Sum(x, None, False)
+  x
 Subject To
- 7: reshape(x, (2,), F) <= [1. 1.]
+ 16: reshape(x, (1,), F) <= [1.]
 Bounds
  x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1
+  - C0
 Subject To
  R0: C0 <= 1
- R1: C1 <= 1
 Bounds
  C0 free
- C1 free
 End
 ----------------------------------------
 GUROBI
 Maximize
-  x[0] + x[1]
+  x[0]
 Subject To
- 7[0]: x[0] <= 1
- 7[1]: x[1] <= 1
+ 16[0]: x[0] <= 1
 Bounds
  x[0] free
- x[1] free
 End

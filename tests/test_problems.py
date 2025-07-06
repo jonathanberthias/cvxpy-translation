@@ -608,6 +608,9 @@ def reshape() -> Generator[cp.Problem]:
     a = x + 1
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, (), order="F") <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, 1, order="F") <= np.ones(1)])
+    yield cp.Problem(
+        cp.Maximize(x), [cp.reshape(x, (1, 1), order="F") <= np.ones((1, 1))]
+    )
     if CVXPY_VERSION >= (1, 4, 0):
         # -1 support added in https://github.com/cvxpy/cvxpy/pull/2061
         yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1, order="F") <= np.ones(1)])

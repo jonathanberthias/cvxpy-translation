@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 21: reshape(x + 1.0, (), F) <= 1.0
+ 21: reshape(x, (1,), F) <= [1.]
 Bounds
  x free
 End
@@ -11,7 +11,7 @@ AFTER COMPILATION
 Minimize
  Obj: -1 x_0
 Subject to
- c1: +1 x_0 <= +0
+ c1: +1 x_0 <= +1
 Bounds
  x_0 free
 End
@@ -20,7 +20,7 @@ SCIP
 Maximize
  Obj: +1 x
 Subject to
- 21: +1 x <= +0
+ 21_0: +1 x <= +1
 Bounds
  x free
 End

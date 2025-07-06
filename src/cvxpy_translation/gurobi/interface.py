@@ -22,9 +22,9 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import Translater
-from cvxpy_translation.gurobi.translation import _is_scalar_shape
 
 if TYPE_CHECKING:
+    from cvxpy.constraints.constraint import Constraint
     from typing_extensions import Self
     from typing_extensions import TypeAlias
 
@@ -148,7 +148,7 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
     # https://www.gurobi.com/documentation/current/refman/pi.html
     if not model.IsMIP:
         for constr in problem.constraints:
-            dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
+            dual = get_constraint_dual(model, constr)
             if dual is None:
                 continue
             if isinstance(problem.objective, cp.Minimize) and (
@@ -182,9 +182,11 @@ def extract_variable_value(
     return value
 
 
-def get_constraint_dual(  # noqa: C901,PLR0911
-    model: gp.Model, constraint_name: str, shape: tuple[int, ...]
+def get_constraint_dual(  # noqa: PLR0911
+    model: gp.Model, constraint: Constraint
 ) -> npt.NDArray[np.float64] | None:
+    constraint_name = str(constraint.constr_id)
+    shape = constraint.shape
     # quadratic constraints don't have duals computed by default
     # https://www.gurobi.com/documentation/current/refman/qcpi.html
     has_qcp_duals = model.params.QCPDual
@@ -200,24 +202,21 @@ def get_constraint_dual(  # noqa: C901,PLR0911
             return np.array([constr.QCPi])
         return None
 
-    if CVXPY_VERSION < (1, 4) and _is_scalar_shape(shape):
-        # In older versions of CVXPY, the shape of a scalar constraint can be (1,1)
-        for test_shape in [(), (1,), (1, 1), (1, 1, 1)]:
-            for _, subconstr_name in _matrix_to_gurobi_names(
-                constraint_name, test_shape
-            ):
-                with suppress(LookupError):
-                    constr = get_constraint_by_name(model, subconstr_name)
-                    if isinstance(constr, gp.Constr):
-                        return np.array(constr.Pi)
-                    assert isinstance(constr, gp.QConstr)
-                    if has_qcp_duals:
-                        return np.array([constr.QCPi])
-                    return None
+    if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
+        # In older versions of CVXPY, the shape of a scalar quad form is (1, 1)
+        _, constr_name = next(_matrix_to_gurobi_names(constraint_name, ()))
+        with suppress(LookupError):
+            constr = get_constraint_by_name(model, constr_name)
+            if isinstance(constr, gp.Constr):
+                return np.array(constr.Pi)
+            assert isinstance(constr, gp.QConstr)
+            if has_qcp_duals:
+                return np.array([constr.QCPi])
+            return None
 
     dual = np.empty(shape)
-    for idx, subconstr_name in _matrix_to_gurobi_names(constraint_name, shape):
-        subconstr = get_constraint_by_name(model, subconstr_name)
+    for idx, constr_name in _matrix_to_gurobi_names(constraint_name, shape):
+        subconstr = get_constraint_by_name(model, constr_name)
         if isinstance(subconstr, gp.QConstr):
             if not has_qcp_duals:
                 # no need to check the other subconstraints, they should all be the same
@@ -228,19 +227,23 @@ def get_constraint_dual(  # noqa: C901,PLR0911
     return dual
 
 
+def _contains_quad_form(constraint: Constraint) -> bool:
+    return any(cp.QuadForm in arg.atoms() for arg in constraint.args)
+
+
 def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr:
     try:
         constr = model.getConstrByName(name)
-    except gp.GurobiError as e:
+    except gp.GurobiError:
         # quadratic constraints are not returned by getConstrByName
         for q_constr in model.getQConstrs():
             if q_constr.QCName == name:
                 return q_constr
-        msg = f"Constraint {name} not found."
-        raise LookupError(msg) from e
     else:
-        assert constr is not None
-        return constr
+        if constr is not None:
+            return constr
+    msg = f"Constraint {name} not found."
+    raise LookupError(msg)
 
 
 def _matrix_to_gurobi_names(

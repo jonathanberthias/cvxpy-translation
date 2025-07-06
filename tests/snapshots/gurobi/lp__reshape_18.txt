@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 55: reshape(x, (2,), F) <= [0. 1.]
+ 49: reshape(x + [1. 1.], (1, 2), F) <= [[1. 1.]]
 Bounds
  x free
 End
@@ -12,7 +12,7 @@ Minimize
   - C0 - C1
 Subject To
  R0: C0 <= 0
- R1: C1 <= 1
+ R1: C1 <= 0
 Bounds
  C0 free
  C1 free
@@ -22,9 +22,13 @@ GUROBI
 Maximize
   x[0] + x[1]
 Subject To
- 55[0]: x[0] <= 0
- 55[1]: x[1] <= 1
+ R0: - x[0] + reshape_1[0] = 1
+ R1: - x[1] + reshape_1[1] = 1
+ 49[0,0]: reshape_1[0] <= 1
+ 49[0,1]: reshape_1[1] <= 1
 Bounds
  x[0] free
  x[1] free
+ reshape_1[0] free
+ reshape_1[1] free
 End

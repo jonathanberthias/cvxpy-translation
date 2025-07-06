@@ -22,9 +22,9 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_translation.scip.translation import CVXPY_VERSION
 from cvxpy_translation.scip.translation import Translater
-from cvxpy_translation.scip.translation import _is_scalar_shape
 
 if TYPE_CHECKING:
+    from cvxpy.constraints.constraint import Constraint
     from typing_extensions import Self
     from typing_extensions import TypeAlias
 
@@ -148,7 +148,7 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
         primal_vars[var.id] = extract_variable_value(model, var.name(), var.shape)
     for constr in problem.constraints:
         try:
-            dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
+            dual = get_constraint_dual(model, constr)
         except UnavailableDualError:
             continue
         if isinstance(constr, Equality) or (
@@ -180,22 +180,27 @@ def extract_variable_value(
 
 
 def get_constraint_dual(
-    model: scip.Model, constraint_name: str, shape: tuple[int, ...]
+    model: scip.Model, constraint: Constraint
 ) -> npt.NDArray[np.float64]:
+    constraint_name = str(constraint.constr_id)
+    shape = constraint.shape
     if shape == ():
         return np.array(_get_scalar_constraint_dual(model, constraint_name))
 
-    if CVXPY_VERSION < (1, 4) and _is_scalar_shape(shape):
+    if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
         # In older versions of CVXPY, the shape of a scalar constraint can be (1,1)
-        for test_shape in [(), (1,), (1, 1), (1, 1, 1)]:
-            for _, subconstr_name in _matrix_to_scip_names(constraint_name, test_shape):
-                with suppress(LookupError):
-                    return np.array(_get_scalar_constraint_dual(model, subconstr_name))
+        _, constr_name = next(_matrix_to_scip_names(constraint_name, ()))
+        with suppress(LookupError):
+            return np.array(_get_scalar_constraint_dual(model, constr_name))
 
     dual = np.empty(shape)
-    for idx, subconstr_name in _matrix_to_scip_names(constraint_name, shape):
-        dual[idx] = _get_scalar_constraint_dual(model, subconstr_name)
+    for idx, constr_name in _matrix_to_scip_names(constraint_name, shape):
+        dual[idx] = _get_scalar_constraint_dual(model, constr_name)
     return dual
+
+
+def _contains_quad_form(constraint: Constraint) -> bool:
+    return any(cp.QuadForm in arg.atoms() for arg in constraint.args)
 
 
 def _get_scalar_constraint_dual(model: scip.Model, constraint_name: str) -> float:
