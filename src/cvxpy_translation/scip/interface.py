@@ -193,7 +193,7 @@ def get_constraint_dual(
         with suppress(LookupError):
             return np.array(_get_scalar_constraint_dual(model, constr_name))
 
-    dual = np.empty(shape)
+    dual = np.zeros(shape)
     for idx, constr_name in _matrix_to_scip_names(constraint_name, shape):
         dual[idx] = _get_scalar_constraint_dual(model, constr_name)
     return dual
