@@ -72,10 +72,10 @@ versions = [
   "{env:HATCH_UV} pip freeze",
 ]
 # convenience script to update the snapshots, it actually runs inside the snapshots env
-update-snapshots = "hatch run latest:update-snapshots -n auto {args}"
+update-snapshots = "hatch run latest:update-snapshots -n 4 {args}"
 all-tests = [
-  "hatch run latest:tests -n auto {args}",
-  "hatch run oldest:tests -n auto {args}",
+  "hatch run latest:tests -n 4 {args}",
+  "hatch run oldest:tests -n 4 {args}",
 ]
 
 [tool.hatch.envs.latest]
@@ -88,7 +88,7 @@ extra-dependencies = [
   "numpy==2.3.1",
   "scipy==1.16.0",
 ]
-scripts = { update-snapshots = "hatch run tests {args} tests/test_all.py::test_lp" }
+scripts = { update-snapshots = "hatch run latest:tests {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes"
