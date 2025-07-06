@@ -1,0 +1,66 @@
+CVXPY
+Maximize
+  Sum(y, None, False)
+Subject To
+ 15: power(y, 2.0) <= 1.0
+Bounds
+ 0.0 <= y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
+Subject to
+ c1: -1 x_0 <= +0
+ c2: -1 x_1 <= +0
+ c3: -1 x_2 <= +0
+ c4: -1 x_3 <= +0
+ c5: +1 x_4 <= +1
+ c6: +1 x_5 <= +1
+ c7: +1 x_6 <= +1
+ c8: +1 x_7 <= +1
+ c9: +1 soc_t_8 -1 x_4 = +1
+ c10: +1 soc_t_9 -1 x_4 = -1
+ c11: +1 soc_t_10 -2 x_0 = +0
+ c12: + [ +1 soc_t_9 * soc_t_9 +1 soc_t_10 * soc_t_10 -1 soc_t_8 * soc_t_8 ] <= +0
+ c13: +1 soc_t_11 -1 x_5 = +1
+ c14: +1 soc_t_12 -1 x_5 = -1
+ c15: +1 soc_t_13 -2 x_1 = +0
+ c16: + [ +1 soc_t_12 * soc_t_12 +1 soc_t_13 * soc_t_13 -1 soc_t_11 * soc_t_11 ] <= +0
+ c17: +1 soc_t_14 -1 x_6 = +1
+ c18: +1 soc_t_15 -1 x_6 = -1
+ c19: +1 soc_t_16 -2 x_2 = +0
+ c20: + [ +1 soc_t_15 * soc_t_15 +1 soc_t_16 * soc_t_16 -1 soc_t_14 * soc_t_14 ] <= +0
+ c21: +1 soc_t_17 -1 x_7 = +1
+ c22: +1 soc_t_18 -1 x_7 = -1
+ c23: +1 soc_t_19 -2 x_3 = +0
+ c24: + [ +1 soc_t_18 * soc_t_18 +1 soc_t_19 * soc_t_19 -1 soc_t_17 * soc_t_17 ] <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ soc_t_9 free
+ soc_t_10 free
+ soc_t_12 free
+ soc_t_13 free
+ soc_t_15 free
+ soc_t_16 free
+ soc_t_18 free
+ soc_t_19 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 y_0_0 +1 y_0_1 +1 y_1_0 +1 y_1_1
+Subject to
+ 15_0_0: + [ +1 y_0_0 * y_0_0 ] <= +1
+ 15_0_1: + [ +1 y_0_1 * y_0_1 ] <= +1
+ 15_1_0: + [ +1 y_1_0 * y_1_0 ] <= +1
+ 15_1_1: + [ +1 y_1_1 * y_1_1 ] <= +1
+Bounds
+End

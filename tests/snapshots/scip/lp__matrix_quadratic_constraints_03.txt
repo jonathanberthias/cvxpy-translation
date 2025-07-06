@@ -1,0 +1,38 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 27: QuadForm(x, [[np.float64(4.0) np.float64(6.0)]
+ [np.float64(6.0) np.float64(10.0)]]) <= 1.0
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1
+Subject to
+ c1: -1 x_0 <= +0
+ c2: -1 x_1 <= +0
+ c3: +1 x_2 <= +1
+ c4: +1 soc_t_3 -1 x_2 = +1
+ c5: +1 soc_t_4 +1 x_2 = +1
+ c6: +1 soc_t_5 -4 x_0 -6 x_1 = +0
+ c7: +1 soc_t_6 -2 x_1 = +0
+ c8: + [ +1 soc_t_4 * soc_t_4 +1 soc_t_5 * soc_t_5 +1 soc_t_6 * soc_t_6 -1 soc_t_3 * soc_t_3 ] <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ soc_t_4 free
+ soc_t_5 free
+ soc_t_6 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ 27: + [ +4 x_0 * x_0 +12 x_0 * x_1 +10 x_1 * x_1 ] <= +1
+Bounds
+End

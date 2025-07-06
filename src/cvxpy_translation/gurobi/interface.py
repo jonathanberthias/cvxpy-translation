@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Dict
 from typing import Iterator
@@ -21,6 +22,7 @@ from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_translation.gurobi.translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import Translater
+from cvxpy_translation.gurobi.translation import _is_scalar_shape
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -180,7 +182,7 @@ def extract_variable_value(
     return value
 
 
-def get_constraint_dual(
+def get_constraint_dual(  # noqa: C901,PLR0911
     model: gp.Model, constraint_name: str, shape: tuple[int, ...]
 ) -> npt.NDArray[np.float64] | None:
     # quadratic constraints don't have duals computed by default
@@ -198,7 +200,22 @@ def get_constraint_dual(
             return np.array([constr.QCPi])
         return None
 
-    dual = np.zeros(shape)
+    if CVXPY_VERSION < (1, 4) and _is_scalar_shape(shape):
+        # In older versions of CVXPY, the shape of a scalar constraint can be (1,1)
+        for test_shape in [(), (1,), (1, 1), (1, 1, 1)]:
+            for _, subconstr_name in _matrix_to_gurobi_names(
+                constraint_name, test_shape
+            ):
+                with suppress(LookupError):
+                    constr = get_constraint_by_name(model, subconstr_name)
+                    if isinstance(constr, gp.Constr):
+                        return np.array(constr.Pi)
+                    assert isinstance(constr, gp.QConstr)
+                    if has_qcp_duals:
+                        return np.array([constr.QCPi])
+                    return None
+
+    dual = np.empty(shape)
     for idx, subconstr_name in _matrix_to_gurobi_names(constraint_name, shape):
         subconstr = get_constraint_by_name(model, subconstr_name)
         if isinstance(subconstr, gp.QConstr):
@@ -214,12 +231,13 @@ def get_constraint_dual(
 def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr:
     try:
         constr = model.getConstrByName(name)
-    except gp.GurobiError:
+    except gp.GurobiError as e:
         # quadratic constraints are not returned by getConstrByName
         for q_constr in model.getQConstrs():
             if q_constr.QCName == name:
                 return q_constr
-        raise  # pragma: no cover
+        msg = f"Constraint {name} not found."
+        raise LookupError(msg) from e
     else:
         assert constr is not None
         return constr
@@ -228,6 +246,9 @@ def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr
 def _matrix_to_gurobi_names(
     base_name: str, shape: tuple[int, ...]
 ) -> Iterator[tuple[tuple[int, ...], str]]:
+    if not shape:
+        yield (), base_name
+        return
     for idx in np.ndindex(shape):
         formatted_idx = ",".join(str(i) for i in idx)
         yield idx, f"{base_name}[{formatted_idx}]"
