@@ -1,0 +1,20 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 16: 1.0 <= log(x)
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0
+Subject to
+\   [nonlinear] <16_0>: log((<x_0>)) >= 1;
+Bounds
+ x_0 free
+End

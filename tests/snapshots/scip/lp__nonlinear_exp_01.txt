@@ -1,0 +1,22 @@
+CVXPY
+Minimize
+  exp(x + 1.0)
+Subject To
+ 11: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x2
+Subject to
+\   [nonlinear] <c1>: exp((<x>+1))+<x2>*(-1) <= 0;
+ 11: +1 x >= +1
+Bounds
+ x free
+ x2 free
+End

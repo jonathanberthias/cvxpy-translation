@@ -359,10 +359,7 @@ class Translater:
 
     def visit_exp(self, node: cp.exp) -> AnyVar:
         (arg,) = node.args
-        expr = self.visit(arg)
-        return self.make_auxilliary_variable_for(
-            scip.exp(expr), "exp", desired_shape=_shape(expr)
-        )
+        return scip.exp(self.visit(arg))
 
     def _stack(
         self,
@@ -401,17 +398,11 @@ class Translater:
 
     def visit_log(self, node: cp.log) -> AnyVar:
         (arg,) = node.args
-        expr = self.visit(arg)
-        return self.make_auxilliary_variable_for(
-            scip.log(expr), "log", desired_shape=_shape(expr)
-        )
+        return scip.log(self.visit(arg))
 
     def visit_log1p(self, node: cp.log1p) -> AnyVar:
         (arg,) = node.args
-        expr = self.visit(arg)
-        return self.make_auxilliary_variable_for(
-            scip.log(expr + 1), "log1p", desired_shape=_shape(expr)
-        )
+        return scip.log(self.visit(arg) + 1)
 
     def _min_max(
         self,
@@ -456,16 +447,23 @@ class Translater:
     def visit_minimum(self, node: cp.minimum) -> Any:
         return self._minimum_maximum(node, scip_fn=scip.min_, name="minimum")
 
-    def visit_Maximize(self, objective: cp.Maximize) -> None:
-        obj = self.translate_into_scalar(objective.expr)
-        self.model.setObjective(obj, sense="maximize")
-
-    def visit_Minimize(self, objective: cp.Minimize) -> None:
+    def _visit_objective(
+        self,
+        objective: cp.Minimize | cp.Maximize,
+        sense: Literal["minimize", "maximize"],
+    ) -> None:
+        """Visit an objective and set it in the model."""
         obj = self.translate_into_scalar(objective.expr)
         if obj.degree() > 1:
-            set_nonlinear_objective(self.model, obj, sense="minimize")
+            set_nonlinear_objective(self.model, obj, sense=sense)
         else:
-            self.model.setObjective(obj, sense="minimize")
+            self.model.setObjective(obj, sense=sense)
+
+    def visit_Maximize(self, objective: cp.Maximize) -> None:
+        self._visit_objective(objective, sense="maximize")
+
+    def visit_Minimize(self, objective: cp.Minimize) -> None:
+        self._visit_objective(objective, sense="minimize")
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
         x, y = node.args

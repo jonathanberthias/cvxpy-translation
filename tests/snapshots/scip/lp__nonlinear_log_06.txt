@@ -1,0 +1,24 @@
+CVXPY
+Maximize
+  Sum(log(x), None, False)
+Subject To
+ 7: x <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x3
+Subject to
+\   [nonlinear] <c1>: log((<x_0>))+log((<x_1>))+<x3>*(-1) >= 0;
+ 7_0: +1 x_0 <= +1
+ 7_1: +1 x_1 <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x3 free
+End
