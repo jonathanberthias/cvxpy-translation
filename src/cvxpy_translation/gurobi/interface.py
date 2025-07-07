@@ -215,8 +215,8 @@ def get_constraint_dual(  # noqa: PLR0911
             return None
 
     dual = np.zeros(shape)
-    for idx, constr_name in _matrix_to_gurobi_names(constraint_name, shape):
-        subconstr = get_constraint_by_name(model, constr_name)
+    for idx, subconstr_name in _matrix_to_gurobi_names(constraint_name, shape):
+        subconstr = get_constraint_by_name(model, subconstr_name)
         if isinstance(subconstr, gp.QConstr):
             if not has_qcp_duals:
                 # no need to check the other subconstraints, they should all be the same
