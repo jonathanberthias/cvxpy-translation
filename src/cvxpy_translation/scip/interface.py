@@ -188,7 +188,7 @@ def get_constraint_dual(
         return np.array(_get_scalar_constraint_dual(model, constraint_name))
 
     if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
-        # In older versions of CVXPY, the shape of a scalar constraint can be (1,1)
+        # In older versions of CVXPY, the shape of a scalar quad form is (1, 1)
         _, constr_name = next(_matrix_to_scip_names(constraint_name, ()))
         with suppress(LookupError):
             return np.array(_get_scalar_constraint_dual(model, constr_name))
