@@ -328,13 +328,7 @@ class Translater:
 
     def visit_abs(self, node: cp.abs) -> Any:
         (arg,) = node.args
-        if isinstance(arg, cp.Constant):
-            return np.abs(arg.value)
-        if node.shape == ():
-            var = self.translate_into_variable(arg, scalar=True)
-            assert isinstance(var, scip.Var)
-            return self.make_auxilliary_variable_for(scip.abs_(var), "abs", lb=0)
-        return self.apply_and_visit_elementwise(cp.abs, arg)
+        return np.abs(self.visit(arg))
 
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
