@@ -270,7 +270,6 @@ def quad_form_psd() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_abs")
 def genexpr_abs() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
