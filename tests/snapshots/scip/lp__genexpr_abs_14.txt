@@ -1,0 +1,43 @@
+CVXPY
+Minimize
+  Sum(abs(X), None, False)
+Subject To
+Bounds
+ 0.0 <= X
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ c1: -1 x_4 <= +0
+ c2: -1 x_5 <= +0
+ c3: -1 x_6 <= +0
+ c4: -1 x_7 <= +0
+ c5: -1 x_0 +1 x_4 <= +0
+ c6: -1 x_1 +1 x_5 <= +0
+ c7: -1 x_2 +1 x_6 <= +0
+ c8: -1 x_3 +1 x_7 <= +0
+ c9: -1 x_0 -1 x_4 <= +0
+ c10: -1 x_1 -1 x_5 <= +0
+ c11: -1 x_2 -1 x_6 <= +0
+ c12: -1 x_3 -1 x_7 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x5
+Subject to
+\   [nonlinear] <c1>: abs((<X_0_0>))+abs((<X_0_1>))+abs((<X_1_0>))+abs((<X_1_1>))+<x5>*(-1) <= 0;
+Bounds
+ x5 free
+End

@@ -1,0 +1,64 @@
+CVXPY
+Minimize
+  Sum(abs(X) + abs(Y), None, False)
+Subject To
+Bounds
+ 0.0 <= X
+ 0.0 <= Y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3 +1 x_4 +1 x_5 +1 x_6 +1 x_7
+Subject to
+ c1: -1 x_8 <= +0
+ c2: -1 x_9 <= +0
+ c3: -1 x_10 <= +0
+ c4: -1 x_11 <= +0
+ c5: -1 x_12 <= +0
+ c6: -1 x_13 <= +0
+ c7: -1 x_14 <= +0
+ c8: -1 x_15 <= +0
+ c9: -1 x_0 +1 x_8 <= +0
+ c10: -1 x_1 +1 x_9 <= +0
+ c11: -1 x_2 +1 x_10 <= +0
+ c12: -1 x_3 +1 x_11 <= +0
+ c13: -1 x_0 -1 x_8 <= +0
+ c14: -1 x_1 -1 x_9 <= +0
+ c15: -1 x_2 -1 x_10 <= +0
+ c16: -1 x_3 -1 x_11 <= +0
+ c17: -1 x_4 +1 x_12 <= +0
+ c18: -1 x_5 +1 x_13 <= +0
+ c19: -1 x_6 +1 x_14 <= +0
+ c20: -1 x_7 +1 x_15 <= +0
+ c21: -1 x_4 -1 x_12 <= +0
+ c22: -1 x_5 -1 x_13 <= +0
+ c23: -1 x_6 -1 x_14 <= +0
+ c24: -1 x_7 -1 x_15 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+ x_10 free
+ x_11 free
+ x_12 free
+ x_13 free
+ x_14 free
+ x_15 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x9
+Subject to
+\   [nonlinear] <c1>: abs((<X_0_0>))+abs((<Y_0_0>))+abs((<X_0_1>))+abs((<Y_0_1>))+abs((<X_1_0>))+abs((<Y_1_0>))+abs((<X_1_1>))+abs((<Y_1_1>))+<x9>*(-1) <= 0;
+Bounds
+ x9 free
+End
