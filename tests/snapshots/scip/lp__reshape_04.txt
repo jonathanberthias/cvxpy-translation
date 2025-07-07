@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 26: reshape(x + 1.0, (1,), F) <= [1.]
+ 26: reshape(x + 1.0, (), F) <= 1.0
 Bounds
  x free
 End
@@ -20,7 +20,7 @@ SCIP
 Maximize
  Obj: +1 x
 Subject to
- 26_0: +1 x <= +0
+ 26: +1 x <= +0
 Bounds
  x free
 End

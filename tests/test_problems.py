@@ -231,6 +231,20 @@ def quad_form() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(x, A)))
 
 
+@group_cases("matrix_quadratic_constraints")
+def matrix_quadratic_constraints() -> Generator[cp.Problem]:
+    x = cp.Variable(2, name="x", nonneg=True)
+    y = cp.Variable((2, 2), name="y", nonneg=True)
+    A_ = np.arange(4).reshape((2, 2))
+    A = A_.T @ A_
+    S = sp.csr_matrix(A)
+
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [x**2 <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(y)), [y**2 <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.quad_form(x, A) <= 1])
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.quad_form(x, S) <= 1])
+
+
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     "requires Gurobi 11+",
@@ -594,6 +608,9 @@ def reshape() -> Generator[cp.Problem]:
     a = x + 1
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, (), order="F") <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(x, 1, order="F") <= np.ones(1)])
+    yield cp.Problem(
+        cp.Maximize(x), [cp.reshape(x, (1, 1), order="F") <= np.ones((1, 1))]
+    )
     if CVXPY_VERSION >= (1, 4, 0):
         # -1 support added in https://github.com/cvxpy/cvxpy/pull/2061
         yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1, order="F") <= np.ones(1)])

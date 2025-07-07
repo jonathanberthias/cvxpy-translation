@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 37: reshape(x + [1. 1.], (2,), F) <= [1. 1.]
+ 31: reshape(x + [1. 1.], (2,), F) <= [1. 1.]
 Bounds
  x free
 End
@@ -22,8 +22,8 @@ SCIP
 Maximize
  Obj: +1 x_0 +1 x_1
 Subject to
- 37_0: +1 x_0 <= +0
- 37_1: +1 x_1 <= +0
+ 31_0: +1 x_0 <= +0
+ 31_1: +1 x_1 <= +0
 Bounds
  x_0 free
  x_1 free

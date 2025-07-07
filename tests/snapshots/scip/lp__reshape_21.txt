@@ -2,8 +2,10 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 19: reshape(x, (2, 2), F) <= [[1.00 1.00]
- [1.00 1.00]]
+ 13: reshape(x, (4, 1), F) <= [[1.00]
+ [1.00]
+ [1.00]
+ [1.00]]
 Bounds
  x free
 End
@@ -27,10 +29,10 @@ SCIP
 Maximize
  Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
 Subject to
- 19_0_0: +1 x_0 <= +1
- 19_0_1: +1 x_1 <= +1
- 19_1_0: +1 x_2 <= +1
- 19_1_1: +1 x_3 <= +1
+ 13_0_0: +1 x_0 <= +1
+ 13_1_0: +1 x_1 <= +1
+ 13_2_0: +1 x_2 <= +1
+ 13_3_0: +1 x_3 <= +1
 Bounds
  x_0 free
  x_1 free

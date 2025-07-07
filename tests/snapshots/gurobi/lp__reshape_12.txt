@@ -2,8 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 19: reshape(x, (2, 1), F) <= [[1.00]
- [1.00]]
+ 13: reshape(x, (2,), F) <= [1. 1.]
 Bounds
  x free
 End
@@ -23,8 +22,8 @@ GUROBI
 Maximize
   x[0] + x[1]
 Subject To
- 19[0,0]: x[0] <= 1
- 19[1,0]: x[1] <= 1
+ 13[0]: x[0] <= 1
+ 13[1]: x[1] <= 1
 Bounds
  x[0] free
  x[1] free

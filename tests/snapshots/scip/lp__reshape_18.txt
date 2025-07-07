@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 55: reshape(x, (2,), F) <= [0. 1.]
+ 49: reshape(x + [1. 1.], (1, 2), F) <= [[1. 1.]]
 Bounds
  x free
 End
@@ -12,7 +12,7 @@ Minimize
  Obj: -1 x_0 -1 x_1
 Subject to
  c1: +1 x_0 <= +0
- c2: +1 x_1 <= +1
+ c2: +1 x_1 <= +0
 Bounds
  x_0 free
  x_1 free
@@ -22,8 +22,8 @@ SCIP
 Maximize
  Obj: +1 x_0 +1 x_1
 Subject to
- 55_0: +1 x_0 <= +0
- 55_1: +1 x_1 <= +1
+ 49_0_0: +1 x_0 <= +0
+ 49_0_1: +1 x_1 <= +0
 Bounds
  x_0 free
  x_1 free

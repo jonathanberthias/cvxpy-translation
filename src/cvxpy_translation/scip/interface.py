@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Dict
 from typing import Iterator
@@ -23,6 +24,7 @@ from cvxpy_translation.scip.translation import CVXPY_VERSION
 from cvxpy_translation.scip.translation import Translater
 
 if TYPE_CHECKING:
+    from cvxpy.constraints.constraint import Constraint
     from typing_extensions import Self
     from typing_extensions import TypeAlias
 
@@ -123,6 +125,10 @@ def backfill_problem(
         problem._compilation_time = compilation_time  # noqa: SLF001
 
 
+class UnavailableDualError(ValueError):
+    pass
+
+
 def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solution:
     attr = {
         cp_settings.EXTRA_STATS: model,
@@ -141,8 +147,9 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
     for var in problem.variables():
         primal_vars[var.id] = extract_variable_value(model, var.name(), var.shape)
     for constr in problem.constraints:
-        dual = get_constraint_dual(model, str(constr.constr_id), constr.shape)
-        if dual is None:
+        try:
+            dual = get_constraint_dual(model, constr)
+        except UnavailableDualError:
             continue
         if isinstance(constr, Equality) or (
             isinstance(constr, Inequality) and constr.args[1].is_constant()
@@ -173,20 +180,35 @@ def extract_variable_value(
 
 
 def get_constraint_dual(
-    model: scip.Model, constraint_name: str, shape: tuple[int, ...]
-) -> npt.NDArray[np.float64] | None:
+    model: scip.Model, constraint: Constraint
+) -> npt.NDArray[np.float64]:
+    constraint_name = str(constraint.constr_id)
+    shape = constraint.shape
     if shape == ():
-        constr = get_constraint_by_name(model, constraint_name)
-        if constr.getConshdlrName() == "nonlinear":
-            # dual solutions are not available for nonlinear constraints
-            return None
-        return np.array(model.getDualsolLinear(constr))
+        return np.array(_get_scalar_constraint_dual(model, constraint_name))
+
+    if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
+        # In older versions of CVXPY, the shape of a scalar quad form is (1, 1)
+        _, constr_name = next(_matrix_to_scip_names(constraint_name, ()))
+        with suppress(LookupError):
+            return np.array(_get_scalar_constraint_dual(model, constr_name))
 
     dual = np.zeros(shape)
     for idx, subconstr_name in _matrix_to_scip_names(constraint_name, shape):
-        constr = get_constraint_by_name(model, subconstr_name)
-        dual[idx] = model.getDualsolLinear(constr)
+        dual[idx] = _get_scalar_constraint_dual(model, subconstr_name)
     return dual
+
+
+def _contains_quad_form(constraint: Constraint) -> bool:
+    return any(cp.QuadForm in arg.atoms() for arg in constraint.args)
+
+
+def _get_scalar_constraint_dual(model: scip.Model, constraint_name: str) -> float:
+    constr = get_constraint_by_name(model, constraint_name)
+    if constr.getConshdlrName() == "nonlinear":
+        # dual solutions are not available for nonlinear constraints
+        raise UnavailableDualError
+    return model.getDualsolLinear(constr)
 
 
 def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
@@ -201,6 +223,9 @@ def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
 def _matrix_to_scip_names(
     base_name: str, shape: tuple[int, ...]
 ) -> Iterator[tuple[tuple[int, ...], str]]:
+    if not shape:
+        yield (), base_name
+        return
     for idx in np.ndindex(shape):
         formatted_idx = "_".join(str(i) for i in idx)
         yield idx, f"{base_name}_{formatted_idx}"

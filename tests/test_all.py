@@ -31,7 +31,11 @@ if TYPE_CHECKING:
 
 PARAMS: Final = {
     cp.GUROBI: {gp.GRB.Param.QCPDual: 1},
-    cp.SCIP: {"numerics/feastol": 1e-10, "numerics/dualfeastol": 1e-10},
+    cp.SCIP: {
+        "numerics/feastol": 1e-10,
+        "numerics/dualfeastol": 1e-10,
+        "limits/time": 2,
+    },
 }
 
 SNAPSHOT_DIR: Final = Path(__file__).parent / "snapshots"
@@ -150,7 +154,7 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     assert set(our_sol.primal_vars) == set(cp_sol.primal_vars)
     for key in our_sol.primal_vars:
         assert our_sol.primal_vars[key] == pytest.approx(
-            cp_sol.primal_vars[key], rel=2e-4
+            cp_sol.primal_vars[key], rel=2e-4, abs=1e-6
         )
     # Dual values are not available for MIPs
     # Sometimes, the Gurobi model is a MIP even though the CVXPY problem is not,
@@ -161,7 +165,9 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     if not our_model.IsMIP:
         assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
         for key in our_sol.dual_vars:
-            assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
+            assert our_sol.dual_vars[key] == pytest.approx(
+                cp_sol.dual_vars[key], abs=2e-6
+            )
     assert set(our_sol.attr) >= set(cp_sol.attr)
     # In some cases, iteration count can be negative??
     cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)

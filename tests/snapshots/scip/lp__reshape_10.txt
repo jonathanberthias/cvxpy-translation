@@ -1,30 +1,26 @@
 CVXPY
 Maximize
-  Sum(x, None, False)
+  x
 Subject To
- 7: reshape(x, (2,), F) <= [1. 1.]
+ 16: reshape(x, (1,), F) <= [1.]
 Bounds
  x free
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
- Obj: -1 x_0 -1 x_1
+ Obj: -1 x_0
 Subject to
  c1: +1 x_0 <= +1
- c2: +1 x_1 <= +1
 Bounds
  x_0 free
- x_1 free
 End
 ----------------------------------------
 SCIP
 Maximize
- Obj: +1 x_0 +1 x_1
+ Obj: +1 x_0
 Subject to
- 7_0: +1 x_0 <= +1
- 7_1: +1 x_1 <= +1
+ 16_0: +1 x_0 <= +1
 Bounds
  x_0 free
- x_1 free
 End
