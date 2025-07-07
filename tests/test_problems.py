@@ -760,7 +760,6 @@ def hstack() -> Generator[cp.Problem]:
     yield from _stack("hstack")
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",
@@ -786,7 +785,6 @@ def nonlinear_exp() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.exp(x) <= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 12,
     reason="requires Gurobi 12+",

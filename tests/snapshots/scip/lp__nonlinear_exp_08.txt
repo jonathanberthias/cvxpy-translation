@@ -1,0 +1,22 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 22: exp(x) <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x_0 +1 x_1
+Subject to
+\   [nonlinear] <22_0>: exp((<x_0>)) <= 1;
+\   [nonlinear] <22_1>: exp((<x_1>)) <= 1;
+Bounds
+ x_0 free
+ x_1 free
+End

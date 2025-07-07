@@ -1,0 +1,22 @@
+CVXPY
+Maximize
+  log(x)
+Subject To
+ 5: x <= 2.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x2
+Subject to
+\   [nonlinear] <c1>: log((<x>))+<x2>*(-1) >= 0;
+ 5: +1 x <= +2
+Bounds
+ x free
+ x2 free
+End
