@@ -214,7 +214,7 @@ def get_constraint_dual(  # noqa: PLR0911
                 return np.array([constr.QCPi])
             return None
 
-    dual = np.empty(shape)
+    dual = np.zeros(shape)
     for idx, constr_name in _matrix_to_gurobi_names(constraint_name, shape):
         subconstr = get_constraint_by_name(model, constr_name)
         if isinstance(subconstr, gp.QConstr):
