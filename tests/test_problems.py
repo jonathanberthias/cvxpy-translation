@@ -539,7 +539,6 @@ def genexpr_norminf() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm_inf)
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("indexing")
 def indexing() -> Generator[cp.Problem]:
     x = cp.Variable(2, name="x", nonneg=True)
