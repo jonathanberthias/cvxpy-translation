@@ -490,7 +490,11 @@ class Translater:
         return self.make_auxilliary_variable_for(norm, name, lb=0)
 
     def visit_norm1(self, node: cp.norm1) -> Any:
-        return self._handle_norm(node, 1, "norm1")
+        (arg,) = node.args
+        expr = self.visit(arg)
+        if isinstance(expr, scip.Expr):
+            return abs(expr)
+        return np.abs(expr).sum()
 
     def visit_Pnorm(self, node: cp.Pnorm) -> Any:
         if node.p != 2:

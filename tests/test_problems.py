@@ -518,7 +518,6 @@ def _genexpr_norm_problems(
     yield cp.Problem(cp.Maximize(cp.sum(cp.multiply(x, A))), [norm(x) <= 6])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norm1")
 def genexpr_norm1() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm1)
