@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  norm1(x + -[ 1.00001 -0.99999])
+  norm1(x + -[ 1.00005 -0.99995])
 Subject To
 Bounds
  x free
@@ -10,10 +10,10 @@ AFTER COMPILATION
 Minimize
  Obj: +1 x_0 +1 x_1
 Subject to
- c1: -1 x_0 +1 x_2 <= +1.00001
- c2: -1 x_1 +1 x_3 <= -0.99999
- c3: -1 x_0 -1 x_2 <= -1.00001
- c4: -1 x_1 -1 x_3 <= +0.99999
+ c1: -1 x_0 +1 x_2 <= +1.00005
+ c2: -1 x_1 +1 x_3 <= -0.99995
+ c3: -1 x_0 -1 x_2 <= -1.00005
+ c4: -1 x_1 -1 x_3 <= +0.99995
 Bounds
  x_0 free
  x_1 free
@@ -25,7 +25,7 @@ SCIP
 Minimize
  Obj: +1 x3
 Subject to
-\   [nonlinear] <c1>: abs((<x_0>+(-1.00001)))+abs((<x_1>+0.99999))+<x3>*(-1) <= 0;
+\   [nonlinear] <c1>: abs((<x_0>+(-1.00005)))+abs((<x_1>+0.99995))+<x3>*(-1) <= 0;
 Bounds
  x_0 free
  x_1 free

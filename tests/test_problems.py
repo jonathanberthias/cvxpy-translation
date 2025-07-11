@@ -501,7 +501,7 @@ def _genexpr_norm_problems(
     reset_id_counter()
     x = cp.Variable(2, name="x")
     # Slightly off from [1, -1] to avoid symmetric solutions
-    A = np.array([1.00001, -0.99999])
+    A = np.array([1.00005, -0.99995])
     yield cp.Problem(cp.Minimize(norm(x)))
     yield cp.Problem(cp.Minimize(norm(x - A)))
     yield cp.Problem(cp.Minimize(norm(x) + norm(A)))
@@ -523,11 +523,10 @@ def genexpr_norm1() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm1)
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norm2")
 def genexpr_norm2() -> Generator[cp.Problem]:
     # we use pnorm(p=2) as the norm2 function will automatically
-    # use matrix norms but Gurobi only handles vector norms
+    # use matrix norms but we only want vector norms
     # pnorm will only create vector norms
     yield from _genexpr_norm_problems(partial(cp.pnorm, p=2))
 

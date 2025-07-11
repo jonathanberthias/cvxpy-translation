@@ -1,0 +1,24 @@
+CVXPY
+Maximize
+  Sum(X @ [[2.00 1.00]
+ [-2.00 -4.00]], None, False)
+Subject To
+ 14: Pnorm(X, 2) <= 6.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Solver 'SCIP' failed. Try another solver, or solve with verbose=True for more information.
+----------------------------------------
+SCIP
+Maximize
+ Obj: +2 X_0_0 +1 X_0_1 -2 X_1_0 -4 X_1_1
+Subject to
+\   [nonlinear] <14>: ((<X_0_0>*<X_0_0>+<X_0_1>*<X_0_1>+<X_1_0>*<X_1_0>+<X_1_1>*<X_1_1>))^0.5 <= 6;
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+End
