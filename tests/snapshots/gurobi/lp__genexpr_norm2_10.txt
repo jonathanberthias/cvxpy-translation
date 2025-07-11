@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Pnorm(x, 2) + Pnorm([ 1.00001 -0.99999], 2)
+  Pnorm(x, 2) + Pnorm([ 1.00005 -0.99995], 2)
 Subject To
 Bounds
  x free
@@ -24,7 +24,7 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  0 x[0] + 0 x[1] + norm2_1 + 1.414213562443806 Constant
+  0 x[0] + 0 x[1] + norm2_1 + 1.414213564140862 Constant
 Subject To
 Bounds
  x[0] free

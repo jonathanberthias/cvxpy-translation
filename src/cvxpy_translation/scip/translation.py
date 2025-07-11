@@ -497,9 +497,12 @@ class Translater:
         return np.abs(expr).sum()
 
     def visit_Pnorm(self, node: cp.Pnorm) -> Any:
-        if node.p != 2:
-            raise InvalidNormError(node)
-        return self._handle_norm(node, 2, "norm2")
+        (arg,) = node.args
+        expr = self.visit(arg)
+        p = node.original_p
+        if isinstance(expr, scip.Expr):
+            return (expr**p) ** (1 / p)
+        return (expr**p).sum() ** (1 / p)
 
     def visit_norm_inf(self, node: cp.norm_inf) -> Any:
         return self._handle_norm(node, np.inf, "norminf")

@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  norm1(x + -[ 1.00001 -0.99999])
+  norm1(x + -[ 1.00005 -0.99995])
 Subject To
 Bounds
  x free
@@ -10,10 +10,10 @@ AFTER COMPILATION
 Minimize
   C0 + C1
 Subject To
- R0: - C0 + C2 <= 1.00001
- R1: - C1 + C3 <= -0.99999
- R2: - C0 - C2 <= -1.00001
- R3: - C1 - C3 <= 0.99999
+ R0: - C0 + C2 <= 1.00005
+ R1: - C1 + C3 <= -0.99995
+ R2: - C0 - C2 <= -1.00005
+ R3: - C1 - C3 <= 0.99995
 Bounds
  C0 free
  C1 free
@@ -25,8 +25,8 @@ GUROBI
 Minimize
   norm1_2
 Subject To
- R0: - x[0] + AddExpression_1[0] = -1.00001
- R1: - x[1] + AddExpression_1[1] = 0.99999
+ R0: - x[0] + AddExpression_1[0] = -1.00005
+ R1: - x[1] + AddExpression_1[1] = 0.99995
 Bounds
  x[0] free
  x[1] free

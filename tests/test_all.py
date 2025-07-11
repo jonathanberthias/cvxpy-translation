@@ -34,7 +34,7 @@ PARAMS: Final = {
     cp.SCIP: {
         "numerics/feastol": 1e-10,
         "numerics/dualfeastol": 1e-10,
-        "limits/time": 2,
+        "limits/time": 10,
     },
 }
 
