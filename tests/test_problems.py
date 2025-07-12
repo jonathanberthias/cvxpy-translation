@@ -736,7 +736,6 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
@@ -746,7 +745,6 @@ def vstack() -> Generator[cp.Problem]:
     yield from _stack("vstack")
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
     reason="requires Gurobi 11+",
