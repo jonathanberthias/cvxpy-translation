@@ -529,7 +529,6 @@ def genexpr_norm2() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(partial(cp.pnorm, p=2))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_norminf")
 def genexpr_norminf() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm_inf)

@@ -168,6 +168,7 @@ def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
 def add_variable(
     model: scip.Model,
     shape: tuple[()],
+    *,
     name: str,
     vtype: str = "CONTINUOUS",
     lb: float | None = None,
@@ -177,6 +178,7 @@ def add_variable(
 def add_variable(
     model: scip.Model,
     shape: tuple[int, ...],
+    *,
     name: str,
     vtype: str = "CONTINUOUS",
     lb: float | None = None,
@@ -185,6 +187,7 @@ def add_variable(
 def add_variable(
     model: scip.Model,
     shape: tuple[int, ...],
+    *,
     name: str,
     vtype: str = "CONTINUOUS",
     lb: float | None = None,
@@ -196,7 +199,7 @@ def add_variable(
 
 
 def add_constraint(
-    cons: scip.scip.ExprCons | scip.scip.MatrixExprCons, model: scip.Model, name: str
+    cons: scip.scip.ExprCons | scip.scip.MatrixExprCons, model: scip.Model, *, name: str
 ) -> None:
     if isinstance(cons, scip.scip.ExprCons):
         model.addCons(cons, name=name)
@@ -499,18 +502,6 @@ class Translater:
     def visit_NegExpression(self, node: NegExpression) -> Any:
         return -self.visit(node.args[0])
 
-    def _handle_norm(
-        self, node: cp.norm1 | cp.Pnorm | cp.norm_inf, p: float, name: str
-    ) -> Any:
-        (x,) = node.args
-        if isinstance(x, cp.Constant):
-            return np.linalg.norm(x.value.ravel(), p)
-        arg = self.translate_into_variable(x)
-        assert isinstance(arg, (scip.Var, scip.MVar))
-        varargs = [arg] if isinstance(arg, scip.Var) else arg.reshape(-1).tolist()
-        norm = scip.norm(varargs, p)
-        return self.make_auxilliary_variable_for(norm, name, lb=0)
-
     def visit_norm1(self, node: cp.norm1) -> Any:
         (arg,) = node.args
         expr = self.visit(arg)
@@ -527,7 +518,17 @@ class Translater:
         return (expr**p).sum() ** (1 / p)
 
     def visit_norm_inf(self, node: cp.norm_inf) -> Any:
-        return self._handle_norm(node, np.inf, "norminf")
+        (arg,) = node.args
+        # inf norm is max(abs(arg))
+        expr = self.visit(arg)
+        if isinstance(expr, scip.Expr):
+            return abs(expr)
+        if isinstance(arg, cp.Constant):
+            return np.max(np.abs(expr))
+        self._aux_id += 1
+        z = add_variable(self.model, shape=(), name=f"norminf_{self._aux_id}", lb=0)
+        add_constraint(z >= abs(expr), self.model, name=f"norminf_{self._aux_id}")
+        return z
 
     def visit_power(self, node: power) -> Any:
         power = self.visit(node.p)
