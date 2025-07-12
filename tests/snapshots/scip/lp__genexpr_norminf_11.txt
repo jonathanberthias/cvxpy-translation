@@ -1,0 +1,35 @@
+CVXPY
+Maximize
+  Sum(x @ [ 1.00005 -0.99995], None, False)
+Subject To
+ 14: norm_inf(x) <= 1.4142135623730951
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1.00005 x_0 +0.99995 x_1
+Subject to
+ c1: +1 x_0 -1 x_2 <= +0
+ c2: +1 x_1 -1 x_2 <= +0
+ c3: -1 x_0 -1 x_2 <= +0
+ c4: -1 x_1 -1 x_2 <= +0
+ c5: +1 x_2 <= +1.4142135623731
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1.00005 x_0 -0.99995 x_1
+Subject to
+\   [nonlinear] <norminf_1_0>: abs((<x_0>))+<norminf_1>*(-1) <= 0;
+\   [nonlinear] <norminf_1_1>: abs((<x_1>))+<norminf_1>*(-1) <= 0;
+ 14: +1 norminf_1 <= +1.4142135623731
+Bounds
+ x_0 free
+ x_1 free
+End

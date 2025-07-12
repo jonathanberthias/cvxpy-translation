@@ -1,0 +1,29 @@
+CVXPY
+Maximize
+  x
+Subject To
+ 12: norm_inf(x) <= 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0
+Subject to
+ c1: +1 x_0 -1 x_1 <= +0
+ c2: -1 x_0 -1 x_1 <= +0
+ c3: +1 x_1 <= +1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x
+Subject to
+\   [nonlinear] <12>: abs((<x>)) <= 1;
+Bounds
+ x free
+End
