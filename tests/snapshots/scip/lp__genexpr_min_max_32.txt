@@ -1,0 +1,42 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 20: 1.0 <= min(X, None, False) + 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ c1: -1 x_0 -1 x_4 <= +0
+ c2: -1 x_1 -1 x_4 <= +0
+ c3: -1 x_2 -1 x_4 <= +0
+ c4: -1 x_3 -1 x_4 <= +0
+ c5: +1 x_4 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ min_1_0_0: +1 X_0_0 -1 min_1 >= +0
+ min_1_0_1: +1 X_0_1 -1 min_1 >= +0
+ min_1_1_0: +1 X_1_0 -1 min_1 >= +0
+ min_1_1_1: +1 X_1_1 -1 min_1 >= +0
+ 20: +1 min_1 >= +0
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ min_1 free
+End

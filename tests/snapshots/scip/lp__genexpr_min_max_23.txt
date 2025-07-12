@@ -1,0 +1,36 @@
+CVXPY
+Minimize
+  max(X, None, False)
+Subject To
+ 5: 1.0 <= X
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 +1 x_1 <= +0
+ c2: -1 x_0 +1 x_2 <= +0
+ c3: -1 x_1 <= -1
+ c4: -1 x_2 <= -1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 max_1
+Subject to
+ max_1_0: +1 X_0 -1 max_1 <= +0
+ max_1_1: +1 X_1 -1 max_1 <= +0
+ 5_0: +1 X_0 >= +1
+ 5_1: +1 X_1 >= +1
+Bounds
+ X_0 free
+ X_1 free
+ max_1 free
+End

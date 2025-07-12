@@ -1,0 +1,34 @@
+CVXPY
+Minimize
+  max(x + y, None, False)
+Subject To
+ 27: 1.0 <= x
+ 31: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 +1 x_1 +1 x_2 <= +0
+ c2: -1 x_1 <= -1
+ c3: -1 x_2 <= -1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0 +1 y
+Subject to
+ 27_0: +1 x_0 >= +1
+ 31: +1 y >= +1
+Bounds
+ x_0 free
+ y free
+End

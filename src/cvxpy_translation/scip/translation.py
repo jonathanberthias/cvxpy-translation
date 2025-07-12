@@ -166,17 +166,14 @@ def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
 
 @overload
 def add_variable(
-    model: scip.Model, shape: tuple[()], name: str, vtype: str, lb: float, ub: float
+    model: scip.Model,
+    shape: tuple[()],
+    name: str,
+    vtype: str = "CONTINUOUS",
+    lb: float | None = None,
+    ub: float | None = None,
 ) -> scip.Variable: ...
 @overload
-def add_variable(
-    model: scip.Model,
-    shape: tuple[int, ...],
-    name: str,
-    vtype: str,
-    lb: float,
-    ub: float,
-) -> AnyVar: ...
 def add_variable(
     model: scip.Model,
     shape: tuple[int, ...],
@@ -184,7 +181,15 @@ def add_variable(
     vtype: str = "CONTINUOUS",
     lb: float | None = None,
     ub: float | None = None,
-) -> AnyVar:
+) -> scip.MatrixVariable: ...
+def add_variable(
+    model: scip.Model,
+    shape: tuple[int, ...],
+    name: str,
+    vtype: str = "CONTINUOUS",
+    lb: float | None = None,
+    ub: float | None = None,
+) -> scip.Variable | scip.MatrixVariable:
     if shape == ():
         return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
     return model.addMatrixVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
@@ -406,31 +411,31 @@ class Translater:
         (arg,) = node.args
         return scip.log(self.visit(arg) + 1)
 
-    def _min_max(
-        self,
-        node: cp.min | cp.max,
-        scip_fn: Callable[[list[scip.Var]], Any],
-        np_fn: Callable[[Any], float],
-        name: str,
-    ) -> Any:
-        (arg,) = node.args
-        if isinstance(arg, cp.Constant):
-            return np_fn(arg.value)
-        if _is_scalar_shape(arg.shape):
-            # min/max of a scalar is itself
-            return self.visit(arg)
-
-        var = self.translate_into_variable(arg)
-        assert isinstance(var, scip.MVar)  # other cases were handled above
-        return self.make_auxilliary_variable_for(
-            scip_fn(var.reshape(-1).tolist()), name
-        )
-
     def visit_max(self, node: cp.max) -> Any:
-        return self._min_max(node, scip_fn=scip.max_, np_fn=np.max, name="max")
+        (arg,) = node.args
+        expr = self.visit(arg)
+        if isinstance(arg, cp.Constant):
+            return np.max(expr)
+        if _is_scalar(arg):
+            # max of a scalar is itself
+            return expr
+        self._aux_id += 1
+        bound_var = add_variable(self.model, shape=(), name=f"max_{self._aux_id}")
+        self.model.addMatrixCons(bound_var >= expr, name=f"max_{self._aux_id}")
+        return bound_var
 
     def visit_min(self, node: cp.min) -> Any:
-        return self._min_max(node, scip_fn=scip.min_, np_fn=np.min, name="min")
+        (arg,) = node.args
+        expr = self.visit(arg)
+        if isinstance(arg, cp.Constant):
+            return np.min(expr)
+        if _is_scalar(arg):
+            # min of a scalar is itself
+            return expr
+        self._aux_id += 1
+        bound_var = add_variable(self.model, shape=(), name=f"min_{self._aux_id}")
+        self.model.addMatrixCons(bound_var <= expr, name=f"min_{self._aux_id}")
+        return bound_var
 
     def _minimum_maximum(
         self, node: cp.minimum | cp.maximum, scip_fn: Callable[[Any], Any], name: str

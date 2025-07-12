@@ -1,0 +1,70 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 26: max(X, None, False) + max(Y, None, False) <= 1.0
+ 31: Y == 1.0
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
+Subject to
+ c1: +1 x_5 = +1
+ c2: +1 x_6 = +1
+ c3: +1 x_7 = +1
+ c4: +1 x_8 = +1
+ c5: +1 x_0 -1 x_4 <= +0
+ c6: +1 x_1 -1 x_4 <= +0
+ c7: +1 x_2 -1 x_4 <= +0
+ c8: +1 x_3 -1 x_4 <= +0
+ c9: +1 x_5 -1 x_9 <= +0
+ c10: +1 x_6 -1 x_9 <= +0
+ c11: +1 x_7 -1 x_9 <= +0
+ c12: +1 x_8 -1 x_9 <= +0
+ c13: +1 x_4 +1 x_9 <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ max_1_0_0: +1 X_0_0 -1 max_1 <= +0
+ max_1_0_1: +1 X_0_1 -1 max_1 <= +0
+ max_1_1_0: +1 X_1_0 -1 max_1 <= +0
+ max_1_1_1: +1 X_1_1 -1 max_1 <= +0
+ max_2_0_0: +1 Y_0_0 -1 max_2 <= +0
+ max_2_0_1: +1 Y_0_1 -1 max_2 <= +0
+ max_2_1_0: +1 Y_1_0 -1 max_2 <= +0
+ max_2_1_1: +1 Y_1_1 -1 max_2 <= +0
+ 26: +1 max_1 +1 max_2 <= +1
+ 31_0_0: +1 Y_0_0 = +1
+ 31_0_1: +1 Y_0_1 = +1
+ 31_1_0: +1 Y_1_0 = +1
+ 31_1_1: +1 Y_1_1 = +1
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ max_1 free
+ Y_0_0 free
+ Y_0_1 free
+ Y_1_0 free
+ Y_1_1 free
+ max_2 free
+End
