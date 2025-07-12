@@ -381,7 +381,9 @@ class Translater:
         return var
 
     def visit_Hstack(self, node: Hstack) -> Any:
-        return self._stack(node, axis=1, name="hstack")
+        args = node.args
+        exprs = [self.visit(arg) for arg in args]
+        return np.hstack(exprs)
 
     def visit_index(self, node: index) -> Any:
         return self.visit(node.args[0])[node.key]
@@ -532,9 +534,11 @@ class Translater:
 
     def visit_QuadForm(self, node: cp.QuadForm) -> scip.Expr:
         vec, psd_mat = node.args
-        vec = self.visit(vec)
-        psd_mat = self.visit(psd_mat)
-        quad = vec @ psd_mat @ vec.T
+        vec_expr = self.visit(vec)
+        psd_mat_expr = self.visit(psd_mat)
+        quad = vec_expr @ psd_mat_expr @ vec_expr.T
+        if isinstance(quad, scip.Expr):
+            return quad
         # The result is a scalar wrapped in a MatrixExpr
         return quad.item()
 
@@ -603,4 +607,6 @@ class Translater:
         return self.vars[var.id]
 
     def visit_Vstack(self, node: Vstack) -> Any:
-        return self._stack(node, axis=0, name="vstack")
+        args = node.args
+        exprs = [self.visit(arg) for arg in args]
+        return np.vstack(exprs)

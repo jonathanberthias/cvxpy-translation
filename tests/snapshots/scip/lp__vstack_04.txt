@@ -1,0 +1,30 @@
+CVXPY
+Minimize
+  Sum(Vstack(x), None, False)
+Subject To
+ 7: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ c1: -1 x_0 <= -1
+ c2: -1 x_1 <= -1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ 7_0: +1 x_0 >= +1
+ 7_1: +1 x_1 >= +1
+Bounds
+ x_0 free
+ x_1 free
+End

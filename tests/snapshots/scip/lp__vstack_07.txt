@@ -1,0 +1,49 @@
+CVXPY
+Minimize
+  Sum(Vstack(x, y, [[0.00 1.00]
+ [2.00 3.00]]), None, False)
+Subject To
+ 15: 1.0 <= x
+ 20: 1.0 <= y
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3 +1 x_4 +1 x_5
+Subject to
+ c1: -1 x_0 <= -1
+ c2: -1 x_1 <= -1
+ c3: -1 x_2 <= -1
+ c4: -1 x_3 <= -1
+ c5: -1 x_4 <= -1
+ c6: -1 x_5 <= -1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0_0 +1 x_0_1 +1 x_1_0 +1 x_1_1 +1 y_0_0 +1 y_0_1 +6
+Subject to
+ 15_0_0: +1 x_0_0 >= +1
+ 15_0_1: +1 x_0_1 >= +1
+ 15_1_0: +1 x_1_0 >= +1
+ 15_1_1: +1 x_1_1 >= +1
+ 20_0_0: +1 y_0_0 >= +1
+ 20_0_1: +1 y_0_1 >= +1
+Bounds
+ x_0_0 free
+ x_0_1 free
+ x_1_0 free
+ x_1_1 free
+ y_0_0 free
+ y_0_1 free
+End

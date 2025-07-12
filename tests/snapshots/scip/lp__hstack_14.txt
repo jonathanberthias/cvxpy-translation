@@ -1,0 +1,38 @@
+CVXPY
+Minimize
+  Sum(Hstack(Promote(2.0, (2, 2)) @ x), None, False)
+Subject To
+ 29: 1.0 <= x
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +2 x_0 +2 x_1 +2 x_2 +2 x_3
+Subject to
+ c1: -1 x_0 <= -1
+ c2: -1 x_1 <= -1
+ c3: -1 x_2 <= -1
+ c4: -1 x_3 <= -1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +2 x_0_0 +2 x_0_1 +2 x_1_0 +2 x_1_1
+Subject to
+ 29_0_0: +1 x_0_0 >= +1
+ 29_0_1: +1 x_0_1 >= +1
+ 29_1_0: +1 x_1_0 >= +1
+ 29_1_1: +1 x_1_1 >= +1
+Bounds
+ x_0_0 free
+ x_0_1 free
+ x_1_0 free
+ x_1_1 free
+End
