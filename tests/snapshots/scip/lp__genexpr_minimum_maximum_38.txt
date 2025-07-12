@@ -1,0 +1,64 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 63: -2.0 <= minimum(X + [[1.00 -2.00]
+ [3.00 4.00]], [[1.00 -2.00]
+ [3.00 4.00]])
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ c1: -1 x_0 -1 x_4 <= +1
+ c2: -1 x_1 -1 x_5 <= +3
+ c3: -1 x_2 -1 x_6 <= -2
+ c4: -1 x_3 -1 x_7 <= +4
+ c5: -1 x_4 <= +1
+ c6: -1 x_5 <= +3
+ c7: -1 x_6 <= -2
+ c8: -1 x_7 <= +4
+ c9: +1 x_4 <= +2
+ c10: +1 x_5 <= +2
+ c11: +1 x_6 <= +2
+ c12: +1 x_7 <= +2
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ minimum_1_0_0_0: +1 minimum_1_0_0 -1 X_0_0 <= +1
+ minimum_1_0_0_1: +1 minimum_1_0_1 -1 X_0_1 <= -2
+ minimum_1_0_1_0: +1 minimum_1_1_0 -1 X_1_0 <= +3
+ minimum_1_0_1_1: +1 minimum_1_1_1 -1 X_1_1 <= +4
+ minimum_1_1_0_0: +1 minimum_1_0_0 <= +1
+ minimum_1_1_0_1: +1 minimum_1_0_1 <= -2
+ minimum_1_1_1_0: +1 minimum_1_1_0 <= +3
+ minimum_1_1_1_1: +1 minimum_1_1_1 <= +4
+ 63_0_0: +1 minimum_1_0_0 >= -2
+ 63_0_1: +1 minimum_1_0_1 >= -2
+ 63_1_0: +1 minimum_1_1_0 >= -2
+ 63_1_1: +1 minimum_1_1_1 >= -2
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ minimum_1_0_0 free
+ minimum_1_0_1 free
+ minimum_1_1_0 free
+ minimum_1_1_1 free
+End

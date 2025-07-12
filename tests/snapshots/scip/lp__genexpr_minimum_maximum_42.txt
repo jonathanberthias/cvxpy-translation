@@ -1,0 +1,72 @@
+CVXPY
+Maximize
+  Sum(X + Y, None, False)
+Subject To
+ 21: maximum(X, Y) <= [[1.00 -2.00]
+ [3.00 4.00]]
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3 -1 x_4 -1 x_5 -1 x_6 -1 x_7
+Subject to
+ c1: +1 x_0 -1 x_8 <= +0
+ c2: +1 x_1 -1 x_9 <= +0
+ c3: +1 x_2 -1 x_10 <= +0
+ c4: +1 x_3 -1 x_11 <= +0
+ c5: +1 x_4 -1 x_8 <= +0
+ c6: +1 x_5 -1 x_9 <= +0
+ c7: +1 x_6 -1 x_10 <= +0
+ c8: +1 x_7 -1 x_11 <= +0
+ c9: +1 x_8 <= +1
+ c10: +1 x_9 <= +3
+ c11: +1 x_10 <= -2
+ c12: +1 x_11 <= +4
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+ x_10 free
+ x_11 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1 +1 Y_0_0 +1 Y_0_1 +1 Y_1_0 +1 Y_1_1
+Subject to
+ maximum_1_0_0_0: +1 maximum_1_0_0 -1 X_0_0 >= +0
+ maximum_1_0_0_1: +1 maximum_1_0_1 -1 X_0_1 >= +0
+ maximum_1_0_1_0: +1 maximum_1_1_0 -1 X_1_0 >= +0
+ maximum_1_0_1_1: +1 maximum_1_1_1 -1 X_1_1 >= +0
+ maximum_1_1_0_0: +1 maximum_1_0_0 -1 Y_0_0 >= +0
+ maximum_1_1_0_1: +1 maximum_1_0_1 -1 Y_0_1 >= +0
+ maximum_1_1_1_0: +1 maximum_1_1_0 -1 Y_1_0 >= +0
+ maximum_1_1_1_1: +1 maximum_1_1_1 -1 Y_1_1 >= +0
+ 21_0_0: +1 maximum_1_0_0 <= +1
+ 21_0_1: +1 maximum_1_0_1 <= -2
+ 21_1_0: +1 maximum_1_1_0 <= +3
+ 21_1_1: +1 maximum_1_1_1 <= +4
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ Y_0_0 free
+ Y_0_1 free
+ Y_1_0 free
+ Y_1_1 free
+ maximum_1_0_0 free
+ maximum_1_0_1 free
+ maximum_1_1_0 free
+ maximum_1_1_1 free
+End

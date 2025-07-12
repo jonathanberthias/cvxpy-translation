@@ -394,7 +394,6 @@ def genexpr_min_max() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_minimum_maximum")
 def genexpr_minimum_maximum() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")

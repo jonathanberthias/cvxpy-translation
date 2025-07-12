@@ -1,0 +1,52 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 35: maximum(X, [ 2. -1.]) <= Y
+ 40: Y == 2.0
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1
+Subject to
+ c1: +1 x_4 = +2
+ c2: +1 x_5 = +2
+ c3: +1 x_0 -1 x_2 <= +0
+ c4: +1 x_1 -1 x_3 <= +0
+ c5: -1 x_2 <= -2
+ c6: -1 x_3 <= +1
+ c7: +1 x_2 -1 x_4 <= +0
+ c8: +1 x_3 -1 x_5 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 X_0 +1 X_1
+Subject to
+ maximum_1_0_0: +1 maximum_1_0 -1 X_0 >= +0
+ maximum_1_0_1: +1 maximum_1_1 -1 X_1 >= +0
+ maximum_1_1_0: +1 maximum_1_0 >= +2
+ maximum_1_1_1: +1 maximum_1_1 >= -1
+ 35_0: +1 Y_0 -1 maximum_1_0 >= +0
+ 35_1: +1 Y_1 -1 maximum_1_1 >= +0
+ 40_0: +1 Y_0 = +2
+ 40_1: +1 Y_1 = +2
+Bounds
+ X_0 free
+ X_1 free
+ maximum_1_0 free
+ maximum_1_1 free
+ Y_0 free
+ Y_1 free
+End

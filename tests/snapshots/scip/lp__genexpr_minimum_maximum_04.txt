@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 33: 1.0 <= minimum(x + 1.0, 2.0)
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 -1 x_1 <= +1
+ c2: -1 x_1 <= +2
+ c3: +1 x_1 <= -1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x
+Subject to
+ minimum_1_0: +1 minimum_1 -1 x <= +1
+ minimum_1_1: +1 minimum_1 <= +2
+ 33: +1 minimum_1 >= +1
+Bounds
+ x free
+ minimum_1 free
+End

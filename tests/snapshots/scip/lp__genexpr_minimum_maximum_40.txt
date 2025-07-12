@@ -1,0 +1,63 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 6: maximum(X, [[1.00 -2.00]
+ [3.00 4.00]]) <= 4.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
+Subject to
+ c1: +1 x_0 -1 x_4 <= +0
+ c2: +1 x_1 -1 x_5 <= +0
+ c3: +1 x_2 -1 x_6 <= +0
+ c4: +1 x_3 -1 x_7 <= +0
+ c5: -1 x_4 <= -1
+ c6: -1 x_5 <= -3
+ c7: -1 x_6 <= +2
+ c8: -1 x_7 <= -4
+ c9: +1 x_4 <= +4
+ c10: +1 x_5 <= +4
+ c11: +1 x_6 <= +4
+ c12: +1 x_7 <= +4
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ maximum_1_0_0_0: +1 maximum_1_0_0 -1 X_0_0 >= +0
+ maximum_1_0_0_1: +1 maximum_1_0_1 -1 X_0_1 >= +0
+ maximum_1_0_1_0: +1 maximum_1_1_0 -1 X_1_0 >= +0
+ maximum_1_0_1_1: +1 maximum_1_1_1 -1 X_1_1 >= +0
+ maximum_1_1_0_0: +1 maximum_1_0_0 >= +1
+ maximum_1_1_0_1: +1 maximum_1_0_1 >= -2
+ maximum_1_1_1_0: +1 maximum_1_1_0 >= +3
+ maximum_1_1_1_1: +1 maximum_1_1_1 >= +4
+ 6_0_0: +1 maximum_1_0_0 <= +4
+ 6_0_1: +1 maximum_1_0_1 <= +4
+ 6_1_0: +1 maximum_1_1_0 <= +4
+ 6_1_1: +1 maximum_1_1_1 <= +4
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ maximum_1_0_0 free
+ maximum_1_0_1 free
+ maximum_1_1_0 free
+ maximum_1_1_1 free
+End

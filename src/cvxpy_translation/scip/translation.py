@@ -195,6 +195,18 @@ def add_variable(
     return model.addMatrixVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
 
 
+def add_constraint(
+    cons: scip.scip.ExprCons | scip.scip.MatrixExprCons, model: scip.Model, name: str
+) -> None:
+    if isinstance(cons, scip.scip.ExprCons):
+        model.addCons(cons, name=name)
+    elif isinstance(cons, scip.scip.MatrixExprCons):
+        model.addMatrixCons(cons, name=name)
+    else:  # pragma: no cover
+        msg = f"Unexpected constraint type: {type(cons)}"
+        raise TypeError(msg)
+
+
 def _should_reverse_inequality(lower: object, upper: object) -> bool:
     """Check whether lower <= upper is safe.
 
@@ -437,22 +449,25 @@ class Translater:
         self.model.addMatrixCons(bound_var <= expr, name=f"min_{self._aux_id}")
         return bound_var
 
-    def _minimum_maximum(
-        self, node: cp.minimum | cp.maximum, scip_fn: Callable[[Any], Any], name: str
-    ) -> Any:
-        args = node.args
-
-        if _is_scalar_shape(node.shape):
-            varargs = [self.translate_into_variable(arg, scalar=True) for arg in args]
-            return self.make_auxilliary_variable_for(scip_fn(varargs), name)
-
-        return self.star_apply_and_visit_elementwise(type(node), *args)  # pyright: ignore[reportArgumentType]
-
     def visit_maximum(self, node: cp.maximum) -> Any:
-        return self._minimum_maximum(node, scip_fn=scip.max_, name="maximum")
+        args = node.args
+        exprs = [self.visit(arg) for arg in args]
+        self._aux_id += 1
+        z = add_variable(self.model, shape=node.shape, name=f"maximum_{self._aux_id}")
+        for i, expr in enumerate(exprs):
+            cons = z >= expr
+            add_constraint(cons, self.model, name=f"maximum_{self._aux_id}_{i}")
+        return z
 
     def visit_minimum(self, node: cp.minimum) -> Any:
-        return self._minimum_maximum(node, scip_fn=scip.min_, name="minimum")
+        args = node.args
+        exprs = [self.visit(arg) for arg in args]
+        self._aux_id += 1
+        z = add_variable(self.model, shape=node.shape, name=f"minimum_{self._aux_id}")
+        for i, expr in enumerate(exprs):
+            cons = z <= expr
+            add_constraint(cons, self.model, name=f"minimum_{self._aux_id}_{i}")
+        return z
 
     def _visit_objective(
         self,

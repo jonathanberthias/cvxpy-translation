@@ -1,0 +1,76 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 70: 0.0 <= minimum(X, z, 1.0)
+ 74: z == 1.0
+Bounds
+ X free
+ z free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ c1: +1 x_8 = +1
+ c2: -1 x_0 -1 x_4 <= +0
+ c3: -1 x_1 -1 x_5 <= +0
+ c4: -1 x_2 -1 x_6 <= +0
+ c5: -1 x_3 -1 x_7 <= +0
+ c6: -1 x_4 -1 x_8 <= +0
+ c7: -1 x_5 -1 x_8 <= +0
+ c8: -1 x_6 -1 x_8 <= +0
+ c9: -1 x_7 -1 x_8 <= +0
+ c10: -1 x_4 <= +1
+ c11: -1 x_5 <= +1
+ c12: -1 x_6 <= +1
+ c13: -1 x_7 <= +1
+ c14: +1 x_4 <= +0
+ c15: +1 x_5 <= +0
+ c16: +1 x_6 <= +0
+ c17: +1 x_7 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ minimum_1_0_0_0: +1 minimum_1_0_0 -1 X_0_0 <= +0
+ minimum_1_0_0_1: +1 minimum_1_0_1 -1 X_0_1 <= +0
+ minimum_1_0_1_0: +1 minimum_1_1_0 -1 X_1_0 <= +0
+ minimum_1_0_1_1: +1 minimum_1_1_1 -1 X_1_1 <= +0
+ minimum_1_1_0_0: +1 minimum_1_0_0 -1 z <= +0
+ minimum_1_1_0_1: +1 minimum_1_0_1 -1 z <= +0
+ minimum_1_1_1_0: +1 minimum_1_1_0 -1 z <= +0
+ minimum_1_1_1_1: +1 minimum_1_1_1 -1 z <= +0
+ minimum_1_2_0_0: +1 minimum_1_0_0 <= +1
+ minimum_1_2_0_1: +1 minimum_1_0_1 <= +1
+ minimum_1_2_1_0: +1 minimum_1_1_0 <= +1
+ minimum_1_2_1_1: +1 minimum_1_1_1 <= +1
+ 70_0_0: +1 minimum_1_0_0 >= +0
+ 70_0_1: +1 minimum_1_0_1 >= +0
+ 70_1_0: +1 minimum_1_1_0 >= +0
+ 70_1_1: +1 minimum_1_1_1 >= +0
+ 74: +1 z = +1
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ z free
+ minimum_1_0_0 free
+ minimum_1_0_1 free
+ minimum_1_1_0 free
+ minimum_1_1_1 free
+End
