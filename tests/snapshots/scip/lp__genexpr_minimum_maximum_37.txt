@@ -1,0 +1,45 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+ 50: -2.0 <= minimum([[1.00 -2.00]
+ [3.00 4.00]], [[2.00 -1.00]
+ [1.00 3.00]])
+ 55: X == 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+cannot reshape array of size 0 into shape (2,2)
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
+Subject to
+ minimum_1_0_0_0: +1 minimum_1_0_0 <= +1
+ minimum_1_0_0_1: +1 minimum_1_0_1 <= -2
+ minimum_1_0_1_0: +1 minimum_1_1_0 <= +3
+ minimum_1_0_1_1: +1 minimum_1_1_1 <= +4
+ minimum_1_1_0_0: +1 minimum_1_0_0 <= +2
+ minimum_1_1_0_1: +1 minimum_1_0_1 <= -1
+ minimum_1_1_1_0: +1 minimum_1_1_0 <= +1
+ minimum_1_1_1_1: +1 minimum_1_1_1 <= +3
+ 50_0_0: +1 minimum_1_0_0 >= -2
+ 50_0_1: +1 minimum_1_0_1 >= -2
+ 50_1_0: +1 minimum_1_1_0 >= -2
+ 50_1_1: +1 minimum_1_1_1 >= -2
+ 55_0_0: +1 X_0_0 = +1
+ 55_0_1: +1 X_0_1 = +1
+ 55_1_0: +1 X_1_0 = +1
+ 55_1_1: +1 X_1_1 = +1
+Bounds
+ X_0_0 free
+ X_0_1 free
+ X_1_0 free
+ X_1_1 free
+ minimum_1_0_0 free
+ minimum_1_0_1 free
+ minimum_1_1_0 free
+ minimum_1_1_1 free
+End

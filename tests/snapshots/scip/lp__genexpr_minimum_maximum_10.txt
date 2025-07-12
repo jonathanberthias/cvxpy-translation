@@ -1,0 +1,32 @@
+CVXPY
+Minimize
+  x
+Subject To
+ 6: 1.0 <= minimum(x, 2.0)
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 -1 x_1 <= +0
+ c2: -1 x_1 <= +2
+ c3: +1 x_1 <= -1
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0
+Subject to
+ minimum_1_0_0: +1 minimum_1_0 -1 x_0 <= +0
+ minimum_1_1_0: +1 minimum_1_0 <= +2
+ 6_0: +1 minimum_1_0 >= +1
+Bounds
+ x_0 free
+ minimum_1_0 free
+End

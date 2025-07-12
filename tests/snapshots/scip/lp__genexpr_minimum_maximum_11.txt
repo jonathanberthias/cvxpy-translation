@@ -1,0 +1,35 @@
+CVXPY
+Minimize
+  x + y
+Subject To
+ 12: 1.0 <= minimum(x, y)
+Bounds
+ x free
+ y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ c1: -1 x_0 -1 x_2 <= +0
+ c2: -1 x_1 -1 x_2 <= +0
+ c3: +1 x_2 <= -1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x_0 +1 y
+Subject to
+ minimum_1_0_0: +1 minimum_1_0 -1 x_0 <= +0
+ minimum_1_1_0: +1 minimum_1_0 -1 y <= +0
+ 12_0: +1 minimum_1_0 >= +1
+Bounds
+ x_0 free
+ y free
+ minimum_1_0 free
+End

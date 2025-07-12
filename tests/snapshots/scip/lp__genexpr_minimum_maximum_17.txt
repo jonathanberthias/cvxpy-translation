@@ -1,0 +1,25 @@
+CVXPY
+Maximize
+  x
+Subject To
+ 21: maximum(1.0, 2.0) <= 2.0
+ 25: x <= 0.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+can only convert an array of size 1 to a Python scalar
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 x_0
+Subject to
+ maximum_1_0: +1 maximum_1 >= +1
+ maximum_1_1: +1 maximum_1 >= +2
+ 21: +1 maximum_1 <= +2
+ 25_0: +1 x_0 <= +0
+Bounds
+ x_0 free
+ maximum_1 free
+End

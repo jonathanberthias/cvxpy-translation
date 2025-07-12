@@ -1,0 +1,47 @@
+CVXPY
+Minimize
+  Sum(X + Y, None, False)
+Subject To
+ 24: [ 2. -1.] <= minimum(X, Y)
+Bounds
+ X free
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+Subject to
+ c1: -1 x_0 -1 x_4 <= +0
+ c2: -1 x_1 -1 x_5 <= +0
+ c3: -1 x_2 -1 x_4 <= +0
+ c4: -1 x_3 -1 x_5 <= +0
+ c5: +1 x_4 <= -2
+ c6: +1 x_5 <= +1
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0 +1 X_1 +1 Y_0 +1 Y_1
+Subject to
+ minimum_1_0_0: +1 minimum_1_0 -1 X_0 <= +0
+ minimum_1_0_1: +1 minimum_1_1 -1 X_1 <= +0
+ minimum_1_1_0: +1 minimum_1_0 -1 Y_0 <= +0
+ minimum_1_1_1: +1 minimum_1_1 -1 Y_1 <= +0
+ 24_0: +1 minimum_1_0 >= +2
+ 24_1: +1 minimum_1_1 >= -1
+Bounds
+ X_0 free
+ X_1 free
+ Y_0 free
+ Y_1 free
+ minimum_1_0 free
+ minimum_1_1 free
+End
