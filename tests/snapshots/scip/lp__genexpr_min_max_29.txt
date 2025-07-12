@@ -1,0 +1,34 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+ 58: max(X, None, False) + max([ 1. -2.], None, False) <= 1.0
+Bounds
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: -1 x_0 -1 x_1
+Subject to
+ c1: +1 x_0 -1 x_2 <= +0
+ c2: +1 x_1 -1 x_2 <= +0
+ c3: +1 x_2 <= +0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: +1 X_0 +1 X_1
+Subject to
+ max_1_0: +1 X_0 -1 max_1 <= +0
+ max_1_1: +1 X_1 -1 max_1 <= +0
+ 58: +1 max_1 <= +0
+Bounds
+ X_0 free
+ X_1 free
+ max_1 free
+End

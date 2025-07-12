@@ -314,7 +314,6 @@ def genexpr_abs() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(cp.abs(x) + cp.abs(A))))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("genexpr_min_max")
 def genexpr_min_max() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
