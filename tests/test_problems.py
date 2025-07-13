@@ -817,7 +817,6 @@ def attributes() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(x + n + b), [n <= 1])
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
 @group_cases("invalid", invalid_reason="unsupported expressions")
 def invalid_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
@@ -829,10 +828,21 @@ def invalid_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
 
 
-@skipif(lambda case: case.context.solver == cp.SCIP, "TODO")
+@skipif(
+    lambda case: case.context.solver == cp.GUROBI,
+    "hstack variant not supported by gurobipy",
+)
+@group_cases("scalar_stack")
+def scalar_stack() -> Generator[cp.Problem]:
+    x = cp.Variable(name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(cp.hstack([x, 1]))))
+    yield cp.Problem(cp.Minimize(cp.sum(cp.vstack([x, 1]))))
+
+
+@skipif(lambda case: case.context.solver == cp.SCIP, "works with SCIP")
 @skipif(
     lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR >= 11,
-    "works in Gurobi 11+",
+    "stack functions exist in Gurobi 11+",
 )
 @group_cases("invalid_stack", invalid_reason="unsupported stack expressions")
 def invalid_stack_expressions() -> Generator[cp.Problem]:

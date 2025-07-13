@@ -20,6 +20,11 @@ import pyscipopt as scip
 import scipy.sparse as sp
 from pyscipopt.recipes.nonlinear import set_nonlinear_objective
 
+from cvxpy_translation.exceptions import InvalidParameterError
+from cvxpy_translation.exceptions import UnsupportedConstraintError
+from cvxpy_translation.exceptions import UnsupportedError
+from cvxpy_translation.exceptions import UnsupportedExpressionError
+
 if TYPE_CHECKING:
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
@@ -50,22 +55,6 @@ Param: TypeAlias = Union[str, float]
 ParamDict: TypeAlias = Dict[str, Param]
 
 
-class UnsupportedError(ValueError):
-    msg_template = "Unsupported CVXPY node: {node}"
-
-    def __init__(self, node: Canonical) -> None:
-        super().__init__(self.msg_template.format(node=node, klass=type(node)))
-        self.node = node
-
-
-class UnsupportedConstraintError(UnsupportedError):
-    msg_template = "Unsupported CVXPY constraint: {node}"
-
-
-class UnsupportedExpressionError(UnsupportedError):
-    msg_template = "Unsupported CVXPY expression: {node} ({klass})"
-
-
 class InvalidPowerError(UnsupportedExpressionError):
     msg_template = "Unsupported power: {node}, only quadratic expressions are supported"
 
@@ -74,16 +63,6 @@ class InvalidNormError(UnsupportedExpressionError):
     msg_template = (
         "Unsupported norm: {node}, only 1-norm, 2-norm and inf-norm are supported"
     )
-
-
-class InvalidNonlinearAtomError(UnsupportedExpressionError):
-    msg_template = (
-        "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
-    )
-
-
-class InvalidParameterError(UnsupportedExpressionError):
-    msg_template = "Unsupported parameter: value for {node} is not set"
 
 
 def _shape(expr: Any) -> tuple[int, ...]:
@@ -513,6 +492,8 @@ class Translater:
         (arg,) = node.args
         expr = self.visit(arg)
         p = node.original_p
+        if p != 2:
+            raise InvalidNormError(node)
         if isinstance(expr, scip.Expr):
             return (expr**p) ** (1 / p)
         return (expr**p).sum() ** (1 / p)
