@@ -17,6 +17,11 @@ import gurobipy as gp
 import numpy as np
 import numpy.typing as npt
 
+from cvxpy_translation.exceptions import InvalidParameterError
+from cvxpy_translation.exceptions import UnsupportedConstraintError
+from cvxpy_translation.exceptions import UnsupportedError
+from cvxpy_translation.exceptions import UnsupportedExpressionError
+
 if TYPE_CHECKING:
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
@@ -49,22 +54,6 @@ Param: TypeAlias = Union[str, float]
 ParamDict: TypeAlias = Dict[str, Param]
 
 
-class UnsupportedError(ValueError):
-    msg_template = "Unsupported CVXPY node: {node}"
-
-    def __init__(self, node: Canonical) -> None:
-        super().__init__(self.msg_template.format(node=node, klass=type(node)))
-        self.node = node
-
-
-class UnsupportedConstraintError(UnsupportedError):
-    msg_template = "Unsupported CVXPY constraint: {node}"
-
-
-class UnsupportedExpressionError(UnsupportedError):
-    msg_template = "Unsupported CVXPY expression: {node} ({klass})"
-
-
 class InvalidPowerError(UnsupportedExpressionError):
     msg_template = "Unsupported power: {node}, only quadratic expressions are supported"
 
@@ -79,10 +68,6 @@ class InvalidNonlinearAtomError(UnsupportedExpressionError):
     msg_template = (
         "Unsupported nonlinear atom: {node}, upgrade your version of gurobipy"
     )
-
-
-class InvalidParameterError(UnsupportedExpressionError):
-    msg_template = "Unsupported parameter: value for {node} is not set"
 
 
 def _shape(expr: Any) -> tuple[int, ...]:

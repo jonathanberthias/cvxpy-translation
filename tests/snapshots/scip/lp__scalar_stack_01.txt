@@ -1,0 +1,23 @@
+CVXPY
+Minimize
+  Sum(Vstack(x, 1.0), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0
+Subject to
+ c1: -1 x_0 <= +0
+Bounds
+ x_0 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 x +1
+Subject to
+Bounds
+End
