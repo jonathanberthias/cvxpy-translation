@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 from functools import partial
 from typing import TYPE_CHECKING
 from typing import Callable
@@ -14,7 +15,8 @@ import cvxpy_translation.scip
 from cvxpy_translation import CVXPY_VERSION
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import Generator
+    from typing_extensions import TypeAlias
 
     from cvxpy_translation.interface import ParamDict
 
@@ -77,11 +79,20 @@ def _validate(dual: bool, solver: str) -> Validator:
     return partial(validate, dual=dual, solver=solver)
 
 
+@contextmanager
+def register_solver(solver: str) -> Generator[str]:
+    method = cvxpy_translation.register_translation_solver(solver)
+    try:
+        yield method
+    finally:
+        del cp.Problem.REGISTERED_SOLVE_METHODS[method]
+
+
 def test_registered_solver(
     problem: cp.Problem, solver: str, validate: Validator, params: ParamDict
 ) -> None:
-    method = cvxpy_translation.register_translation_solver(solver)
-    problem.solve(method=method, **params)
+    with register_solver(solver) as method:
+        problem.solve(method=method, **params)
     validate(problem)
 
 
@@ -91,8 +102,8 @@ def test_registered_solver_with_env(
     if solver != cp.GUROBI:
         pytest.skip("Only GUROBI supports env parameter")
     env = gp.Env(params=params)
-    method = cvxpy_translation.gurobi.register_solver()
-    problem.solve(method=method, env=env)
+    with register_solver(solver) as method:
+        problem.solve(method=method, env=env)
     validate(problem)
 
 
