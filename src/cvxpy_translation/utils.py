@@ -1,6 +1,10 @@
-import time
+from __future__ import annotations
 
-from typing_extensions import Self
+import time
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class Timer:
