@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib.metadata
 import operator
 from functools import reduce
 from math import prod
@@ -44,11 +43,6 @@ if TYPE_CHECKING:
     from cvxpy.utilities.canonical import Canonical
     from typing_extensions import TypeAlias
 
-
-try:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
-except importlib.metadata.PackageNotFoundError:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy-base").split(".")))
 
 AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
 Param: TypeAlias = Union[str, float]

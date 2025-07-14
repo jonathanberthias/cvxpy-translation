@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Dict
@@ -20,12 +19,12 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
-from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import Translater
+from cvxpy_translation.utils import Timer
 
 if TYPE_CHECKING:
     from cvxpy.constraints.constraint import Constraint
-    from typing_extensions import Self
     from typing_extensions import TypeAlias
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
@@ -36,28 +35,16 @@ ParamDict: TypeAlias = Dict[str, Param]
 GUROBI_TRANSLATION: str = "GUROBI_TRANSLATION"
 
 
-class _Timer:
-    time: float
-
-    def __enter__(self) -> Self:
-        self._start = time.perf_counter()
-        return self
-
-    def __exit__(self, *args: object) -> None:
-        end = time.perf_counter()
-        self.time = end - self._start
-
-
 def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) -> float:
     """Solve a CVXPY problem using Gurobi.
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_translation.gurobi.solve(problem)
     """
-    with _Timer() as compilation:
+    with Timer() as compilation:
         model = build_model(problem, params=params, env=env)
 
-    with _Timer() as solve:
+    with Timer() as solve:
         model.optimize()
 
     backfill_problem(
@@ -67,13 +54,14 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
     return float(problem.value)  # pyright: ignore[reportArgumentType]
 
 
-def register_solver(name: str = GUROBI_TRANSLATION) -> None:
-    """Register the solver under the given name, defaults to `NATIVE_GUROBI`.
+def register_solver(name: str = GUROBI_TRANSLATION) -> str:
+    """Register the solver under the given name, defaults to `GUROBI_TRANSLATION`.
 
     Once this function has been called, the solver can be used as follows:
-        problem.solve(method=NATIVE_GUROBI)
+        problem.solve(method=GUROBI_TRANSLATION)
     """
     cp.Problem.register_solve(name, solve)
+    return name
 
 
 def build_model(

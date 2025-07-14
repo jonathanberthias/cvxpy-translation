@@ -148,6 +148,7 @@ ignore = [
   "E501",    # comments may exceed line length
   "FIX",     # TODOs are fine
   "TD",      # TODOs are fine
+  "PLC0415", # `import` not at top of file is on purpose
   "PLR2004", # 'magic' constants are not that annoying
   "S101",    # asserts used for type narrowing
 ]

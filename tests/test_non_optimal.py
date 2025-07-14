@@ -3,7 +3,7 @@ import gurobipy as gp
 from cvxpy import settings as s
 
 import cvxpy_translation.gurobi
-from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation import CVXPY_VERSION
 
 
 def test_backfill_unbounded() -> None:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Dict
@@ -20,12 +19,12 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import scip_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
-from cvxpy_translation.scip.translation import CVXPY_VERSION
+from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.scip.translation import Translater
+from cvxpy_translation.utils import Timer
 
 if TYPE_CHECKING:
     from cvxpy.constraints.constraint import Constraint
-    from typing_extensions import Self
     from typing_extensions import TypeAlias
 
 AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
@@ -36,28 +35,16 @@ ParamDict: TypeAlias = Dict[str, Param]
 SCIP_TRANSLATION: str = "SCIP_TRANSLATION"
 
 
-class _Timer:
-    time: float
-
-    def __enter__(self) -> Self:
-        self._start = time.perf_counter()
-        return self
-
-    def __exit__(self, *args: object) -> None:
-        end = time.perf_counter()
-        self.time = end - self._start
-
-
 def solve(problem: cp.Problem, **params: Param) -> float:
     """Solve a CVXPY problem using SCIP.
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_translation.scip.solve(problem)
     """
-    with _Timer() as compilation:
+    with Timer() as compilation:
         model = build_model(problem, params=params)
 
-    with _Timer() as solve:
+    with Timer() as solve:
         model.optimize()
 
     backfill_problem(
@@ -67,13 +54,14 @@ def solve(problem: cp.Problem, **params: Param) -> float:
     return float(problem.value)  # pyright: ignore[reportArgumentType]
 
 
-def register_solver(name: str = SCIP_TRANSLATION) -> None:
+def register_solver(name: str = SCIP_TRANSLATION) -> str:
     """Register the solver under the given name, defaults to `SCIP_TRANSLATION`.
 
     Once this function has been called, the solver can be used as follows:
         problem.solve(method=SCIP_TRANSLATION)
     """
     cp.Problem.register_solve(name, solve)
+    return name
 
 
 def build_model(problem: cp.Problem, *, params: ParamDict | None = None) -> scip.Model:

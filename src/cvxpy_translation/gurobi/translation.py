@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib.metadata
 import operator
 from functools import reduce
 from math import prod
@@ -42,10 +41,6 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 
-try:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
-except importlib.metadata.PackageNotFoundError:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy-base").split(".")))
 GUROBIPY_VERSION = gp.gurobi.version()
 GUROBI_MAJOR = GUROBIPY_VERSION[0]
 
@@ -334,7 +329,7 @@ class Translater:
     def visit_exp(self, node: cp.exp) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
-        from gurobipy import nlfunc  # noqa: PLC0415
+        from gurobipy import nlfunc
 
         (arg,) = node.args
         expr = self.visit(arg)
@@ -368,7 +363,7 @@ class Translater:
     def visit_log(self, node: cp.log) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
-        from gurobipy import nlfunc  # noqa: PLC0415
+        from gurobipy import nlfunc
 
         (arg,) = node.args
         expr = self.visit(arg)
@@ -379,7 +374,7 @@ class Translater:
     def visit_log1p(self, node: cp.log1p) -> AnyVar:
         if GUROBI_MAJOR < 12:
             raise InvalidNonlinearAtomError(node)
-        from gurobipy import nlfunc  # noqa: PLC0415
+        from gurobipy import nlfunc
 
         (arg,) = node.args
         expr = self.visit(arg)

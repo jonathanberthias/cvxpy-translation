@@ -20,7 +20,7 @@ from pytest_insta.fixture import SnapshotFixture
 
 import cvxpy_translation.gurobi
 import cvxpy_translation.scip
-from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation import CVXPY_VERSION
 from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
@@ -91,12 +91,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
             generated_model, case.context.solver, tmp_path
         )
 
-    if case.context.solver == cp.GUROBI:
-        model = cvxpy_translation.gurobi.build_model(problem)
-    elif case.context.solver == cp.SCIP:
-        model = cvxpy_translation.scip.build_model(problem)
-    else:
-        pytest.fail(f"Unexpected solver: {case.context.solver}")
+    model = cvxpy_translation.build_model(problem, solver=case.context.solver)
     model_lines = lp_from_solver(model, case.context.solver, tmp_path)
 
     divider = ["-" * 40]

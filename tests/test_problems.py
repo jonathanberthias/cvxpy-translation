@@ -12,7 +12,7 @@ import cvxpy as cp
 import numpy as np
 import scipy.sparse as sp
 
-from cvxpy_translation.gurobi.translation import CVXPY_VERSION
+from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import GUROBI_MAJOR
 
 
@@ -853,7 +853,7 @@ def invalid_stack_expressions() -> Generator[cp.Problem]:
 
 def reset_id_counter() -> None:
     """Reset the counter used to assign constraint and variable ids."""
-    from cvxpy.lin_ops.lin_utils import ID_COUNTER  # noqa: PLC0415
+    from cvxpy.lin_ops.lin_utils import ID_COUNTER
 
     ID_COUNTER.count = 1
 
