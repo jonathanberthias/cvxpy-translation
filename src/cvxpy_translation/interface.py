@@ -77,27 +77,6 @@ def build_model(
     raise NotImplementedError(msg)
 
 
-def fill_model(problem: cp.Problem, model: gp.Model | scip.Model) -> None:
-    """Add the objective and constraints from a CVXPY problem to a native model.
-
-    Args:
-        problem: The CVXPY problem to convert.
-        model: The native model to which constraints and objectives are added.
-
-    """
-    if gurobi_available and isinstance(model, gp.Model):
-        from cvxpy_translation.gurobi.interface import fill_model as fill_gurobi_model
-
-        fill_gurobi_model(problem, model)
-    elif scip_available and isinstance(model, scip.Model):
-        from cvxpy_translation.scip.interface import fill_model as fill_scip_model
-
-        fill_scip_model(problem, model)
-    else:
-        msg = f"Unsupported model type: {type(model)}, expected gp.Model or scip.Model"
-        raise NotImplementedError(msg)
-
-
 def backfill_problem(
     problem: cp.Problem,
     model: gp.Model | scip.Model,

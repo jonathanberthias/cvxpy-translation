@@ -12,7 +12,6 @@ from cvxpy_translation.exceptions import (
 )
 from cvxpy_translation.interface import backfill_problem as backfill_problem
 from cvxpy_translation.interface import build_model as build_model
-from cvxpy_translation.interface import fill_model as fill_model
 from cvxpy_translation.interface import (
     register_translation_solver as register_translation_solver,
 )
