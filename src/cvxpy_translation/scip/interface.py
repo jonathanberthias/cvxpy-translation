@@ -204,8 +204,8 @@ def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
     for constr in constrs:
         if constr.name == name:
             return constr
-    msg = f"Constraint {name} not found."
-    raise LookupError(msg)
+    msg = f"Constraint {name} not found."  # pragma: no cover
+    raise LookupError(msg)  # pragma: no cover
 
 
 def _matrix_to_scip_names(

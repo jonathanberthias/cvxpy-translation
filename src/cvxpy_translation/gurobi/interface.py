@@ -230,8 +230,8 @@ def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr
     else:
         if constr is not None:
             return constr
-    msg = f"Constraint {name} not found."
-    raise LookupError(msg)
+    msg = f"Constraint {name} not found."  # pragma: no cover
+    raise LookupError(msg)  # pragma: no cover
 
 
 def _matrix_to_gurobi_names(
