@@ -82,7 +82,7 @@ all-tests = [
 description = "Dependencies at their most up-to-date versions"
 python = "3.13"
 extra-dependencies = [
-  "cvxpy-base==1.6.6",
+  "cvxpy-base==1.7.1",
   "gurobipy==12.0.3",
   "pyscipopt==5.5.0",
   "numpy==2.3.1",
