@@ -14,13 +14,9 @@ Subject To
  R1: - C1 + C3 <= 0
  R2: - C0 - C2 <= 0
  R3: - C1 - C3 <= 0
- R4: - C2 <= 0
- R5: - C3 <= 0
 Bounds
  C0 free
  C1 free
- C2 free
- C3 free
 End
 ----------------------------------------
 GUROBI

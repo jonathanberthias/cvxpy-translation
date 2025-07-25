@@ -10,9 +10,7 @@ AFTER COMPILATION
 Minimize
   C0
 Subject To
- R0: - C0 <= 0
 Bounds
- C0 free
 End
 ----------------------------------------
 GUROBI
