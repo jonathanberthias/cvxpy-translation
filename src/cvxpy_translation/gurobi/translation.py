@@ -65,6 +65,10 @@ class InvalidNonlinearAtomError(UnsupportedExpressionError):
     )
 
 
+class ComplexExpressionError(UnsupportedExpressionError):
+    msg_template = "Complex expressions are not supported: {node}"
+
+
 def _shape(expr: Any) -> tuple[int, ...]:
     return getattr(expr, "shape", ())
 
@@ -305,6 +309,12 @@ class Translater:
     def visit_AddExpression(self, node: AddExpression) -> Any:
         args = list(map(self.visit, node.args))
         return reduce(operator.add, args)
+
+    def visit_conj(self, node: cp.conj) -> Any:
+        (arg,) = node.args
+        if arg.is_complex():
+            raise ComplexExpressionError(node)
+        return self.visit(arg)
 
     def visit_Constant(self, const: cp.Constant) -> Any:
         return const.value
