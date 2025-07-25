@@ -11,10 +11,8 @@ Minimize
  [ 2 C0 ^2 ] / 2 
 Subject To
  R0: - C0 + C1 = 1
- R1: - C1 <= 0
 Bounds
  C0 free
- C1 free
 End
 ----------------------------------------
 GUROBI

@@ -108,7 +108,7 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
         )
     )
 
-    if CVXPY_VERSION[:2] == (1, 6):
+    if CVXPY_VERSION[:2] == (1, 7):
         assert snapshot(f"{case.group}_{case.idx:02d}.txt") == output
     else:
         # don't update snapshots nor delete them

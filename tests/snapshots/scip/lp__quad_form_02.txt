@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  [1. 2.] @ A @ [1. 2.]
+  conj([1. 2.]) @ A @ [1. 2.]
 Subject To
 Bounds
  0.0 <= A
