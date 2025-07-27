@@ -86,7 +86,7 @@ extra-dependencies = [
   "gurobipy==12.0.3",
   "pyscipopt==5.5.0",
   "numpy==2.3.2",
-  "scipy==1.16.0",
+  "scipy==1.16.1",
 ]
 scripts = { update-snapshots = "hatch run latest:tests {args} tests/test_all.py::test_lp" }
 
