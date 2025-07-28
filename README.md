@@ -1,56 +1,44 @@
 # CVXPY translation
 
 This small library provides an alternative way to solve CVXPY problems by
-building solver's native models. It currently supports Gurobi.
+building solver's native models. It currently supports Gurobi and SCIP.
 
 ## Usage
 
 The library provides a solver that will translate a CVXPY `Problem` into a
-`gurobipy.Model`, and optimize using Gurobi:
+`gurobipy.Model` or a `pyscipopt.Model`, and solve using the direct interface:
 
 ```python
 import cvxpy as cp
-import cvxpy_translation.gurobi
 
 problem = cp.Problem(cp.Maximize(cp.Variable(name="x", nonpos=True)))
-cvxpy_translation.gurobi.solve(problem)
+cvxpy_translation.solve(problem, solver=cp.GUROBI)
 assert problem.value == 0
-```
-
-The solver can also be registered with CVXPY and used as any other solver:
-
-```python
-import cvxpy as cp
-from cvxpy_translation.gurobi import GUROBI_TRANSLATION, solver
-
-cvxpy_translation.gurobi.register_solver()
-# ^ this is the same as:
-cp.Problem.register_solve_method(GUROBI_TRANSLATION, solver())
-
-problem.solve(method=GUROBI_TRANSLATION)
 ```
 
 This solver is a simple wrapper for the most common use case:
 
 ```python
-from cvxpy_translation.gurobi import build_model, backfill_problem
+from cvxpy_translation import build_model, backfill_problem
 
-model = build_model(problem)
+model = build_model(problem, solver=cp.SCIP)
 model.optimize()
 backfill_problem(problem, model)
-assert model.optVal == problem.value
+assert model.getObjVal() == problem.value
 ```
 
-The `build_model` function provided by this library translates the
-`cvxpy.Problem` instance into an equivalent `gurobipy.Model`, and
-`backfill_problem` sets the optimal values on the original problem.
+The `build_model` function provided by this library translates the `Problem`
+instance into an equivalent `Model`, and `backfill_problem` sets the optimal
+values on the original problem.
 
 > [!NOTE] Both functions must be used together as they rely on naming
-> conventions to map variables and constraints between CVXPY and Gurobi.
+> conventions to map variables and constraints between the problem and the
+> model.
 
-The output of the `build_model` function is a standard `gurobipy.Model`
-instance, which can be further customized prior to solving. This approach
-enables you to manage how the model will be optimized.
+The output of the `build_model` function is a `Model` instance, which can be
+further customized prior to solving. This approach enables you to manage how the
+model will be optimized, set parameters, or use features that aren't available
+through CVXPY's interface.
 
 ## Installation
 
@@ -58,28 +46,30 @@ enables you to manage how the model will be optimized.
 pip install cvxpy-translation
 ```
 
-## CVXPY has an interface to Gurobi, why is this needed?
+## CVXPY has an interface to Gurobi and SCIP, why is this needed?
 
-When using CVXPY's interface to Gurobi, the problems fed to Gurobi have been
+When using CVXPY's interface, the problems fed to the solver have been
 pre-compiled by CVXPY, meaning the model is not exactly the same as the one you
 have written. This is great for solvers with low-level APIs, such as SCS or
-OSQP, but `gurobipy` allows you to express your models at a higher-level.
+OSQP, but `gurobipy` and `pyscipopt` allow you to express your models at a
+higher-level.
 
-Providing the raw model to Gurobi can be a better idea in general to let the
-Gurobi solver use its own heuristics. The chosen algorithm can be different
-depending on the way it is modelled, potentially leading to better performance.
+Providing the raw model to the solver can be a better idea in general to let the
+solver use its own heuristics. The chosen algorithm can be different depending
+on the way it is modelled.
 
 In addition, CVXPY does not give access to the model before solving it. CVXPY
-must therefore make some choices for you, such as setting `QCPDual` to 1 on all
-non-MIP models. Having access to the model can help if you want to handle the
-call to `.optimize()` in a non-standard way, e.g. by sending it to an async
-loop.
+must therefore make some choices for you, such as setting some parameters on the
+generated model. Having access to the model can help if you want to handle the
+call to `.optimize()` in a non-standard way, e.g. by calling `.optimizeAsync()`
+in `gurobipy` or `solveConcurrent()` in `pyscipopt`. It is also required to set
+callbacks.
 
-Another feature is the ability to use the latest features of Gurobi, such as
-non-linear expressions, which are not yet supported by the Gurobi interface in
-CVXPY.
+Another feature is the ability to use the latest features of the solvers, such
+as non-linear expressions in Gurobi, which are not yet supported by the Gurobi
+interface in CVXPY.
 
-### Example
+### Example with Gurobi
 
 Consider this QP problem:
 
@@ -121,36 +111,28 @@ Note that:
 - no extra (free) variables;
 - no extra constraints.
 
-## Why not use `gurobipy` directly?
+## Why not use `gurobipy` or `pyscipopt` directly?
 
 CVXPY has 2 main features: a modelling API and interfaces to many solvers. The
-modelling API has a great design, whereas `gurobipy` feels like a thin layer
-over the C API. The interfaces to other solvers can be useful to not have to
-rewrite the problem when switching solvers.
+modelling API has a great design, whereas `gurobipy` and `pyscipopt` feel like a
+thin layer over the C API. The interfaces to other solvers can be useful to not
+have to rewrite the problem when switching solvers.
 
 # Supported versions
 
-All supported versions of Python, CVXPY and `gurobipy` should work. However, due
-to licensing restrictions, old versions of `gurobipy` cannot be tested in CI. If
-you run into a bug, please open an issue in this repo specifying the versions
-used.
+All supported versions of Python and CVXPY should work.
+
+The same goes for `gurobipy`. However, due to licensing restrictions, old
+versions of `gurobipy` cannot be tested in CI. If you run into a bug, please
+open an issue in this repo specifying the versions used.
+
+Only versions of `pyscipopt` after 5.5.0 are supported as that is when the
+matrix API was introduced.
 
 # Contributing
 
 [Hatch](https://hatch.pypa.io/latest/) is used for development. It will handle
-all virtual environment management.
-
-To lint the code, run:
-
-```sh
-ruff check
-```
-
-To format the code, run:
-
-```sh
-ruff format
-```
+all the dependencies when testing on multiple versions.
 
 For testing, run:
 
@@ -170,3 +152,15 @@ hatch run update-snapshots
 ```
 
 You can then check the output in the `tests/snapshots` folder is as expected.
+
+To lint the code, run:
+
+```sh
+ruff check
+```
+
+To format the code, run:
+
+```sh
+ruff format
+```
