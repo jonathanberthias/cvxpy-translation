@@ -31,9 +31,10 @@ The `build_model` function provided by this library translates the `Problem`
 instance into an equivalent `Model`, and `backfill_problem` sets the optimal
 values on the original problem.
 
-> [!NOTE] Both functions must be used together as they rely on naming
-> conventions to map variables and constraints between the problem and the
-> model.
+<!-- prettier-ignore -->
+> [!NOTE]
+> Both functions must be used together as they rely on naming conventions to
+> map variables and constraints between the problem and the model.
 
 The output of the `build_model` function is a `Model` instance, which can be
 further customized prior to solving. This approach enables you to manage how the

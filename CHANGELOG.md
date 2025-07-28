@@ -2,6 +2,41 @@
 
 ## Unreleased
 
+### New name!
+
+The library has been renamed to `cvxpy-translation`! This was to reflect that we
+are now able to translate problems into SCIP models in addition to Gurobi
+models.
+
+### New interface: SCIP
+
+Problems can be translated to `pyscipopt.Model` instances. The feature set is on
+par with Gurobi.
+
+### Breaking changes
+
+- The top-level functions `solve`, `build_model` and
+  `register_translation_solver` now require a `solver` argument that must be the
+  solver name from CVXPY. The previous functions for Gurobi are still available
+  by importing from `cvxpy_translation.gurobi`.
+
+- Exceptions are now split between general exceptions defined in the top-level
+  `cvxpy_translation`, and solver specific exceptions available from the solver
+  submodules, `cvxpy_translation.gurobi` and `cvxpy_translation.scip`.
+
+### New features
+
+- Support CVXPY 1.7
+  ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
+- Add support for `cp.conj` which is used internally by `cp.quad_form` in CVXPY
+  1.7 ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
+
+### Bug fixes
+
+- Scalar quadratic forms were incorrectly handled in CVXPY versions before
+  1.4.0, this now works as expected
+  ([#146](https://github.com/jonathanberthias/cvxpy-translation/pull/146))
+
 ## [1.2.0] - 2025-03-23
 
 - Add support for `cp.exp`, `cp.log` and `cp.log1p` through the non-linear
