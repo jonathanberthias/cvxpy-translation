@@ -65,7 +65,7 @@ def snapshot(
 
     """
     path = SNAPSHOT_DIR / case.context.solver.lower() / "lp"
-    session: SnapshotSession = request.config._snapshot_session  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+    session: SnapshotSession = request.config._no_deletion_snapshot_session  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
     with SnapshotFixture(session[path], session) as fixture:
         yield fixture
 
