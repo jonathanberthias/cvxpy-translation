@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
-from typing import Generator
 from unittest.mock import patch
 
 import cvxpy as cp
@@ -25,6 +24,8 @@ from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from cvxpy.reductions.solution import Solution
     from pytest_insta.session import SnapshotSession
 

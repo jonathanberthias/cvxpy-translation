@@ -17,13 +17,12 @@ license = "Apache-2.0"
 authors = [
   { name = "Jonathan Berthias", email = "jvberthias@gmail.com" },
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -36,7 +35,7 @@ dependencies = [
   # "cvxpy" must be available but we don't list it
   # as a dependency because cvxpy-base is sufficient
   "numpy>=1.23.0",
-  "scipy>=1.4.0",
+  "scipy>=1.5.4",
 ]
 
 [project.optional-dependencies]
@@ -58,8 +57,8 @@ description = "Base environment for other envs to inherit from"
 dependencies = [
   "pytest==7.4.4",
   "pytest-insta==0.2.0",
-  "pytest-xdist==3.6.1",
-  "pytest-cov==5.0.0",
+  "pytest-xdist==3.8.0",
+  "pytest-cov==6.2.1",
 ]
 installer = "uv"
 [tool.hatch.envs.default.scripts]
@@ -93,13 +92,13 @@ scripts = { update-snapshots = "hatch run latest:tests {args} tests/test_all.py:
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes"
 env-vars = { UV_RESOLUTION = "lowest-direct" }
-python = "3.8"
+python = "3.9"
 extra-dependencies = [
   # we have to set a version here since cvxpy is not listed as a dependency
   # we use cvxpy-base to avoid installing unnecessary dependencies
-  "cvxpy-base>=1.1.16",
+  "cvxpy-base==1.1.16",
   # bundled license is expired on older versions of gurobipy
-  "gurobipy>=11",
+  "gurobipy==11.*",
 ]
 features = ["gurobi", "scip"]
 
@@ -124,7 +123,7 @@ implicit_reexport = true
 
 [tool.pyright]
 typeCheckingMode = "basic"
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 
 [tool.hatch.envs.hatch-static-analysis]
 # https://hatch.pypa.io/latest/config/static-analysis/
@@ -181,7 +180,7 @@ skip-magic-trailing-comma = true
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--strict-config", "--strict-markers"]
-minversion = "6"
+minversion = "7"
 pythonpath = "tests"
 testpaths = ["tests"]
 xfail_strict = true
@@ -195,7 +194,6 @@ omit = [
 ]
 [tool.coverage.report]
 exclude_also = [
-  "if TYPE_CHECKING:",
   "@overload",
 ]
 show_missing = true

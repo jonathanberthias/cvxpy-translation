@@ -24,6 +24,9 @@ par with Gurobi.
   `cvxpy_translation`, and solver specific exceptions available from the solver
   submodules, `cvxpy_translation.gurobi` and `cvxpy_translation.scip`.
 
+- Support for EOL Python 3.8 has been dropped
+  ([#179](https://github.com/jonathanberthias/cvxpy-translation/pull/179)).
+
 ### New features
 
 - Support CVXPY 1.7

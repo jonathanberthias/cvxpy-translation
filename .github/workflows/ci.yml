@@ -29,7 +29,7 @@ jobs:
           - env: "latest"
             python: "3.13"
           - env: "oldest"
-            python: "3.8"
+            python: "3.9"
 
     steps:
       - uses: actions/checkout@v4

@@ -5,7 +5,6 @@ from functools import reduce
 from math import prod
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Dict
 from typing import Literal
 from typing import Union
 from typing import overload
@@ -44,7 +43,7 @@ if TYPE_CHECKING:
 
 AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
 Param: TypeAlias = Union[str, float]
-ParamDict: TypeAlias = Dict[str, Param]
+ParamDict: TypeAlias = dict[str, Param]
 
 
 class InvalidPowerError(UnsupportedExpressionError):
