@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from dataclasses import replace
 from functools import partial
 from functools import wraps
+from typing import TYPE_CHECKING
 from typing import Callable
-from typing import Generator
 from typing import Literal
 
 import cvxpy as cp
@@ -14,6 +14,9 @@ import scipy.sparse as sp
 
 from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import GUROBI_MAJOR
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @dataclass(frozen=True)

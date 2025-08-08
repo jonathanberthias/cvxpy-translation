@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Dict
 
 import cvxpy as cp
 
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
 
 
 Param: TypeAlias = Any
-ParamDict: TypeAlias = Dict[str, Param]
+ParamDict: TypeAlias = dict[str, Param]
 
 
 def solve(problem: cp.Problem, solver: str, **params: Param) -> float:

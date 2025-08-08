@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from contextlib import suppress
 from typing import TYPE_CHECKING
-from typing import Dict
-from typing import Iterator
 from typing import Union
 
 import cvxpy as cp
@@ -24,12 +22,14 @@ from cvxpy_translation.scip.translation import Translater
 from cvxpy_translation.utils import Timer
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from cvxpy.constraints.constraint import Constraint
     from typing_extensions import TypeAlias
 
 AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
 Param: TypeAlias = Union[str, float]
-ParamDict: TypeAlias = Dict[str, Param]
+ParamDict: TypeAlias = dict[str, Param]
 
 # Default name for the solver when registering it with CVXPY.
 SCIP_TRANSLATION: str = "SCIP_TRANSLATION"

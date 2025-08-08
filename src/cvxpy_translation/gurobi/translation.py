@@ -6,8 +6,6 @@ from math import prod
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
-from typing import Dict
-from typing import Iterator
 from typing import Union
 from typing import overload
 
@@ -22,6 +20,8 @@ from cvxpy_translation.exceptions import UnsupportedError
 from cvxpy_translation.exceptions import UnsupportedExpressionError
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from cvxpy.atoms.affine.add_expr import AddExpression
     from cvxpy.atoms.affine.binary_operators import DivExpression
     from cvxpy.atoms.affine.binary_operators import MulExpression
@@ -46,7 +46,7 @@ GUROBI_MAJOR = GUROBIPY_VERSION[0]
 
 AnyVar: TypeAlias = Union[gp.Var, gp.MVar]
 Param: TypeAlias = Union[str, float]
-ParamDict: TypeAlias = Dict[str, Param]
+ParamDict: TypeAlias = dict[str, Param]
 
 
 class InvalidPowerError(UnsupportedExpressionError):
