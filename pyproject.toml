@@ -98,7 +98,7 @@ extra-dependencies = [
   # we use cvxpy-base to avoid installing unnecessary dependencies
   "cvxpy-base==1.1.16",
   # bundled license is expired on older versions of gurobipy
-  "gurobipy==11.*",
+  "gurobipy==12.*",
 ]
 features = ["gurobi", "scip"]
 
