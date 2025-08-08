@@ -689,6 +689,12 @@ def reshape() -> Generator[cp.Problem]:
     )
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.vec(x) <= np.arange(4)])
 
+    reset_id_counter()
+    p = cp.Parameter()
+    p.value = 1
+    x = cp.Variable(name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(x + cp.reshape(p, (1,), order="F")))
+
 
 def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     stack = getattr(cp, stack_name)
