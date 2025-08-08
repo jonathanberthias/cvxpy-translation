@@ -96,7 +96,7 @@ python = "3.9"
 extra-dependencies = [
   # we have to set a version here since cvxpy is not listed as a dependency
   # we use cvxpy-base to avoid installing unnecessary dependencies
-  "cvxpy-base==1.1.16",
+  "cvxpy-base==1.7.1",
   # bundled license is expired on older versions of gurobipy
   "gurobipy==11.*",
 ]
