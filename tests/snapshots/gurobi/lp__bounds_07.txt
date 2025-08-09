@@ -23,8 +23,8 @@ Maximize
   X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
 Bounds
- X[0,0] free
- X[0,1] free
- X[1,0] free
- X[1,1] free
+ X[0,0] <= 1
+ 1 <= X[0,1] <= 2
+ 2 <= X[1,0] <= 3
+ 3 <= X[1,1] <= 4
 End

@@ -31,8 +31,8 @@ Minimize
  Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
 Subject to
 Bounds
- X_0_0 free
- X_0_1 free
- X_1_0 free
- X_1_1 free
+ 0 <= X_0_0 <= 1
+ 1 <= X_0_1 <= 2
+ 2 <= X_1_0 <= 3
+ 3 <= X_1_1 <= 4
 End

@@ -22,5 +22,5 @@ Maximize
  Obj: +1 x
 Subject to
 Bounds
- x free
+ 1 <= x <= 2
 End

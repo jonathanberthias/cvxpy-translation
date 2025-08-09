@@ -73,12 +73,14 @@ def _is_scalar(expr: Any) -> bool:
 
 
 def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
-    lb = None
-    ub = None
-    if var.is_nonneg():
-        lb = 0
-    if var.is_nonpos():
-        ub = 0
+    if var.bounds is not None:
+        lb, ub = var.bounds
+    else:
+        lb, ub = None, None
+        if var.is_nonneg():
+            lb = 0
+        if var.is_nonpos():
+            ub = 0
 
     vtype = "CONTINUOUS"
     if var.attributes["integer"]:

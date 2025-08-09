@@ -21,6 +21,6 @@ Maximize
   X[0] + X[1]
 Subject To
 Bounds
- X[0] free
- X[1] free
+ 1 <= X[0] <= 3
+ 2 <= X[1] <= 4
 End

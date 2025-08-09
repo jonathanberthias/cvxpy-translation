@@ -20,5 +20,5 @@ Minimize
   x[0]
 Subject To
 Bounds
- x[0] free
+ 1 <= x[0] <= 2
 End

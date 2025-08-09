@@ -20,5 +20,5 @@ Maximize
   x
 Subject To
 Bounds
- x free
+ 1 <= x <= 2
 End
