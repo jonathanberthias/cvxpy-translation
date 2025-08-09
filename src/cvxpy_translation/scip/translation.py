@@ -430,12 +430,9 @@ class Translater:
         """
         (x,) = node.args
         target_shape = node.shape
-        if isinstance(x, cp.Constant):
-            try:
-                return x.value.reshape(target_shape)
-            except AttributeError:
-                return np.reshape(x, target_shape)
         expr = self.visit(x)
+        if isinstance(expr, (int, float)):
+            return np.reshape(expr, target_shape)
         if isinstance(expr, scip.Expr):
             if target_shape == ():
                 return expr
@@ -444,18 +441,7 @@ class Translater:
             assert isinstance(expr, scip.MatrixExpr)
             assert _is_scalar(expr)
             return expr.item()
-        elif not isinstance(expr, scip.MatrixExpr):
-            expr_shape = _shape(expr)
-            # Force creation of a MatrixVariable even if the shape is scalar
-            if expr_shape == ():
-                expr_shape = (1,)
-            expr = self.make_auxilliary_variable_for(
-                expr, "reshape", desired_shape=expr_shape
-            )
-            assert isinstance(expr, scip.MatrixVariable)
-        reshaped = expr.reshape(target_shape)
-        assert reshaped.shape == target_shape
-        return reshaped
+        return expr.reshape(target_shape)
 
     def visit_special_index(self, node: special_index) -> Any:
         return self.visit(node.args[0])[node.key]

@@ -1,0 +1,22 @@
+CVXPY
+Minimize
+  x + reshape(2.5, (1,), F)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0
+Subject To
+Bounds
+End
+----------------------------------------
+GUROBI
+Minimize
+  x + 2.5 Constant
+Subject To
+Bounds
+ Constant = 1
+End
