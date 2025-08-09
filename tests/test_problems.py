@@ -830,6 +830,9 @@ def attributes() -> Generator[cp.Problem]:
 
 @group_cases("bounds")
 def bounds() -> Generator[cp.Problem]:
+    if CVXPY_VERSION < (1, 5, 0):
+        # Bounds were added in CVXPY 1.5.0
+        return
     x = cp.Variable(name="x", bounds=(np.array(1), np.array(2)))
     yield cp.Problem(cp.Minimize(x))
     yield cp.Problem(cp.Maximize(x))

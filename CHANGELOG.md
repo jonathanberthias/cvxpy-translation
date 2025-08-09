@@ -29,6 +29,8 @@ par with Gurobi.
 
 ### New features
 
+- Support variable bounds
+  ([#183](https://github.com/jonathanberthias/cvxpy-translation/pull/183))
 - Support CVXPY 1.7
   ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
 - Add support for `cp.conj` which is used internally by `cp.quad_form` in CVXPY
