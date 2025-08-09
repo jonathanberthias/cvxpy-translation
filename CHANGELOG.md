@@ -39,6 +39,9 @@ par with Gurobi.
 - Scalar quadratic forms were incorrectly handled in CVXPY versions before
   1.4.0, this now works as expected
   ([#146](https://github.com/jonathanberthias/cvxpy-translation/pull/146))
+- An unnecessary variable was generated when parameters appeared in a
+  `cp.reshape` expression
+  ([#180](https://github.com/jonathanberthias/cvxpy-translation/pull/180))
 
 ## [1.2.0] - 2025-03-23
 
