@@ -94,11 +94,14 @@ description = "The oldest supported set of dependencies, for testing purposes"
 env-vars = { UV_RESOLUTION = "lowest-direct" }
 python = "3.9"
 extra-dependencies = [
+  # We use lower bounds and not exact versions to prevent bots from updating
+  # these. We have to check manually that these lower bounds are chosen by uv.
+
   # we have to set a version here since cvxpy is not listed as a dependency
   # we use cvxpy-base to avoid installing unnecessary dependencies
-  "cvxpy-base==1.1.16",
+  "cvxpy-base>=1.1.16",
   # bundled license is expired on older versions of gurobipy
-  "gurobipy==11.*",
+  "gurobipy>=11",
 ]
 features = ["gurobi", "scip"]
 
