@@ -692,8 +692,10 @@ def reshape() -> Generator[cp.Problem]:
     reset_id_counter()
     p = cp.Parameter()
     p.value = 1
+    c = cp.Constant(2.5)
     x = cp.Variable(name="x", nonneg=True)
     yield cp.Problem(cp.Minimize(x + cp.reshape(p, (1,), order="F")))
+    yield cp.Problem(cp.Minimize(x + cp.reshape(c, (1,), order="F")))
 
 
 def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:

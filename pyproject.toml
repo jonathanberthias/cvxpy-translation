@@ -87,7 +87,7 @@ extra-dependencies = [
   "numpy==2.3.2",
   "scipy==1.16.1",
 ]
-scripts = { update-snapshots = "hatch run latest:tests {args} tests/test_all.py::test_lp" }
+scripts = { update-snapshots = "hatch run latest:tests --insta update {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes"

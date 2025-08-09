@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  x + reshape(param1, (1,), F)
+  x + reshape(2.5, (1,), F)
 Subject To
 Bounds
  0.0 <= x
@@ -17,7 +17,7 @@ End
 ----------------------------------------
 SCIP
 Minimize
- Obj: +1 x +1
+ Obj: +1 x +2.5
 Subject to
 Bounds
 End

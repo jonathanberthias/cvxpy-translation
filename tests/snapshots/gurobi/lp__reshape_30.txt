@@ -15,9 +15,8 @@ End
 ----------------------------------------
 GUROBI
 Minimize
-  x + reshape_1[0]
+  x + Constant
 Subject To
- R0: reshape_1[0] = 1
 Bounds
- reshape_1[0] free
+ Constant = 1
 End

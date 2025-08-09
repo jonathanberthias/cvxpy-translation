@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  x + reshape(param1, (1,), F)
+  x + reshape(2.5, (1,), F)
 Subject To
 Bounds
  0.0 <= x
@@ -8,16 +8,15 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
- Obj: +1 x_0
-Subject to
- c1: -1 x_0 <= +0
+  C0
+Subject To
 Bounds
- x_0 free
 End
 ----------------------------------------
-SCIP
+GUROBI
 Minimize
- Obj: +1 x +1
-Subject to
+  x + 2.5 Constant
+Subject To
 Bounds
+ Constant = 1
 End
