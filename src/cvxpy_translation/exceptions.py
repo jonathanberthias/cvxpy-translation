@@ -1,12 +1,22 @@
-from cvxpy.utilities.canonical import Canonical
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from typing import Any
+
+if TYPE_CHECKING:
+    from cvxpy.expressions.leaf import Leaf
+    from cvxpy.utilities.canonical import Canonical
 
 
 class UnsupportedError(ValueError):
     msg_template = "Unsupported CVXPY node: {node}"
 
-    def __init__(self, node: Canonical) -> None:
-        super().__init__(self.msg_template.format(node=node, klass=type(node)))
+    def __init__(self, node: Canonical, **kwargs: Any) -> None:
+        super().__init__(
+            self.msg_template.format(node=node, klass=type(node), **kwargs)
+        )
         self.node = node
+        self.kwargs = kwargs
 
 
 class UnsupportedConstraintError(UnsupportedError):
@@ -15,6 +25,14 @@ class UnsupportedConstraintError(UnsupportedError):
 
 class UnsupportedExpressionError(UnsupportedError):
     msg_template = "Unsupported CVXPY expression: {node} ({klass})"
+
+
+class UnsupportedAttributesError(UnsupportedExpressionError):
+    msg_template = "Unsupported attributes for {node}: {attributes}"
+
+    def __init__(self, leaf: Leaf, attributes: set[str]) -> None:
+        super().__init__(leaf, attributes=list(attributes))
+        self.unhandled = attributes
 
 
 class InvalidParameterError(UnsupportedExpressionError):

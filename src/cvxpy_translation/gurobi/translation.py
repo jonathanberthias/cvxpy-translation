@@ -17,6 +17,7 @@ import scipy.sparse as sp
 
 from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.exceptions import InvalidParameterError
+from cvxpy_translation.exceptions import UnsupportedAttributesError
 from cvxpy_translation.exceptions import UnsupportedConstraintError
 from cvxpy_translation.exceptions import UnsupportedError
 from cvxpy_translation.exceptions import UnsupportedExpressionError
@@ -132,7 +133,16 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
     raise NotImplementedError(msg)  # pragma: no cover
 
 
+HANDLED_ATTRIBUTES = {"integer", "boolean", "nonneg", "nonpos", "neg", "pos", "bounds"}
+
+
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
+    attributes = var.attributes
+    set_attributes = {k for k, v in attributes.items() if v}
+    unhandled = set_attributes - HANDLED_ATTRIBUTES
+    if unhandled:
+        raise UnsupportedAttributesError(leaf=var, attributes=unhandled)
+
     # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
     if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
         lb, ub = var.bounds
@@ -145,9 +155,9 @@ def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
             ub = 0
 
     vtype = gp.GRB.CONTINUOUS
-    if var.attributes["integer"]:
+    if attributes["integer"]:
         vtype = gp.GRB.INTEGER
-    if var.attributes["boolean"]:
+    if attributes["boolean"]:
         vtype = gp.GRB.BINARY
 
     return add_variable(model, var.shape, lb=lb, ub=ub, vtype=vtype, name=var.name())

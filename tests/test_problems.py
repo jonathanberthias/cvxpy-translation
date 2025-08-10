@@ -861,6 +861,33 @@ def invalid_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
 
 
+@group_cases("unsupported_attributes", invalid_reason="unsupported attributes")
+def unsupported_attributes() -> Generator[cp.Problem]:
+    complex_ = cp.Variable(name="x", complex=True)
+    yield cp.Problem(cp.Minimize(cp.real(complex_)))
+
+    psd = cp.Variable((2, 2), name="x", PSD=True)
+    yield cp.Problem(cp.Minimize(cp.sum(psd)))
+
+    nsd = cp.Variable((2, 2), name="x", NSD=True)
+    yield cp.Problem(cp.Minimize(cp.sum(nsd)))
+
+    symmetric = cp.Variable((2, 2), name="x", symmetric=True)
+    yield cp.Problem(cp.Minimize(cp.sum(symmetric)))
+
+    imag = cp.Variable(name="x", imag=True)
+    yield cp.Problem(cp.Minimize(cp.real(imag)))
+
+    diag = cp.Variable((2, 2), name="x", diag=True)
+    yield cp.Problem(cp.Minimize(cp.sum(diag)))
+
+    hermitian = cp.Variable((2, 2), name="x", hermitian=True)
+    yield cp.Problem(cp.Minimize(cp.real(cp.sum(hermitian))))
+
+    sparsity = cp.Variable(4, name="x", sparsity=[[0]])
+    yield cp.Problem(cp.Minimize(cp.sum(sparsity)))
+
+
 @skipif(
     lambda case: case.context.solver == cp.GUROBI,
     "hstack variant not supported by gurobipy",
