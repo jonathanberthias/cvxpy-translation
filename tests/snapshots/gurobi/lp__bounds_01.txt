@@ -1,0 +1,24 @@
+CVXPY
+Maximize
+  x
+Subject To
+Bounds
+ [1.] <= x[True]
+ x[True] <= [3.5]
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0
+Subject To
+Bounds
+ 1 <= C0 <= 3.5
+End
+----------------------------------------
+GUROBI
+Maximize
+  x[0]
+Subject To
+Bounds
+ 1 <= x[0] <= 3.5
+End

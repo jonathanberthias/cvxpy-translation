@@ -15,6 +15,7 @@ import numpy as np
 import numpy.typing as npt
 import scipy.sparse as sp
 
+from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.exceptions import InvalidParameterError
 from cvxpy_translation.exceptions import UnsupportedConstraintError
 from cvxpy_translation.exceptions import UnsupportedError
@@ -132,12 +133,16 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
-    lb = -gp.GRB.INFINITY
-    ub = gp.GRB.INFINITY
-    if var.is_nonneg():
-        lb = 0
-    if var.is_nonpos():
-        ub = 0
+    # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
+    if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
+        lb, ub = var.bounds
+    else:
+        lb = -gp.GRB.INFINITY
+        ub = gp.GRB.INFINITY
+        if var.is_nonneg():
+            lb = 0
+        if var.is_nonpos():
+            ub = 0
 
     vtype = gp.GRB.CONTINUOUS
     if var.attributes["integer"]:

@@ -1,0 +1,26 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+Bounds
+ [1. 1.] <= X[True, True]
+ X[True, True] <= [3. 4.]
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  C0 + C1
+Subject To
+Bounds
+ 1 <= C0 <= 3
+ 1 <= C1 <= 4
+End
+----------------------------------------
+GUROBI
+Minimize
+  X[0] + X[1]
+Subject To
+Bounds
+ 1 <= X[0] <= 3
+ 1 <= X[1] <= 4
+End

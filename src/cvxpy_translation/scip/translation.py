@@ -16,6 +16,7 @@ import pyscipopt as scip
 import scipy.sparse as sp
 from pyscipopt.recipes.nonlinear import set_nonlinear_objective
 
+from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.exceptions import InvalidParameterError
 from cvxpy_translation.exceptions import UnsupportedConstraintError
 from cvxpy_translation.exceptions import UnsupportedError
@@ -73,12 +74,15 @@ def _is_scalar(expr: Any) -> bool:
 
 
 def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
-    lb = None
-    ub = None
-    if var.is_nonneg():
-        lb = 0
-    if var.is_nonpos():
-        ub = 0
+    # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
+    if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
+        lb, ub = var.bounds
+    else:
+        lb, ub = None, None
+        if var.is_nonneg():
+            lb = 0
+        if var.is_nonpos():
+            ub = 0
 
     vtype = "CONTINUOUS"
     if var.attributes["integer"]:

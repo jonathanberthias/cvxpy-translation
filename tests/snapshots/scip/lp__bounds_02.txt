@@ -1,0 +1,30 @@
+CVXPY
+Minimize
+  Sum(X, None, False)
+Subject To
+Bounds
+ [1. 1.] <= X[True, True]
+ X[True, True] <= [3. 4.]
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: +1 x_0 +1 x_1
+Subject to
+ c1: -1 x_0 <= -1
+ c2: -1 x_1 <= -1
+ c3: +1 x_0 <= +3
+ c4: +1 x_1 <= +4
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: +1 X_0 +1 X_1
+Subject to
+Bounds
+ 1 <= X_0 <= 3
+ 1 <= X_1 <= 4
+End

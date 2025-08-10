@@ -1,0 +1,30 @@
+CVXPY
+Maximize
+  Sum(X, None, False)
+Subject To
+Bounds
+ [0. 1. 2. 3.] <= X[[ True  True], [ True  True]]
+ X[[ True  True], [ True  True]] <= [1. 2. 3. 4.]
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - C0 - C1 - C2 - C3
+Subject To
+Bounds
+ C0 <= 1
+ 2 <= C1 <= 3
+ 1 <= C2 <= 2
+ 3 <= C3 <= 4
+End
+----------------------------------------
+GUROBI
+Maximize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
+Subject To
+Bounds
+ X[0,0] <= 1
+ 1 <= X[0,1] <= 2
+ 2 <= X[1,0] <= 3
+ 3 <= X[1,1] <= 4
+End

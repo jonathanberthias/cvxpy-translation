@@ -828,6 +828,28 @@ def attributes() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(x + n + b), [n <= 1])
 
 
+@group_cases("bounds")
+def bounds() -> Generator[cp.Problem]:
+    if CVXPY_VERSION < (1, 5, 0):
+        # Bounds were added in CVXPY 1.5.0
+        return
+    x = cp.Variable(name="x", bounds=(np.array(1), np.array(2)))
+    yield cp.Problem(cp.Minimize(x))
+
+    reset_id_counter()
+    x = cp.Variable(1, name="x", bounds=[1, 3.5])
+    yield cp.Problem(cp.Maximize(x))
+
+    reset_id_counter()
+    x = cp.Variable(2, name="X", bounds=[1, np.array([3, 4])])
+    yield cp.Problem(cp.Minimize(cp.sum(x)))
+
+    reset_id_counter()
+    b = np.arange(4).reshape((2, 2))
+    x = cp.Variable((2, 2), name="X", bounds=(b, b + 1))
+    yield cp.Problem(cp.Maximize(cp.sum(x)))
+
+
 @group_cases("invalid", invalid_reason="unsupported expressions")
 def invalid_expressions() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")

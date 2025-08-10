@@ -18,6 +18,8 @@ from cvxpy_translation.interface import (
 from cvxpy_translation.interface import solve as solve
 
 try:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")))
+    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy").split(".")[:3]))
 except importlib.metadata.PackageNotFoundError:
-    CVXPY_VERSION = tuple(map(int, importlib.metadata.version("cvxpy-base").split(".")))
+    CVXPY_VERSION = tuple(
+        map(int, importlib.metadata.version("cvxpy-base").split(".")[:3])
+    )
