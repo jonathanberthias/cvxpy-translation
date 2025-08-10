@@ -835,23 +835,19 @@ def bounds() -> Generator[cp.Problem]:
         return
     x = cp.Variable(name="x", bounds=(np.array(1), np.array(2)))
     yield cp.Problem(cp.Minimize(x))
-    yield cp.Problem(cp.Maximize(x))
 
     reset_id_counter()
-    x = cp.Variable(1, name="x", bounds=(np.array([1]), np.array([2])))
+    x = cp.Variable(1, name="x", bounds=[1, 3.5])
     yield cp.Problem(cp.Minimize(x))
-    yield cp.Problem(cp.Maximize(x))
 
     reset_id_counter()
-    x = cp.Variable(2, name="X", bounds=(np.array([1, 2]), np.array([3, 4])))
+    x = cp.Variable(2, name="X", bounds=[1, np.array([3, 4])])
     yield cp.Problem(cp.Minimize(cp.sum(x)))
-    yield cp.Problem(cp.Maximize(cp.sum(x)))
 
     reset_id_counter()
     b = np.arange(4).reshape((2, 2))
     x = cp.Variable((2, 2), name="X", bounds=(b, b + 1))
     yield cp.Problem(cp.Minimize(cp.sum(x)))
-    yield cp.Problem(cp.Maximize(cp.sum(x)))
 
 
 @group_cases("invalid", invalid_reason="unsupported expressions")

@@ -1,24 +1,30 @@
 CVXPY
-Maximize
-  x
+Minimize
+  Sum(X, None, False)
 Subject To
 Bounds
- [1.] <= x[True]
- x[True] <= [2.]
+ [0. 1. 2. 3.] <= X[[ True  True], [ True  True]]
+ X[[ True  True], [ True  True]] <= [1. 2. 3. 4.]
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0
+  C0 + C1 + C2 + C3
 Subject To
 Bounds
- 1 <= C0 <= 2
+ C0 <= 1
+ 2 <= C1 <= 3
+ 1 <= C2 <= 2
+ 3 <= C3 <= 4
 End
 ----------------------------------------
 GUROBI
-Maximize
-  x[0]
+Minimize
+  X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
 Bounds
- 1 <= x[0] <= 2
+ X[0,0] <= 1
+ 1 <= X[0,1] <= 2
+ 2 <= X[1,0] <= 3
+ 3 <= X[1,1] <= 4
 End
