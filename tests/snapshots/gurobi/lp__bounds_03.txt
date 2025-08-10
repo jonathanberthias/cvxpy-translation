@@ -1,5 +1,5 @@
 CVXPY
-Minimize
+Maximize
   Sum(X, None, False)
 Subject To
 Bounds
@@ -9,7 +9,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + C1 + C2 + C3
+  - C0 - C1 - C2 - C3
 Subject To
 Bounds
  C0 <= 1
@@ -19,7 +19,7 @@ Bounds
 End
 ----------------------------------------
 GUROBI
-Minimize
+Maximize
   X[0,0] + X[0,1] + X[1,0] + X[1,1]
 Subject To
 Bounds

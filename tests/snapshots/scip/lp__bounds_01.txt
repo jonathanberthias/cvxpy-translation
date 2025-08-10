@@ -1,5 +1,5 @@
 CVXPY
-Minimize
+Maximize
   x
 Subject To
 Bounds
@@ -9,7 +9,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
- Obj: +1 x_0
+ Obj: -1 x_0
 Subject to
  c1: -1 x_0 <= -1
  c2: +1 x_0 <= +3.5
@@ -18,7 +18,7 @@ Bounds
 End
 ----------------------------------------
 SCIP
-Minimize
+Maximize
  Obj: +1 x_0
 Subject to
 Bounds

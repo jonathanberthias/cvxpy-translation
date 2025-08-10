@@ -1,5 +1,5 @@
 CVXPY
-Minimize
+Maximize
   Sum(X, None, False)
 Subject To
 Bounds
@@ -9,7 +9,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
- Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
+ Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
 Subject to
  c1: -1 x_0 <= +0
  c2: -1 x_2 <= -1
@@ -27,7 +27,7 @@ Bounds
 End
 ----------------------------------------
 SCIP
-Minimize
+Maximize
  Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
 Subject to
 Bounds
