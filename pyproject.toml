@@ -39,6 +39,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+cvxpy = ["cvxpy>=1.1.16"]
+cvxpy-base = ["cvxpy-base>=1.1.16"]
 gurobi = ["gurobipy"]
 scip = ["pyscipopt>=5.4.1"]
 
@@ -94,16 +96,12 @@ description = "The oldest supported set of dependencies, for testing purposes"
 env-vars = { UV_RESOLUTION = "lowest-direct" }
 python = "3.9"
 extra-dependencies = [
-  # We use lower bounds and not exact versions to prevent bots from updating
-  # these. We have to check manually that these lower bounds are chosen by uv.
-
-  # we have to set a version here since cvxpy is not listed as a dependency
-  # we use cvxpy-base to avoid installing unnecessary dependencies
-  "cvxpy-base>=1.1.16",
-  # bundled license is expired on older versions of gurobipy
+  # We use a lower bound and not exact an version to prevent bots from updating
+  # the version. We have to check manually that the lower bound is chosen by uv.
+  # Bundled license is expired on older versions of gurobipy
   "gurobipy>=11",
 ]
-features = ["gurobi", "scip"]
+features = ["cvxpy-base", "gurobi", "scip"]
 
 [tool.hatch.envs.types]
 description = "Type checking environment"
