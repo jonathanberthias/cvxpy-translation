@@ -19,22 +19,23 @@ par with Gurobi.
   `register_translation_solver` now require a `solver` argument that must be the
   solver name from CVXPY. The previous functions for Gurobi are still available
   by importing from `cvxpy_translation.gurobi`.
-
 - Exceptions are now split between general exceptions defined in the top-level
   `cvxpy_translation`, and solver specific exceptions available from the solver
   submodules, `cvxpy_translation.gurobi` and `cvxpy_translation.scip`.
-
+- Unhandled attributes set on `Variable` and `Parameter` will now raise an error
+  instead of being silently ignored
+  ([#185](https://github.com/jonathanberthias/cvxpy-translation/pull/185))
 - Support for EOL Python 3.8 has been dropped
   ([#179](https://github.com/jonathanberthias/cvxpy-translation/pull/179)).
 
 ### New features
 
 - Support variable bounds
-  ([#183](https://github.com/jonathanberthias/cvxpy-translation/pull/183))
+  ([#184](https://github.com/jonathanberthias/cvxpy-translation/pull/184))
 - Support CVXPY 1.7
   ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
-- Add support for `cp.conj` which is used internally by `cp.quad_form` in CVXPY
-  1.7 ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
+- Add support for `cp.conj` which is used by `cp.quad_form` in CVXPY 1.7
+  ([#165](https://github.com/jonathanberthias/cvxpy-translation/pull/165))
 
 ### Bug fixes
 

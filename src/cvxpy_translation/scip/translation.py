@@ -14,10 +14,12 @@ import numpy as np
 import numpy.typing as npt
 import pyscipopt as scip
 import scipy.sparse as sp
+from cvxpy.constraints.constraint import Constraint
 from pyscipopt.recipes.nonlinear import set_nonlinear_objective
 
 from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.exceptions import InvalidParameterError
+from cvxpy_translation.exceptions import UnsupportedAttributesError
 from cvxpy_translation.exceptions import UnsupportedConstraintError
 from cvxpy_translation.exceptions import UnsupportedError
 from cvxpy_translation.exceptions import UnsupportedExpressionError
@@ -73,7 +75,16 @@ def _is_scalar(expr: Any) -> bool:
     return _is_scalar_shape(_shape(expr))
 
 
+HANDLED_ATTRIBUTES = {"integer", "boolean", "nonneg", "nonpos", "neg", "pos", "bounds"}
+
+
 def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
+    attributes = var.attributes
+    set_attributes = {k for k, v in attributes.items() if v}
+    unhandled = set_attributes - HANDLED_ATTRIBUTES
+    if unhandled:
+        raise UnsupportedAttributesError(leaf=var, attributes=unhandled)
+
     # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
     if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
         lb, ub = var.bounds
@@ -85,9 +96,9 @@ def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
             ub = 0
 
     vtype = "CONTINUOUS"
-    if var.attributes["integer"]:
+    if attributes["integer"]:
         vtype = "INTEGER"
-    if var.attributes["boolean"]:
+    if attributes["boolean"]:
         vtype = "BINARY"
 
     return add_variable(model, var.shape, lb=lb, ub=ub, vtype=vtype, name=var.name())
@@ -170,7 +181,7 @@ class Translater:
         if visitor is not None:
             return visitor(node)
 
-        if isinstance(node, cp.Constraint):
+        if isinstance(node, Constraint):
             raise UnsupportedConstraintError(node)
         if isinstance(node, cp.Expression):
             raise UnsupportedExpressionError(node)
