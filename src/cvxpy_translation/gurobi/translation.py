@@ -14,6 +14,7 @@ import gurobipy as gp
 import numpy as np
 import numpy.typing as npt
 import scipy.sparse as sp
+from cvxpy.constraints.constraint import Constraint
 
 from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.exceptions import InvalidParameterError
@@ -211,7 +212,7 @@ class Translater:
         if visitor is not None:
             return visitor(node)
 
-        if isinstance(node, cp.Constraint):
+        if isinstance(node, Constraint):
             raise UnsupportedConstraintError(node)
         if isinstance(node, cp.Expression):
             raise UnsupportedExpressionError(node)

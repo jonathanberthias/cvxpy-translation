@@ -14,6 +14,7 @@ import numpy as np
 import numpy.typing as npt
 import pyscipopt as scip
 import scipy.sparse as sp
+from cvxpy.constraints.constraint import Constraint
 from pyscipopt.recipes.nonlinear import set_nonlinear_objective
 
 from cvxpy_translation import CVXPY_VERSION
@@ -180,7 +181,7 @@ class Translater:
         if visitor is not None:
             return visitor(node)
 
-        if isinstance(node, cp.Constraint):
+        if isinstance(node, Constraint):
             raise UnsupportedConstraintError(node)
         if isinstance(node, cp.Expression):
             raise UnsupportedExpressionError(node)

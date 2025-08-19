@@ -47,8 +47,9 @@ def test_failing_atoms(
 ) -> None:
     if invalid_case.skip_reason:
         pytest.skip(invalid_case.skip_reason)
-    with pytest.raises(cvxpy_translation.UnsupportedExpressionError):
-        invalid_case_translater.visit(invalid_case.problem.objective.expr)
+    with pytest.raises(cvxpy_translation.UnsupportedExpressionError) as exc:
+        invalid_case_translater.visit(invalid_case.problem)
+    assert type(exc.value) is not cvxpy_translation.UnsupportedExpressionError
 
 
 def test_parameter(translater: Any) -> None:

@@ -863,28 +863,30 @@ def invalid_expressions() -> Generator[cp.Problem]:
 
 @group_cases("unsupported_attributes", invalid_reason="unsupported attributes")
 def unsupported_attributes() -> Generator[cp.Problem]:
-    complex_ = cp.Variable(name="x", complex=True)
-    yield cp.Problem(cp.Minimize(cp.real(complex_)))
+    x = cp.Variable(name="x", nonneg=True)
 
-    psd = cp.Variable((2, 2), name="x", PSD=True)
+    complex_ = cp.Variable(complex=True)
+    yield cp.Problem(cp.Minimize(x), [complex_ == 1])
+
+    psd = cp.Variable((2, 2), PSD=True)
     yield cp.Problem(cp.Minimize(cp.sum(psd)))
 
-    nsd = cp.Variable((2, 2), name="x", NSD=True)
+    nsd = cp.Variable((2, 2), NSD=True)
     yield cp.Problem(cp.Minimize(cp.sum(nsd)))
 
-    symmetric = cp.Variable((2, 2), name="x", symmetric=True)
+    symmetric = cp.Variable((2, 2), symmetric=True)
     yield cp.Problem(cp.Minimize(cp.sum(symmetric)))
 
-    imag = cp.Variable(name="x", imag=True)
-    yield cp.Problem(cp.Minimize(cp.real(imag)))
+    imag = cp.Variable(imag=True)
+    yield cp.Problem(cp.Minimize(x), [imag == 1j])
 
-    diag = cp.Variable((2, 2), name="x", diag=True)
+    diag = cp.Variable((2, 2), diag=True)
     yield cp.Problem(cp.Minimize(cp.sum(diag)))
 
-    hermitian = cp.Variable((2, 2), name="x", hermitian=True)
-    yield cp.Problem(cp.Minimize(cp.real(cp.sum(hermitian))))
+    hermitian = cp.Variable((2, 2), hermitian=True)
+    yield cp.Problem(cp.Minimize(x), [cp.sum(hermitian) == 1])
 
-    sparsity = cp.Variable(4, name="x", sparsity=[[0]])
+    sparsity = cp.Variable(4, sparsity=[[0]])
     yield cp.Problem(cp.Minimize(cp.sum(sparsity)))
 
 
