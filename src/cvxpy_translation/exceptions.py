@@ -31,7 +31,7 @@ class UnsupportedAttributesError(UnsupportedExpressionError):
     msg_template = "Unsupported attributes for {node}: {attributes}"
 
     def __init__(self, leaf: Leaf, attributes: set[str]) -> None:
-        super().__init__(leaf, attributes=list(attributes))
+        super().__init__(leaf, attributes=sorted(attributes))
         self.unhandled = attributes
 
 
