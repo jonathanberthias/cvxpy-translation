@@ -3,8 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import Any
 
-from cvxpy.expressions.leaf import Leaf
-
 if TYPE_CHECKING:
     from cvxpy.expressions.leaf import Leaf
     from cvxpy.utilities.canonical import Canonical
