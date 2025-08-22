@@ -24,7 +24,8 @@ par with Gurobi.
   submodules, `cvxpy_translation.gurobi` and `cvxpy_translation.scip`.
 - Unhandled attributes set on `Variable` and `Parameter` will now raise an error
   instead of being silently ignored
-  ([#185](https://github.com/jonathanberthias/cvxpy-translation/pull/185))
+  ([#185](https://github.com/jonathanberthias/cvxpy-translation/pull/185),
+  [#190](https://github.com/jonathanberthias/cvxpy-translation/pull/190))
 - Support for EOL Python 3.8 has been dropped
   ([#179](https://github.com/jonathanberthias/cvxpy-translation/pull/179)).
 

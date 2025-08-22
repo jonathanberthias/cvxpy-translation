@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import Any
 
+from cvxpy.expressions.leaf import Leaf
+
 if TYPE_CHECKING:
     from cvxpy.expressions.leaf import Leaf
     from cvxpy.utilities.canonical import Canonical
@@ -33,6 +35,15 @@ class UnsupportedAttributesError(UnsupportedExpressionError):
     def __init__(self, leaf: Leaf, attributes: set[str]) -> None:
         super().__init__(leaf, attributes=sorted(attributes))
         self.unhandled = attributes
+
+
+class UnsupportedPartialAttributesError(UnsupportedExpressionError):
+    msg_template = (
+        "Unsupported partial attribute {attribute} for {node}. Split the leaf instead."
+    )
+
+    def __init__(self, leaf: Leaf, attribute: str) -> None:
+        super().__init__(leaf, attribute=attribute)
 
 
 class InvalidParameterError(UnsupportedExpressionError):

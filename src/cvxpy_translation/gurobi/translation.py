@@ -22,6 +22,7 @@ from cvxpy_translation.exceptions import UnsupportedAttributesError
 from cvxpy_translation.exceptions import UnsupportedConstraintError
 from cvxpy_translation.exceptions import UnsupportedError
 from cvxpy_translation.exceptions import UnsupportedExpressionError
+from cvxpy_translation.exceptions import UnsupportedPartialAttributesError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -135,6 +136,7 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
 
 
 HANDLED_ATTRIBUTES = {"integer", "boolean", "nonneg", "nonpos", "neg", "pos", "bounds"}
+NO_PARTIAL_ATTRIBUTES = {"integer", "boolean"}
 
 
 def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
@@ -143,6 +145,11 @@ def translate_variable(var: cp.Variable, model: gp.Model) -> AnyVar:
     unhandled = set_attributes - HANDLED_ATTRIBUTES
     if unhandled:
         raise UnsupportedAttributesError(leaf=var, attributes=unhandled)
+
+    for partial_attr in set_attributes & NO_PARTIAL_ATTRIBUTES:
+        idx = getattr(var, f"{partial_attr}_idx")
+        if var.ndim > 0 and var[idx].size != var.size:
+            raise UnsupportedPartialAttributesError(leaf=var, attribute=partial_attr)
 
     # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
     if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
