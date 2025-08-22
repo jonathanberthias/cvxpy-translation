@@ -889,6 +889,18 @@ def unsupported_attributes() -> Generator[cp.Problem]:
     sparsity = cp.Variable(4, sparsity=[[0]])
     yield cp.Problem(cp.Minimize(cp.sum(sparsity)))
 
+    partial_integer1 = cp.Variable(3, integer=[1])
+    yield cp.Problem(cp.Minimize(cp.sum(partial_integer1)))
+
+    partial_integer2 = cp.Variable(3, integer=[True, False, True])
+    yield cp.Problem(cp.Minimize(cp.sum(partial_integer2)))
+
+    partial_boolean1 = cp.Variable(3, boolean=[1])
+    yield cp.Problem(cp.Minimize(cp.sum(partial_boolean1)))
+
+    partial_boolean2 = cp.Variable(3, boolean=[True, False, True])
+    yield cp.Problem(cp.Minimize(cp.sum(partial_boolean2)))
+
 
 @skipif(
     lambda case: case.context.solver == cp.GUROBI,

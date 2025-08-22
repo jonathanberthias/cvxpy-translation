@@ -35,5 +35,14 @@ class UnsupportedAttributesError(UnsupportedExpressionError):
         self.unhandled = attributes
 
 
+class UnsupportedPartialAttributesError(UnsupportedExpressionError):
+    msg_template = (
+        "Unsupported partial attribute {attribute} for {node}. Split the leaf instead."
+    )
+
+    def __init__(self, leaf: Leaf, attribute: str) -> None:
+        super().__init__(leaf, attribute=attribute)
+
+
 class InvalidParameterError(UnsupportedExpressionError):
     msg_template = "Unsupported parameter: value for {node} is not set"
