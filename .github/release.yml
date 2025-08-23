@@ -1,0 +1,5 @@
+changelog:
+  exclude:
+    authors:
+      - renovate[bot]
+      - pre-commit-ci[bot]
