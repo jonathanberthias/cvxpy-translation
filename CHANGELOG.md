@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [2.0.0] - 2025-08-23
 
 ### New name!
 
@@ -184,3 +184,5 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v1.1.0...v1.1.1
 [1.2.0]:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v1.1.1...v1.2.0
+[2.0.0]:
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v1.2.0...v2.0.0
