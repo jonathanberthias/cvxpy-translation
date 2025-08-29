@@ -137,6 +137,21 @@ def simple_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**2 + y**2))
 
 
+@group_cases("constant_objective")
+def constant_objective() -> Generator[cp.Problem]:
+    """Test cases for constant objectives (issue #196)."""
+    x = cp.Variable(name="x")
+    
+    # Pure constant objectives
+    yield cp.Problem(cp.Minimize(5.0), [x >= 1])
+    yield cp.Problem(cp.Maximize(3.0), [x <= 1])
+    yield cp.Problem(cp.Minimize(0), [x >= 0])
+    
+    # Constant objectives with different constraint types
+    yield cp.Problem(cp.Minimize(1), [x == 2])
+    yield cp.Problem(cp.Maximize(-2.5), [x <= 0, x >= -1])
+
+
 @group_cases("scalar_linear")
 def scalar_linear_constraints() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")
