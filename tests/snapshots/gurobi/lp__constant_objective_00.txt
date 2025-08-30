@@ -1,0 +1,26 @@
+CVXPY
+Minimize
+  0.0
+Subject To
+ 4: x == -1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ 
+Subject To
+ R0: C0 = -1
+Bounds
+ C0 free
+End
+----------------------------------------
+GUROBI
+Minimize
+ 
+Subject To
+ 4: x = -1
+Bounds
+ x free
+End

@@ -1,0 +1,26 @@
+CVXPY
+Maximize
+  -2.5
+Subject To
+ 8: x == 0.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: 0 x_0
+Subject to
+ c1: +1 x_0 = +0
+Bounds
+ x_0 free
+End
+----------------------------------------
+SCIP
+Maximize
+ Obj: -2.5
+Subject to
+ 8: +1 x = +0
+Bounds
+ x free
+End

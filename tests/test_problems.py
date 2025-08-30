@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import replace
+from decimal import Decimal
 from functools import partial
 from functools import wraps
 from typing import TYPE_CHECKING
@@ -139,17 +140,14 @@ def simple_expressions() -> Generator[cp.Problem]:
 
 @group_cases("constant_objective")
 def constant_objective() -> Generator[cp.Problem]:
-    """Test cases for constant objectives (issue #196)."""
     x = cp.Variable(name="x")
-    
-    # Pure constant objectives
-    yield cp.Problem(cp.Minimize(5.0), [x >= 1])
-    yield cp.Problem(cp.Maximize(3.0), [x <= 1])
-    yield cp.Problem(cp.Minimize(0), [x >= 0])
-    
-    # Constant objectives with different constraint types
-    yield cp.Problem(cp.Minimize(1), [x == 2])
-    yield cp.Problem(cp.Maximize(-2.5), [x <= 0, x >= -1])
+
+    yield cp.Problem(cp.Minimize(0), [x == -1])
+    yield cp.Problem(cp.Maximize(-2.5), [x == 0])
+    yield cp.Problem(cp.Minimize(np.array(1.0)), [x == 1])
+    yield cp.Problem(cp.Minimize([0]), [x == 1])
+    yield cp.Problem(cp.Minimize(Decimal(0)), [x == 1])
+    yield cp.Problem(cp.Minimize(cp.Constant(0)), [x == 1])
 
 
 @group_cases("scalar_linear")

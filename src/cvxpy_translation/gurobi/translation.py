@@ -459,10 +459,14 @@ class Translater:
 
     def visit_Maximize(self, objective: cp.Maximize) -> None:
         obj = self.translate_into_scalar(objective.expr)
+        if isinstance(obj, np.ndarray):
+            obj = obj.item()
         self.model.setObjective(obj, sense=gp.GRB.MAXIMIZE)
 
     def visit_Minimize(self, objective: cp.Minimize) -> None:
         obj = self.translate_into_scalar(objective.expr)
+        if isinstance(obj, np.ndarray):
+            obj = obj.item()
         self.model.setObjective(obj, sense=gp.GRB.MINIMIZE)
 
     def visit_MulExpression(self, node: MulExpression) -> Any:
