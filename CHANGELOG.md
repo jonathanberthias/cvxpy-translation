@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Bug fixes
+
+- Fix translation of constant objective terms for both SCIP and Gurobi
+  ([#197](https://github.com/jonathanberthias/cvxpy-translation/pull/197))
+
 ## [2.0.0] - 2025-08-23
 
 ### New name!
@@ -27,7 +34,7 @@ par with Gurobi.
   ([#185](https://github.com/jonathanberthias/cvxpy-translation/pull/185),
   [#190](https://github.com/jonathanberthias/cvxpy-translation/pull/190))
 - Support for EOL Python 3.8 has been dropped
-  ([#179](https://github.com/jonathanberthias/cvxpy-translation/pull/179)).
+  ([#179](https://github.com/jonathanberthias/cvxpy-translation/pull/179))
 
 ### New features
 
