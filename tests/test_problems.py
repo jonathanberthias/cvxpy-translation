@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import replace
+from decimal import Decimal
 from functools import partial
 from functools import wraps
 from typing import TYPE_CHECKING
@@ -135,6 +136,18 @@ def simple_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**2))
     yield cp.Problem(cp.Minimize((x - 1) ** 2))
     yield cp.Problem(cp.Minimize(x**2 + y**2))
+
+
+@group_cases("constant_objective")
+def constant_objective() -> Generator[cp.Problem]:
+    x = cp.Variable(name="x")
+
+    yield cp.Problem(cp.Minimize(0), [x == -1])
+    yield cp.Problem(cp.Maximize(-2.5), [x == 0])
+    yield cp.Problem(cp.Minimize(np.array(1.0)), [x == 1])
+    yield cp.Problem(cp.Minimize([0]), [x == 1])
+    yield cp.Problem(cp.Minimize(Decimal(0)), [x == 1])
+    yield cp.Problem(cp.Minimize(cp.Constant(0)), [x == 1])
 
 
 @group_cases("scalar_linear")

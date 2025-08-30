@@ -348,7 +348,7 @@ class Translater:
     ) -> None:
         """Visit an objective and set it in the model."""
         obj = self.translate_into_scalar(objective.expr)
-        if obj.degree() > 1:
+        if hasattr(obj, "degree") and obj.degree() > 1:
             set_nonlinear_objective(self.model, obj, sense=sense)
         else:
             self.model.setObjective(obj, sense=sense)

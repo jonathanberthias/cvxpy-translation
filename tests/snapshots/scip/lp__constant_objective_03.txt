@@ -1,0 +1,26 @@
+CVXPY
+Minimize
+  [0.]
+Subject To
+ 16: x == 1.0
+Bounds
+ x free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ Obj: 0 x_0
+Subject to
+ c1: +1 x_0 = +1
+Bounds
+ x_0 free
+End
+----------------------------------------
+SCIP
+Minimize
+ Obj: 0 x
+Subject to
+ 16: +1 x = +1
+Bounds
+ x free
+End
