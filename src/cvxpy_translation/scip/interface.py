@@ -192,15 +192,18 @@ def _contains_quad_form(constraint: Constraint) -> bool:
 
 
 def _get_scalar_constraint_dual(model: scip.Model, constraint_name: str) -> float:
-    constr = get_constraint_by_name(model, constraint_name)
-    if constr.getConshdlrName() == "nonlinear":
+    try:
+        constr = get_constraint_by_name(model, constraint_name)
+    except LookupError as e:
+        raise UnavailableDualError from e
+    if constr.isNonlinear():
         # dual solutions are not available for nonlinear constraints
         raise UnavailableDualError
     return model.getDualsolLinear(constr)
 
 
 def get_constraint_by_name(model: scip.Model, name: str) -> scip.Constraint:
-    constrs = model.getConss(transformed=False)
+    constrs = model.getConss(transformed=True)
     for constr in constrs:
         if constr.name == name:
             return constr
