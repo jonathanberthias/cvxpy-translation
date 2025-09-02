@@ -6,6 +6,10 @@
 
 - Fix translation of constant objective terms for both SCIP and Gurobi
   ([#197](https://github.com/jonathanberthias/cvxpy-translation/pull/197))
+- Fix backfilling for SCIP when presolve removes constraints
+  ([#201](https://github.com/jonathanberthias/cvxpy-translation/pull/201))
+- Fix backfilling for SCIP when a user limit is hit before any solution is found
+  ([#202](https://github.com/jonathanberthias/cvxpy-translation/pull/202))
 
 ## [2.0.0] - 2025-08-23
 

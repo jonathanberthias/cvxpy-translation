@@ -15,7 +15,6 @@ from cvxpy.problems.problem import SolverStats
 from cvxpy.reductions.solution import Solution
 from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import scip_conif
-from cvxpy.settings import SOLUTION_PRESENT
 
 from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.scip.translation import Translater
@@ -97,7 +96,17 @@ def backfill_problem(
 ) -> None:
     """Update the CVXPY problem with the solution from the SCIP model."""
     solution = extract_solution_from_model(model, problem)
+
+    # problem.unpack does not handle statuses other than optimal and inf_or_unbd
+    # so we lie about the status to be sure the processing is still done
+    original_status = solution.status
+    if model.getNSols() == 0:
+        solution.status = cp_settings.INFEASIBLE
+
     problem.unpack(solution)
+    solution.status = original_status
+    # overwrite the status
+    problem._status = original_status  # noqa: SLF001
 
     if CVXPY_VERSION >= (1, 4):
         # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
@@ -124,7 +133,14 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
         cp_settings.NUM_ITERS: model.lpiGetIterations(),
     }
     status = scip_conif.STATUS_MAP[model.getStatus()]
-    if status not in SOLUTION_PRESENT:
+    if model.getNSols() == 0:
+        # Make status more accurate - user limit statuses are like:
+        # timelimit, nodelimit, bestsollimit, etc.
+        status = (
+            cp_settings.USER_LIMIT
+            if model.getStatus().endswith("limit")
+            else cp_settings.SOLVER_ERROR
+        )
         if CVXPY_VERSION >= (1, 2, 0):
             # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
             return failure_solution(status, attr)
