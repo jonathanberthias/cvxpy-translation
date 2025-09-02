@@ -6,7 +6,6 @@ from typing import Union
 
 import cvxpy as cp
 import cvxpy.settings as cp_settings
-import cvxpy.settings as s
 import numpy as np
 import numpy.typing as npt
 import pyscipopt as scip
@@ -102,7 +101,7 @@ def backfill_problem(
     # so we lie about the status to be sure the processing is still done
     original_status = solution.status
     if model.getNSols() == 0:
-        solution.status = s.INFEASIBLE
+        solution.status = cp_settings.INFEASIBLE
 
     problem.unpack(solution)
     solution.status = original_status
@@ -137,7 +136,11 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
     if model.getNSols() == 0:
         # Make status more accurate - user limit statuses are like:
         # timelimit, nodelimit, bestsollimit, etc.
-        status = s.USER_LIMIT if model.getStatus().endswith("limit") else s.SOLVER_ERROR
+        status = (
+            cp_settings.USER_LIMIT
+            if model.getStatus().endswith("limit")
+            else cp_settings.SOLVER_ERROR
+        )
         if CVXPY_VERSION >= (1, 2, 0):
             # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
             return failure_solution(status, attr)
