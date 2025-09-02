@@ -130,17 +130,6 @@ class UnavailableDualError(ValueError):
     pass
 
 
-LIMIT_STATUSES = {
-    "timelimit",
-    "nodelimit",
-    "totalnodelimit",
-    "stallnodelimit",
-    "memlimit",
-    "sollimit",
-    "bestsollimit",
-}
-
-
 def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solution:
     attr = {
         cp_settings.EXTRA_STATS: model,
@@ -149,8 +138,9 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
     }
     status = scip_conif.STATUS_MAP[model.getStatus()]
     if model.getNSols() == 0:
-        # Make status more accurate
-        status = s.USER_LIMIT if model.getStatus() in LIMIT_STATUSES else s.SOLVER_ERROR
+        # Make status more accurate - user limit statuses are like:
+        # timelimit, nodelimit, bestsollimit, etc.
+        status = s.USER_LIMIT if model.getStatus().endswith("limit") else s.SOLVER_ERROR
         if CVXPY_VERSION >= (1, 2, 0):
             # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
             return failure_solution(status, attr)
