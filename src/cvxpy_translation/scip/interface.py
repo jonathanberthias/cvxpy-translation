@@ -89,9 +89,6 @@ def set_params(model: scip.Model, params: ParamDict) -> None:
         model.setParam(key, param)
 
 
-CP_STATUS_WITH_SOLUTION = {cp.OPTIMAL, cp.OPTIMAL_INACCURATE}
-
-
 def backfill_problem(
     problem: cp.Problem,
     model: scip.Model,
