@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [2.0.1] - 2025-09-06
+
 ### Bug fixes
 
 - Fix translation of constant objective terms for both SCIP and Gurobi
@@ -10,6 +12,11 @@
   ([#201](https://github.com/jonathanberthias/cvxpy-translation/pull/201))
 - Fix backfilling for SCIP when a user limit is hit before any solution is found
   ([#202](https://github.com/jonathanberthias/cvxpy-translation/pull/202))
+
+### Other changes
+
+- Switch from `pytest-insta` to `pytest-snapshot` for snapshot testing
+  ([#203](https://github.com/jonathanberthias/cvxpy-translation/pull/203))
 
 ## [2.0.0] - 2025-08-23
 
@@ -197,3 +204,5 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v1.1.1...v1.2.0
 [2.0.0]:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v1.2.0...v2.0.0
+[2.0.1]:
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.0...v2.0.1
