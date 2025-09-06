@@ -57,10 +57,10 @@ build.hooks.vcs.version-file = "src/cvxpy_translation/_version.py"
 [tool.hatch.envs.default]
 description = "Base environment for other envs to inherit from"
 dependencies = [
-  "pytest==7.4.4",
-  "pytest-insta==0.2.0",
-  "pytest-xdist==3.8.0",
+  "pytest==8.1.1",
   "pytest-cov==6.2.1",
+  "pytest-snapshot==0.9.0",
+  "pytest-xdist==3.8.0",
 ]
 installer = "uv"
 [tool.hatch.envs.default.scripts]
@@ -89,7 +89,7 @@ extra-dependencies = [
   "numpy==2.3.2",
   "scipy==1.16.1",
 ]
-scripts = { update-snapshots = "hatch run latest:tests --insta update {args} tests/test_all.py::test_lp" }
+scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes"

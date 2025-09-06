@@ -15,7 +15,7 @@ import gurobipy as gp
 import pyscipopt as scip
 import pytest
 from cvxpy.reductions.solvers.conic_solvers.scip_conif import SCIP
-from pytest_insta.fixture import SnapshotFixture
+from pytest_snapshot.plugin import Snapshot
 
 import cvxpy_translation.gurobi
 import cvxpy_translation.scip
@@ -27,7 +27,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
     from cvxpy.reductions.solution import Solution
-    from pytest_insta.session import SnapshotSession
 
 
 PARAMS: Final = {
@@ -56,22 +55,17 @@ def case(request: pytest.FixtureRequest) -> ProblemTestCase:
 
 
 @pytest.fixture
-def snapshot(
-    request: pytest.FixtureRequest, case: ProblemTestCase
-) -> Generator[SnapshotFixture]:
-    """Replace SnapshotFixture.from_request to inject the solver name in the path.
-
-    Yields:
-        SnapshotFixture: A fixture that can be used to create snapshots for the test.
-
-    """
-    path = SNAPSHOT_DIR / case.context.solver.lower() / "lp"
-    session: SnapshotSession = request.config._no_deletion_snapshot_session  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
-    with SnapshotFixture(session[path], session) as fixture:
-        yield fixture
+def snapshot(request: pytest.FixtureRequest) -> Generator[Snapshot]:
+    # Override the snapshot fixture to set our own custom snapshot directory.
+    with Snapshot(
+        snapshot_update=request.config.option.snapshot_update,
+        allow_snapshot_deletion=request.config.option.allow_snapshot_deletion,
+        snapshot_dir=SNAPSHOT_DIR,
+    ) as snapshot:
+        yield snapshot
 
 
-def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) -> None:
+def test_lp(case: ProblemTestCase, snapshot: Snapshot, tmp_path: Path) -> None:
     """Generate LP output for CVXPY and the tested solver.
 
     This test requires human intervention to check the differences in the
@@ -110,10 +104,8 @@ def test_lp(case: ProblemTestCase, snapshot: SnapshotFixture, tmp_path: Path) ->
     )
 
     if CVXPY_VERSION[:2] == (1, 7):
-        assert snapshot(f"{case.group}_{case.idx:02d}.txt") == output
-    else:
-        # don't update snapshots nor delete them
-        snapshot.session.strategy = "update-none"
+        outfile = f"{case.context.solver.lower()}/{case.group}_{case.idx:02d}.txt"
+        snapshot.assert_match(output, outfile)
 
 
 def test_backfill(case: ProblemTestCase) -> None:
