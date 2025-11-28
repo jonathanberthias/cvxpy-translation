@@ -99,7 +99,9 @@ extra-dependencies = [
   # We use a lower bound and not exact an version to prevent bots from updating
   # the version. We have to check manually that the lower bound is chosen by uv.
   # Bundled license is expired on older versions of gurobipy
-  "gurobipy>=11",
+  "gurobipy>=12.0.0",
+  # gurobipy 12 requires at least cvxpy 1.1.24 to include https://github.com/cvxpy/cvxpy/pull/1962
+  "cvxpy-base>=1.1.24",
 ]
 features = ["cvxpy-base", "gurobi", "scip"]
 
