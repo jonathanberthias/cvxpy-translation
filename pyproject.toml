@@ -31,6 +31,9 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
+urls.Documentation = "https://github.com/jonathanberthias/cvxpy-translation#readme"
+urls.Issues = "https://github.com/jonathanberthias/cvxpy-translation/issues"
+urls.Source = "https://github.com/jonathanberthias/cvxpy-translation"
 dependencies = [
   # "cvxpy" must be available but we don't list it
   # as a dependency because cvxpy-base is sufficient
@@ -41,13 +44,43 @@ dependencies = [
 [project.optional-dependencies]
 cvxpy = ["cvxpy>=1.1.16"]
 cvxpy-base = ["cvxpy-base>=1.1.16"]
-gurobi = ["gurobipy"]
+gurobi = ["gurobipy>=9"]
 scip = ["pyscipopt>=5.4.1"]
 
-[project.urls]
-Documentation = "https://github.com/jonathanberthias/cvxpy-translation#readme"
-Issues = "https://github.com/jonathanberthias/cvxpy-translation/issues"
-Source = "https://github.com/jonathanberthias/cvxpy-translation"
+[dependency-groups]
+test = [
+  "pytest==8.1.1",
+  "pytest-cov==6.2.1",
+  "pytest-snapshot==0.9.0",
+  "pytest-xdist==3.8.0",
+]
+latest = [
+  { "include-group" = "test" },
+  "cvxpy-base==1.7.2",
+  "gurobipy==12.0.3",
+  "pyscipopt==5.6.0",
+  "numpy==2.3.2",
+  "scipy==1.16.1",
+]
+oldest = [
+  { "include-group" = "test" },
+  "cvxpy-base>=1.1.24",
+  "gurobipy>=12.0.0",
+  "pyscipopt>=5.4.1",
+  "numpy>=1.23.0",
+  "scipy>=1.5.4",
+  "cvxpy-translation[cvxpy-base]",
+  "cvxpy-translation[gurobi]",
+  "cvxpy-translation[scip]",
+]
+types = ["mypy==1.5.1", "pyright==1.1.307"]
+dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
+
+[tool.uv]
+conflicts = [[{ group = "latest" }, { group = "oldest" }]]
+[tool.uv.dependency-groups]
+latest = { requires-python = "~=3.13.0" }
+oldest = { requires-python = "~=3.9.0" }
 
 [tool.hatch]
 version.source = "vcs"
@@ -56,12 +89,7 @@ build.hooks.vcs.version-file = "src/cvxpy_translation/_version.py"
 
 [tool.hatch.envs.default]
 description = "Base environment for other envs to inherit from"
-dependencies = [
-  "pytest==8.1.1",
-  "pytest-cov==6.2.1",
-  "pytest-snapshot==0.9.0",
-  "pytest-xdist==3.8.0",
-]
+dependency-groups = ["test"]
 installer = "uv"
 [tool.hatch.envs.default.scripts]
 tests = [
@@ -72,7 +100,6 @@ versions = [
   "python --version",
   "{env:HATCH_UV} pip freeze",
 ]
-# convenience script to update the snapshots, it actually runs inside the snapshots env
 update-snapshots = "hatch run latest:update-snapshots -n 4 {args}"
 all-tests = [
   "hatch run latest:tests -n 4 {args}",
@@ -80,43 +107,29 @@ all-tests = [
 ]
 
 [tool.hatch.envs.latest]
-description = "Dependencies at their most up-to-date versions"
+description = "Dependencies at their most up-to-date versions, equivalent to `uv sync`"
 python = "3.13"
-extra-dependencies = [
-  "cvxpy-base==1.7.2",
-  "gurobipy==12.0.3",
-  "pyscipopt==5.6.0",
-  "numpy==2.3.2",
-  "scipy==1.16.1",
-]
+dependency-groups = ["latest"]
 scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
-description = "The oldest supported set of dependencies, for testing purposes"
+description = "The oldest supported set of dependencies, for testing purposes, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
 env-vars = { UV_RESOLUTION = "lowest-direct" }
 python = "3.9"
-extra-dependencies = [
-  # We use a lower bound and not exact an version to prevent bots from updating
-  # the version. We have to check manually that the lower bound is chosen by uv.
-  # Bundled license is expired on older versions of gurobipy
-  "gurobipy>=12.0.0",
-  # gurobipy 12 requires at least cvxpy 1.1.24 to include https://github.com/cvxpy/cvxpy/pull/1962
-  "cvxpy-base>=1.1.24",
-]
-features = ["cvxpy-base", "gurobi", "scip"]
+dependency-groups = ["oldest"]
 
 [tool.hatch.envs.types]
 description = "Type checking environment"
 template = "latest"
-post-install-commands = ["{env:HATCH_UV} pip install mypy pyright"]
+dependency-groups = ["types"]
 [tool.hatch.envs.types.scripts]
-check = ["- my-py", "py-right"]
+check = ["versions", "- my-py", "py-right"]
 my-py = "mypy {args:src tests}"
 py-right = "pyright {args:src tests}"
 
 [tool.mypy]
 strict = false
-untyped_calls_exclude = ["cvxpy"]
+# untyped_calls_exclude = ["cvxpy"]  # enable once Mypy 1.6 or later is used
 [[tool.mypy.overrides]]
 module = "scipy.*"
 ignore_missing_imports = true
