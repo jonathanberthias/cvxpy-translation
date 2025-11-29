@@ -36,8 +36,6 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
-        with:
-          python-version: ${{ matrix.python }}
 
       - name: Run tests
         run: uvx hatch -e ${{ matrix.env }} run tests
