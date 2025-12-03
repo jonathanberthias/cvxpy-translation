@@ -73,7 +73,7 @@ oldest = [
   "cvxpy-translation[gurobi]",
   "cvxpy-translation[scip]",
 ]
-types = ["mypy==1.5.1", "pyright==1.1.307"]
+types = ["mypy==1.19.0", "pyright==1.1.307"]
 dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
 
 [tool.uv]
