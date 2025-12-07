@@ -1,6 +1,6 @@
 CVXPY
 Maximize
-  Sum(x @ [ 1.00005 -0.99995], None, False)
+  Sum(x * [ 1.00005 -0.99995], None, False)
 Subject To
  14: Pnorm(x, 2) <= 1.4142135623730951
 Bounds

@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(x @ [[1.00 3.00]
+  Sum(x * [[1.00 3.00]
  [2.00 4.00]], None, False)
 Subject To
  25: 1.0 <= Sum(x, -1, False)

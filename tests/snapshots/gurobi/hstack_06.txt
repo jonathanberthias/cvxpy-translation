@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Hstack(2.0 @ x), None, False)
+  Sum(Hstack(2.0 * x), None, False)
 Subject To
  25: 1.0 <= x
 Bounds

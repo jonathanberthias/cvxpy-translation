@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Vstack(Promote(2.0, (2, 2)) @ x), None, False)
+  Sum(Vstack(Promote(2.0, (2, 2)) * x), None, False)
 Subject To
  29: 1.0 <= x
 Bounds

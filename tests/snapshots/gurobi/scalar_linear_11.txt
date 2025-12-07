@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 89: 1.0 <= 2.0 @ x
+ 89: 1.0 <= 2.0 * x
 Bounds
  x free
 End
