@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Vstack(2.0 @ x, 3.0 @ y, 1.0), None, False)
+  Sum(Vstack(2.0 * x, 3.0 * y, 1.0), None, False)
 Subject To
  32: 1.0 <= x
  36: 1.0 <= y

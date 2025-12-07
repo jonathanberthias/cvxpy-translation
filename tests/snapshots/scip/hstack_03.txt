@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Hstack(reshape(2.0 @ x, (1,), F), reshape(3.0 @ y, (1,), F), reshape(1.0, (1,), F)), None, False)
+  Sum(Hstack(reshape(2.0 * x, (1,), F), reshape(3.0 * y, (1,), F), reshape(1.0, (1,), F)), None, False)
 Subject To
  40: 1.0 <= x
  44: 1.0 <= y

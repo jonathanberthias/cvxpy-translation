@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  2.0 @ x
+  2.0 * x
 Subject To
 Bounds
  0.0 <= x

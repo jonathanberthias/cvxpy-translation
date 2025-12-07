@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Hstack(reshape(2.0 @ x, (1,), F)), None, False)
+  Sum(Hstack(reshape(2.0 * x, (1,), F)), None, False)
 Subject To
  29: 1.0 <= x
 Bounds

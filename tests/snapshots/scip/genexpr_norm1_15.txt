@@ -1,6 +1,6 @@
 CVXPY
 Maximize
-  Sum(X @ [[2.00 1.00]
+  Sum(X * [[2.00 1.00]
  [-2.00 -4.00]], None, False)
 Subject To
  14: norm1(X) <= 6.0

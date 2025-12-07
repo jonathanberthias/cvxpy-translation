@@ -2,7 +2,7 @@ CVXPY
 Minimize
   x
 Subject To
- 95: 1.0 <= 2.0 @ x + y
+ 95: 1.0 <= 2.0 * x + y
  99: y == 0.0
 Bounds
  x free
