@@ -13,32 +13,24 @@ Generals
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: -1 x_2 -1 x_1 -1 x_0
-Subject to
- c1: +1 x_0 <= +0
- c2: +1 x_1 <= +1
-Bounds
- 0 <= x_2 <= 1
- x_1 free
- x_0 free
-Binaries
- x_2
-Generals
- x_1
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [binary] <x_2>: obj=-1, original bounds=[0,1]
+  [integer] <x_1>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] <= 0;
+  [linear] <c2>: <x_1>[I] <= 1;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 b +1 n +1 x
-Subject to
- 13: +1 n <= +1
-Bounds
- 0 <= b <= 1
- n free
- -inf <= x <= 0
-Binaries
- b
-Generals
- n
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [binary] <b>: obj=1, original bounds=[0,1]
+  [integer] <n>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x>: obj=1, original bounds=[-inf,0]
+CONSTRAINTS
+  [linear] <13>: <n>[I] <= 1;
+END

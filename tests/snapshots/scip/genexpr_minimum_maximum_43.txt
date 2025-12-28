@@ -10,71 +10,71 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3 -1 x_4 -1 x_5 -1 x_6 -1 x_7
-Subject to
- c1: +1 x_0 -1 x_8 <= +0
- c2: +1 x_1 -1 x_9 <= +0
- c3: +1 x_2 -1 x_10 <= +0
- c4: +1 x_3 -1 x_11 <= +0
- c5: +1 x_4 -1 x_8 <= +0
- c6: +1 x_5 -1 x_9 <= +0
- c7: +1 x_6 -1 x_10 <= +0
- c8: +1 x_7 -1 x_11 <= +0
- c9: -1 x_8 <= -1
- c10: -1 x_9 <= -3
- c11: -1 x_10 <= +2
- c12: -1 x_11 <= -4
- c13: +1 x_8 <= +4
- c14: +1 x_9 <= +4
- c15: +1 x_10 <= +4
- c16: +1 x_11 <= +4
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
- x_5 free
- x_6 free
- x_7 free
- x_8 free
- x_9 free
- x_10 free
- x_11 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_5>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_6>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_7>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_8>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_9>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_10>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_11>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] -<x_8>[C] <= 0;
+  [linear] <c2>: <x_1>[C] -<x_9>[C] <= 0;
+  [linear] <c3>: <x_2>[C] -<x_10>[C] <= 0;
+  [linear] <c4>: <x_3>[C] -<x_11>[C] <= 0;
+  [linear] <c5>: <x_4>[C] -<x_8>[C] <= 0;
+  [linear] <c6>: <x_5>[C] -<x_9>[C] <= 0;
+  [linear] <c7>: <x_6>[C] -<x_10>[C] <= 0;
+  [linear] <c8>: <x_7>[C] -<x_11>[C] <= 0;
+  [linear] <c9>:  -<x_8>[C] <= -1;
+  [linear] <c10>:  -<x_9>[C] <= -3;
+  [linear] <c11>:  -<x_10>[C] <= 2;
+  [linear] <c12>:  -<x_11>[C] <= -4;
+  [linear] <c13>: <x_8>[C] <= 4;
+  [linear] <c14>: <x_9>[C] <= 4;
+  [linear] <c15>: <x_10>[C] <= 4;
+  [linear] <c16>: <x_11>[C] <= 4;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1 +1 Y_0_0 +1 Y_0_1 +1 Y_1_0 +1 Y_1_1
-Subject to
- maximum_1_0_0_0: +1 maximum_1_0_0 -1 X_0_0 >= +0
- maximum_1_0_0_1: +1 maximum_1_0_1 -1 X_0_1 >= +0
- maximum_1_0_1_0: +1 maximum_1_1_0 -1 X_1_0 >= +0
- maximum_1_0_1_1: +1 maximum_1_1_1 -1 X_1_1 >= +0
- maximum_1_1_0_0: +1 maximum_1_0_0 -1 Y_0_0 >= +0
- maximum_1_1_0_1: +1 maximum_1_0_1 -1 Y_0_1 >= +0
- maximum_1_1_1_0: +1 maximum_1_1_0 -1 Y_1_0 >= +0
- maximum_1_1_1_1: +1 maximum_1_1_1 -1 Y_1_1 >= +0
- maximum_1_2_0_0: +1 maximum_1_0_0 >= +1
- maximum_1_2_0_1: +1 maximum_1_0_1 >= -2
- maximum_1_2_1_0: +1 maximum_1_1_0 >= +3
- maximum_1_2_1_1: +1 maximum_1_1_1 >= +4
- 29_0_0: +1 maximum_1_0_0 <= +4
- 29_0_1: +1 maximum_1_0_1 <= +4
- 29_1_0: +1 maximum_1_1_0 <= +4
- 29_1_1: +1 maximum_1_1_1 <= +4
-Bounds
- X_0_0 free
- X_0_1 free
- X_1_0 free
- X_1_1 free
- Y_0_0 free
- Y_0_1 free
- Y_1_0 free
- Y_1_1 free
- maximum_1_0_0 free
- maximum_1_0_1 free
- maximum_1_1_0 free
- maximum_1_1_1 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <X_0_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_0_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Y_0_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Y_0_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Y_1_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Y_1_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_0_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_0_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_1_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_1_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <maximum_1_0_0_0>: <maximum_1_0_0>[C] -<X_0_0>[C] >= 0;
+  [linear] <maximum_1_0_0_1>: <maximum_1_0_1>[C] -<X_0_1>[C] >= 0;
+  [linear] <maximum_1_0_1_0>: <maximum_1_1_0>[C] -<X_1_0>[C] >= 0;
+  [linear] <maximum_1_0_1_1>: <maximum_1_1_1>[C] -<X_1_1>[C] >= 0;
+  [linear] <maximum_1_1_0_0>: <maximum_1_0_0>[C] -<Y_0_0>[C] >= 0;
+  [linear] <maximum_1_1_0_1>: <maximum_1_0_1>[C] -<Y_0_1>[C] >= 0;
+  [linear] <maximum_1_1_1_0>: <maximum_1_1_0>[C] -<Y_1_0>[C] >= 0;
+  [linear] <maximum_1_1_1_1>: <maximum_1_1_1>[C] -<Y_1_1>[C] >= 0;
+  [linear] <maximum_1_2_0_0>: <maximum_1_0_0>[C] >= 1;
+  [linear] <maximum_1_2_0_1>: <maximum_1_0_1>[C] >= -2;
+  [linear] <maximum_1_2_1_0>: <maximum_1_1_0>[C] >= 3;
+  [linear] <maximum_1_2_1_1>: <maximum_1_1_1>[C] >= 4;
+  [linear] <29_0_0>: <maximum_1_0_0>[C] <= 4;
+  [linear] <29_0_1>: <maximum_1_0_1>[C] <= 4;
+  [linear] <29_1_0>: <maximum_1_1_0>[C] <= 4;
+  [linear] <29_1_1>: <maximum_1_1_1>[C] <= 4;
+END

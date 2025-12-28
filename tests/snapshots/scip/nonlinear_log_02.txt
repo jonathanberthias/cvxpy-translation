@@ -11,10 +11,10 @@ AFTER COMPILATION
 Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x
-Subject to
-\   [nonlinear] <15>: log((<x>)) >= -1;
-Bounds
- x free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <15>: log((<x>)) >= -1;
+END

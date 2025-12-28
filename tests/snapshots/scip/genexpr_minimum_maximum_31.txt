@@ -10,43 +10,43 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: -1 x_0 -1 x_1
-Subject to
- c1: +1 x_4 = +1
- c2: +1 x_0 -1 x_2 <= +0
- c3: +1 x_1 -1 x_3 <= +0
- c4: -1 x_2 +1 x_4 <= +0
- c5: -1 x_3 +1 x_4 <= +0
- c6: -1 x_2 <= -1
- c7: -1 x_3 <= -1
- c8: +1 x_2 <= +2
- c9: +1 x_3 <= +2
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_4>[C] == 1;
+  [linear] <c2>: <x_0>[C] -<x_2>[C] <= 0;
+  [linear] <c3>: <x_1>[C] -<x_3>[C] <= 0;
+  [linear] <c4>:  -<x_2>[C] +<x_4>[C] <= 0;
+  [linear] <c5>:  -<x_3>[C] +<x_4>[C] <= 0;
+  [linear] <c6>:  -<x_2>[C] <= -1;
+  [linear] <c7>:  -<x_3>[C] <= -1;
+  [linear] <c8>: <x_2>[C] <= 2;
+  [linear] <c9>: <x_3>[C] <= 2;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 X_0 +1 X_1
-Subject to
- maximum_1_0_0: +1 maximum_1_0 -1 X_0 >= +0
- maximum_1_0_1: +1 maximum_1_1 -1 X_1 >= +0
- maximum_1_1_0: +1 maximum_1_0 -1 z >= +0
- maximum_1_1_1: +1 maximum_1_1 -1 z >= +0
- maximum_1_2_0: +1 maximum_1_0 >= +1
- maximum_1_2_1: +1 maximum_1_1 >= +1
- 55_0: +1 maximum_1_0 <= +2
- 55_1: +1 maximum_1_1 <= +2
- 59: +1 z = +1
-Bounds
- X_0 free
- X_1 free
- z free
- maximum_1_0 free
- maximum_1_1 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <X_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <z>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <maximum_1_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <maximum_1_0_0>: <maximum_1_0>[C] -<X_0>[C] >= 0;
+  [linear] <maximum_1_0_1>: <maximum_1_1>[C] -<X_1>[C] >= 0;
+  [linear] <maximum_1_1_0>: <maximum_1_0>[C] -<z>[C] >= 0;
+  [linear] <maximum_1_1_1>: <maximum_1_1>[C] -<z>[C] >= 0;
+  [linear] <maximum_1_2_0>: <maximum_1_0>[C] >= 1;
+  [linear] <maximum_1_2_1>: <maximum_1_1>[C] >= 1;
+  [linear] <55_0>: <maximum_1_0>[C] <= 2;
+  [linear] <55_1>: <maximum_1_1>[C] <= 2;
+  [linear] <59>: <z>[C] == 1;
+END

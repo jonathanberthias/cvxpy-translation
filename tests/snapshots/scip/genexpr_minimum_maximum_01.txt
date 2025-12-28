@@ -9,27 +9,27 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- c1: -1 x_0 -1 x_2 <= +0
- c2: -1 x_1 -1 x_2 <= +0
- c3: +1 x_2 <= -1
-Bounds
- x_0 free
- x_1 free
- x_2 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] -<x_2>[C] <= 0;
+  [linear] <c2>:  -<x_1>[C] -<x_2>[C] <= 0;
+  [linear] <c3>: <x_2>[C] <= -1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x +1 y
-Subject to
- minimum_1_0: +1 minimum_1 -1 x <= +0
- minimum_1_1: +1 minimum_1 -1 y <= +0
- 12: +1 minimum_1 >= +1
-Bounds
- x free
- y free
- minimum_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <y>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <minimum_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <minimum_1_0>: <minimum_1>[C] -<x>[C] <= 0;
+  [linear] <minimum_1_1>: <minimum_1>[C] -<y>[C] <= 0;
+  [linear] <12>: <minimum_1>[C] >= 1;
+END

@@ -11,12 +11,12 @@ AFTER COMPILATION
 Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 x2
-Subject to
-\   [nonlinear] <c1>: log((<x_0>+2))+<x2>*(-1) >= 0;
- 11_0: +1 x_0 <= -0.5
-Bounds
- x_0 free
- x2 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x2>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <c1>: log((<x_0>+2))+<x2>*(-1) >= 0;
+  [linear] <11_0>: <x_0>[C] <= -0.5;
+END

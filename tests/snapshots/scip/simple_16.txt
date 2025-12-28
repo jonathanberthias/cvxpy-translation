@@ -8,35 +8,39 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- c1: -1 x_2 <= +0
- c2: -1 x_3 <= +0
- c3: +1 soc_t_2 -1 x_0 = +1
- c4: +1 soc_t_3 -1 x_0 = -1
- c5: +1 soc_t_4 -2 x_2 = +0
- c6: + [ +1 soc_t_3 * soc_t_3 +1 soc_t_4 * soc_t_4 -1 soc_t_2 * soc_t_2 ] <= +0
- c7: +1 soc_t_5 -1 x_1 = +1
- c8: +1 soc_t_6 -1 x_1 = -1
- c9: +1 soc_t_7 -2 x_3 = +0
- c10: + [ +1 soc_t_6 * soc_t_6 +1 soc_t_7 * soc_t_7 -1 soc_t_5 * soc_t_5 ] <= +0
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- soc_t_3 free
- soc_t_4 free
- soc_t_6 free
- soc_t_7 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_2>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_3>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_4>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_5>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_6>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_7>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_2>[C] <= 0;
+  [linear] <c2>:  -<x_3>[C] <= 0;
+  [linear] <c3>: <soc_t_2>[C] -<x_0>[C] == 1;
+  [linear] <c4>: <soc_t_3>[C] -<x_0>[C] == -1;
+  [linear] <c5>: <soc_t_4>[C] -2<x_2>[C] == 0;
+  [nonlinear] <c6>: <soc_t_3>*<soc_t_3>+<soc_t_4>*<soc_t_4>-<soc_t_2>*<soc_t_2> <= 0;
+  [linear] <c7>: <soc_t_5>[C] -<x_1>[C] == 1;
+  [linear] <c8>: <soc_t_6>[C] -<x_1>[C] == -1;
+  [linear] <c9>: <soc_t_7>[C] -2<x_3>[C] == 0;
+  [nonlinear] <c10>: <soc_t_6>*<soc_t_6>+<soc_t_7>*<soc_t_7>-<soc_t_5>*<soc_t_5> <= 0;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x3
-Subject to
- c1: +1 x3 + [ -1 x * x -1 y * y ] >= +0
-Bounds
- x3 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=0, original bounds=[0,+inf]
+  [continuous] <y>: obj=0, original bounds=[0,+inf]
+  [continuous] <x3>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <c1>: <x3>-<x>*<x>-<y>*<y> >= 0;
+END

@@ -8,37 +8,37 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
-Subject to
- c1: -1 x_0 +1 x_4 <= +2
- c2: -1 x_1 +1 x_5 <= -2
- c3: -1 x_2 +1 x_6 <= +1
- c4: -1 x_3 +1 x_7 <= -4
- c5: -1 x_0 -1 x_4 <= -2
- c6: -1 x_1 -1 x_5 <= +2
- c7: -1 x_2 -1 x_6 <= -1
- c8: -1 x_3 -1 x_7 <= +4
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
- x_5 free
- x_6 free
- x_7 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_5>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_6>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_7>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] +<x_4>[C] <= 2;
+  [linear] <c2>:  -<x_1>[C] +<x_5>[C] <= -2;
+  [linear] <c3>:  -<x_2>[C] +<x_6>[C] <= 1;
+  [linear] <c4>:  -<x_3>[C] +<x_7>[C] <= -4;
+  [linear] <c5>:  -<x_0>[C] -<x_4>[C] <= -2;
+  [linear] <c6>:  -<x_1>[C] -<x_5>[C] <= 2;
+  [linear] <c7>:  -<x_2>[C] -<x_6>[C] <= -1;
+  [linear] <c8>:  -<x_3>[C] -<x_7>[C] <= 4;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x5
-Subject to
-\   [nonlinear] <c1>: abs((<X_0_0>+(-2)))+abs((<X_0_1>+(-1)))+abs((<X_1_0>+2))+abs((<X_1_1>+4))+<x5>*(-1) <= 0;
-Bounds
- X_0_0 free
- X_0_1 free
- X_1_0 free
- X_1_1 free
- x5 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <X_0_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <X_0_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <X_1_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <X_1_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x5>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <c1>: abs((<X_0_0>+(-2)))+abs((<X_0_1>+(-1)))+abs((<X_1_0>+2))+abs((<X_1_1>+4))+<x5>*(-1) <= 0;
+END

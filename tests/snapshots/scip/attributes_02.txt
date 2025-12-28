@@ -10,23 +10,19 @@ Generals
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0
-Subject to
- c1: -1 x_0 <= -1
-Bounds
- x_0 free
-Generals
- x_0
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [integer] <x_0>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[I] <= -1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 n
-Subject to
- 6: +1 n >= +1
-Bounds
- n free
-Generals
- n
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [integer] <n>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <6>: <n>[I] >= 1;
+END

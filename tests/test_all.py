@@ -254,7 +254,7 @@ def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
 
 
 def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:
-    out_path = tmp_path / "scip.lp"
+    out_path = tmp_path / "scip.cip"
     model.writeProblem(str(out_path), verbose=False)
     return out_path.read_text().splitlines()[4:]
 

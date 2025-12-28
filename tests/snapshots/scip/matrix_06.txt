@@ -9,23 +9,23 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- c1: +1 x_1 = +1
- c2: +2 x_0 +3 x_1 = +1
-Bounds
- x_0 free
- x_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_1>[C] == 1;
+  [linear] <c2>:  +2<x_0>[C] +3<x_1>[C] == 1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- 68_0: +1 x_1 = +1
- 68_1: +2 x_0 +3 x_1 = +1
-Bounds
- x_0 free
- x_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <68_0>: <x_1>[C] == 1;
+  [linear] <68_1>:  +2<x_0>[C] +3<x_1>[C] == 1;
+END

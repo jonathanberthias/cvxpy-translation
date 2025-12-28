@@ -12,14 +12,14 @@ AFTER COMPILATION
 can only convert an array of size 1 to a Python scalar
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x
-Subject to
- minimum_1_0: +1 minimum_1 <= +1
- minimum_1_1: +1 minimum_1 <= +2
- 23: +1 minimum_1 <= +1
- 27: +1 x >= +0
-Bounds
- x free
- minimum_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <minimum_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <minimum_1_0>: <minimum_1>[C] <= 1;
+  [linear] <minimum_1_1>: <minimum_1>[C] <= 2;
+  [linear] <23>: <minimum_1>[C] <= 1;
+  [linear] <27>: <x>[C] >= 0;
+END

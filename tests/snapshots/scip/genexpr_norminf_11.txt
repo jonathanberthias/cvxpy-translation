@@ -8,28 +8,29 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: -1.00005 x_0 +0.99995 x_1
-Subject to
- c1: +1 x_0 -1 x_2 <= +0
- c2: +1 x_1 -1 x_2 <= +0
- c3: -1 x_0 -1 x_2 <= +0
- c4: -1 x_1 -1 x_2 <= +0
- c5: +1 x_2 <= +1.4142135623731
-Bounds
- x_0 free
- x_1 free
- x_2 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=-1.00005, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=0.99995, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] -<x_2>[C] <= 0;
+  [linear] <c2>: <x_1>[C] -<x_2>[C] <= 0;
+  [linear] <c3>:  -<x_0>[C] -<x_2>[C] <= 0;
+  [linear] <c4>:  -<x_1>[C] -<x_2>[C] <= 0;
+  [linear] <c5>: <x_2>[C] <= 1.4142135623731;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1.00005 x_0 -0.99995 x_1
-Subject to
-\   [nonlinear] <norminf_1_0>: abs((<x_0>))+<norminf_1>*(-1) <= 0;
-\   [nonlinear] <norminf_1_1>: abs((<x_1>))+<norminf_1>*(-1) <= 0;
- 14: +1 norminf_1 <= +1.4142135623731
-Bounds
- x_0 free
- x_1 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0>: obj=1.00005, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=-0.99995, original bounds=[-inf,+inf]
+  [continuous] <norminf_1>: obj=0, original bounds=[0,+inf]
+CONSTRAINTS
+  [nonlinear] <norminf_1_0>: abs((<x_0>))+<norminf_1>*(-1) <= 0;
+  [nonlinear] <norminf_1_1>: abs((<x_1>))+<norminf_1>*(-1) <= 0;
+  [linear] <14>: <norminf_1>[C] <= 1.4142135623731;
+END

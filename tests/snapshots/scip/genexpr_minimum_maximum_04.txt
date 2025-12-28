@@ -8,25 +8,25 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0
-Subject to
- c1: -1 x_0 -1 x_1 <= +1
- c2: -1 x_1 <= +2
- c3: +1 x_1 <= -1
-Bounds
- x_0 free
- x_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] -<x_1>[C] <= 1;
+  [linear] <c2>:  -<x_1>[C] <= 2;
+  [linear] <c3>: <x_1>[C] <= -1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x
-Subject to
- minimum_1_0: +1 minimum_1 -1 x <= +1
- minimum_1_1: +1 minimum_1 <= +2
- 33: +1 minimum_1 >= +1
-Bounds
- x free
- minimum_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <minimum_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <minimum_1_0>: <minimum_1>[C] -<x>[C] <= 1;
+  [linear] <minimum_1_1>: <minimum_1>[C] <= 2;
+  [linear] <33>: <minimum_1>[C] >= 1;
+END

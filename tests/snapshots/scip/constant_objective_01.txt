@@ -8,19 +8,20 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: 0 x_0
-Subject to
- c1: +1 x_0 = +0
-Bounds
- x_0 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] == 0;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: -2.5
-Subject to
- 8: +1 x = +0
-Bounds
- x free
-End
+OBJECTIVE
+  Sense            : maximize
+  Offset           : -2.5
+VARIABLES
+  [continuous] <x>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <8>: <x>[C] == 0;
+END

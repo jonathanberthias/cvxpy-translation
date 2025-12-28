@@ -8,31 +8,31 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: -1 x_0 -1 x_1 -1 x_2 -1 x_3
-Subject to
- c1: +1 x_0 <= +1
- c2: +1 x_1 <= +1
- c3: +1 x_2 <= +1
- c4: +1 x_3 <= +1
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=-1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=-1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] <= 1;
+  [linear] <c2>: <x_1>[C] <= 1;
+  [linear] <c3>: <x_2>[C] <= 1;
+  [linear] <c4>: <x_3>[C] <= 1;
+END
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
-Subject to
- 56_0_0: +1 x_0 <= +1
- 56_0_1: +1 x_1 <= +1
- 56_1_0: +1 x_2 <= +1
- 56_1_1: +1 x_3 <= +1
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <56_0_0>: <x_0>[C] <= 1;
+  [linear] <56_0_1>: <x_1>[C] <= 1;
+  [linear] <56_1_0>: <x_2>[C] <= 1;
+  [linear] <56_1_1>: <x_3>[C] <= 1;
+END
