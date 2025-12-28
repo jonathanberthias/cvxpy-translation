@@ -7,17 +7,18 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0
-Subject to
- c1: -1 x_0 <= +0
-Bounds
- x_0 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] <= 0;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x_0_0 +1
-Subject to
-Bounds
-End
+OBJECTIVE
+  Sense            : minimize
+  Offset           : +1
+VARIABLES
+  [continuous] <x_0_0>: obj=1, original bounds=[0,+inf]
+END

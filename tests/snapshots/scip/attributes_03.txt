@@ -8,21 +8,15 @@ Binaries
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0
-Subject to
-Bounds
- 0 <= x_0 <= 1
-Binaries
- x_0
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [binary] <x_0>: obj=1, original bounds=[0,1]
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 b
-Subject to
-Bounds
- 0 <= b <= 1
-Binaries
- b
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [binary] <b>: obj=1, original bounds=[0,1]
+END

@@ -10,51 +10,51 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
-Subject to
- c1: +1 x_4 = +1
- c2: +1 x_5 = +1
- c3: +1 x_6 = +1
- c4: +1 x_7 = +1
- c5: -1 x_0 -1 x_4 -1 x_8 <= +0
- c6: -1 x_1 -1 x_5 -1 x_8 <= +0
- c7: -1 x_2 -1 x_6 -1 x_8 <= +0
- c8: -1 x_3 -1 x_7 -1 x_8 <= +0
- c9: +1 x_8 <= -1
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
- x_5 free
- x_6 free
- x_7 free
- x_8 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_5>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_6>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_7>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_8>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_4>[C] == 1;
+  [linear] <c2>: <x_5>[C] == 1;
+  [linear] <c3>: <x_6>[C] == 1;
+  [linear] <c4>: <x_7>[C] == 1;
+  [linear] <c5>:  -<x_0>[C] -<x_4>[C] -<x_8>[C] <= 0;
+  [linear] <c6>:  -<x_1>[C] -<x_5>[C] -<x_8>[C] <= 0;
+  [linear] <c7>:  -<x_2>[C] -<x_6>[C] -<x_8>[C] <= 0;
+  [linear] <c8>:  -<x_3>[C] -<x_7>[C] -<x_8>[C] <= 0;
+  [linear] <c9>: <x_8>[C] <= -1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
-Subject to
- min_1_0_0: +1 X_0_0 +1 Y_0_0 -1 min_1 >= +0
- min_1_0_1: +1 X_0_1 +1 Y_0_1 -1 min_1 >= +0
- min_1_1_0: +1 X_1_0 +1 Y_1_0 -1 min_1 >= +0
- min_1_1_1: +1 X_1_1 +1 Y_1_1 -1 min_1 >= +0
- 40: +1 min_1 >= +1
- 45_0_0: +1 Y_0_0 = +1
- 45_0_1: +1 Y_0_1 = +1
- 45_1_0: +1 Y_1_0 = +1
- 45_1_1: +1 Y_1_1 = +1
-Bounds
- X_0_0 free
- X_0_1 free
- X_1_0 free
- X_1_1 free
- Y_0_0 free
- Y_0_1 free
- Y_1_0 free
- Y_1_1 free
- min_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <X_0_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_0_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Y_0_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <Y_0_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <Y_1_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <Y_1_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <min_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <min_1_0_0>: <X_0_0>[C] +<Y_0_0>[C] -<min_1>[C] >= 0;
+  [linear] <min_1_0_1>: <X_0_1>[C] +<Y_0_1>[C] -<min_1>[C] >= 0;
+  [linear] <min_1_1_0>: <X_1_0>[C] +<Y_1_0>[C] -<min_1>[C] >= 0;
+  [linear] <min_1_1_1>: <X_1_1>[C] +<Y_1_1>[C] -<min_1>[C] >= 0;
+  [linear] <40>: <min_1>[C] >= 1;
+  [linear] <45_0_0>: <Y_0_0>[C] == 1;
+  [linear] <45_0_1>: <Y_0_1>[C] == 1;
+  [linear] <45_1_0>: <Y_1_0>[C] == 1;
+  [linear] <45_1_1>: <Y_1_1>[C] == 1;
+END

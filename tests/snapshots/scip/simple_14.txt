@@ -7,26 +7,28 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0
-Subject to
- c1: -1 x_1 <= +0
- c2: +1 soc_t_1 -1 x_0 = +1
- c3: +1 soc_t_2 -1 x_0 = -1
- c4: +1 soc_t_3 -2 x_1 = +0
- c5: + [ +1 soc_t_2 * soc_t_2 +1 soc_t_3 * soc_t_3 -1 soc_t_1 * soc_t_1 ] <= +0
-Bounds
- x_0 free
- x_1 free
- soc_t_2 free
- soc_t_3 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_1>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_2>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_3>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_1>[C] <= 0;
+  [linear] <c2>: <soc_t_1>[C] -<x_0>[C] == 1;
+  [linear] <c3>: <soc_t_2>[C] -<x_0>[C] == -1;
+  [linear] <c4>: <soc_t_3>[C] -2<x_1>[C] == 0;
+  [nonlinear] <c5>: <soc_t_2>*<soc_t_2>+<soc_t_3>*<soc_t_3>-<soc_t_1>*<soc_t_1> <= 0;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x2
-Subject to
- c1: +1 x2 + [ -1 x * x ] >= +0
-Bounds
- x2 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x>: obj=0, original bounds=[0,+inf]
+  [continuous] <x2>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <c1>: <x2>-<x>*<x> >= 0;
+END

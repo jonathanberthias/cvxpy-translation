@@ -11,31 +11,31 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- c1: +1 x_1 +1 x_2 = -1
- c2: +2 x_0 +3 x_1 +1 x_3 = -1
- c3: +1 x_2 = +0
- c4: +1 x_3 = +0
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_1>[C] +<x_2>[C] == -1;
+  [linear] <c2>:  +2<x_0>[C] +3<x_1>[C] +<x_3>[C] == -1;
+  [linear] <c3>: <x_2>[C] == 0;
+  [linear] <c4>: <x_3>[C] == 0;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x_0 +1 x_1
-Subject to
- 126_0: +1 x_1 +1 y_0 = -1
- 126_1: +2 x_0 +3 x_1 +1 y_1 = -1
- 131_0: +1 y_0 = +0
- 131_1: +1 y_1 = +0
-Bounds
- x_0 free
- x_1 free
- y_0 free
- y_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <y_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <y_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <126_0>: <x_1>[C] +<y_0>[C] == -1;
+  [linear] <126_1>:  +2<x_0>[C] +3<x_1>[C] +<y_1>[C] == -1;
+  [linear] <131_0>: <y_0>[C] == 0;
+  [linear] <131_1>: <y_1>[C] == 0;
+END

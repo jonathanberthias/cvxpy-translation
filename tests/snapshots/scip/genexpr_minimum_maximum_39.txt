@@ -10,67 +10,67 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +1 x_0 +1 x_1 +1 x_2 +1 x_3
-Subject to
- c1: +1 x_8 = +1
- c2: -1 x_0 -1 x_4 <= +0
- c3: -1 x_1 -1 x_5 <= +0
- c4: -1 x_2 -1 x_6 <= +0
- c5: -1 x_3 -1 x_7 <= +0
- c6: -1 x_4 -1 x_8 <= +0
- c7: -1 x_5 -1 x_8 <= +0
- c8: -1 x_6 -1 x_8 <= +0
- c9: -1 x_7 -1 x_8 <= +0
- c10: -1 x_4 <= +1
- c11: -1 x_5 <= +1
- c12: -1 x_6 <= +1
- c13: -1 x_7 <= +1
- c14: +1 x_4 <= +0
- c15: +1 x_5 <= +0
- c16: +1 x_6 <= +0
- c17: +1 x_7 <= +0
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
- x_5 free
- x_6 free
- x_7 free
- x_8 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_5>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_6>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_7>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_8>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_8>[C] == 1;
+  [linear] <c2>:  -<x_0>[C] -<x_4>[C] <= 0;
+  [linear] <c3>:  -<x_1>[C] -<x_5>[C] <= 0;
+  [linear] <c4>:  -<x_2>[C] -<x_6>[C] <= 0;
+  [linear] <c5>:  -<x_3>[C] -<x_7>[C] <= 0;
+  [linear] <c6>:  -<x_4>[C] -<x_8>[C] <= 0;
+  [linear] <c7>:  -<x_5>[C] -<x_8>[C] <= 0;
+  [linear] <c8>:  -<x_6>[C] -<x_8>[C] <= 0;
+  [linear] <c9>:  -<x_7>[C] -<x_8>[C] <= 0;
+  [linear] <c10>:  -<x_4>[C] <= 1;
+  [linear] <c11>:  -<x_5>[C] <= 1;
+  [linear] <c12>:  -<x_6>[C] <= 1;
+  [linear] <c13>:  -<x_7>[C] <= 1;
+  [linear] <c14>: <x_4>[C] <= 0;
+  [linear] <c15>: <x_5>[C] <= 0;
+  [linear] <c16>: <x_6>[C] <= 0;
+  [linear] <c17>: <x_7>[C] <= 0;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 X_0_0 +1 X_0_1 +1 X_1_0 +1 X_1_1
-Subject to
- minimum_1_0_0_0: +1 minimum_1_0_0 -1 X_0_0 <= +0
- minimum_1_0_0_1: +1 minimum_1_0_1 -1 X_0_1 <= +0
- minimum_1_0_1_0: +1 minimum_1_1_0 -1 X_1_0 <= +0
- minimum_1_0_1_1: +1 minimum_1_1_1 -1 X_1_1 <= +0
- minimum_1_1_0_0: +1 minimum_1_0_0 -1 z <= +0
- minimum_1_1_0_1: +1 minimum_1_0_1 -1 z <= +0
- minimum_1_1_1_0: +1 minimum_1_1_0 -1 z <= +0
- minimum_1_1_1_1: +1 minimum_1_1_1 -1 z <= +0
- minimum_1_2_0_0: +1 minimum_1_0_0 <= +1
- minimum_1_2_0_1: +1 minimum_1_0_1 <= +1
- minimum_1_2_1_0: +1 minimum_1_1_0 <= +1
- minimum_1_2_1_1: +1 minimum_1_1_1 <= +1
- 70_0_0: +1 minimum_1_0_0 >= +0
- 70_0_1: +1 minimum_1_0_1 >= +0
- 70_1_0: +1 minimum_1_1_0 >= +0
- 70_1_1: +1 minimum_1_1_1 >= +0
- 74: +1 z = +1
-Bounds
- X_0_0 free
- X_0_1 free
- X_1_0 free
- X_1_1 free
- z free
- minimum_1_0_0 free
- minimum_1_0_1 free
- minimum_1_1_0 free
- minimum_1_1_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <X_0_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_0_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <X_1_1>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <z>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <minimum_1_0_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <minimum_1_0_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <minimum_1_1_0>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <minimum_1_1_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <minimum_1_0_0_0>: <minimum_1_0_0>[C] -<X_0_0>[C] <= 0;
+  [linear] <minimum_1_0_0_1>: <minimum_1_0_1>[C] -<X_0_1>[C] <= 0;
+  [linear] <minimum_1_0_1_0>: <minimum_1_1_0>[C] -<X_1_0>[C] <= 0;
+  [linear] <minimum_1_0_1_1>: <minimum_1_1_1>[C] -<X_1_1>[C] <= 0;
+  [linear] <minimum_1_1_0_0>: <minimum_1_0_0>[C] -<z>[C] <= 0;
+  [linear] <minimum_1_1_0_1>: <minimum_1_0_1>[C] -<z>[C] <= 0;
+  [linear] <minimum_1_1_1_0>: <minimum_1_1_0>[C] -<z>[C] <= 0;
+  [linear] <minimum_1_1_1_1>: <minimum_1_1_1>[C] -<z>[C] <= 0;
+  [linear] <minimum_1_2_0_0>: <minimum_1_0_0>[C] <= 1;
+  [linear] <minimum_1_2_0_1>: <minimum_1_0_1>[C] <= 1;
+  [linear] <minimum_1_2_1_0>: <minimum_1_1_0>[C] <= 1;
+  [linear] <minimum_1_2_1_1>: <minimum_1_1_1>[C] <= 1;
+  [linear] <70_0_0>: <minimum_1_0_0>[C] >= 0;
+  [linear] <70_0_1>: <minimum_1_0_1>[C] >= 0;
+  [linear] <70_1_0>: <minimum_1_1_0>[C] >= 0;
+  [linear] <70_1_1>: <minimum_1_1_1>[C] >= 0;
+  [linear] <74>: <z>[C] == 1;
+END

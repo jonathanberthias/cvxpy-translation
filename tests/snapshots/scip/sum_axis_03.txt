@@ -12,10 +12,14 @@ AFTER COMPILATION
 cannot reshape array of size 1 into shape (2,)
 ----------------------------------------
 SCIP
-Minimize
- Obj: +1 x_0_0 +3 x_0_1 +2 x_1_0 +4 x_1_1
-Subject to
- 25_0: +1 x_0_0 +1 x_0_1 >= +1
- 25_1: +1 x_1_0 +1 x_1_1 >= +1
-Bounds
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_0_1>: obj=3, original bounds=[0,+inf]
+  [continuous] <x_1_0>: obj=2, original bounds=[0,+inf]
+  [continuous] <x_1_1>: obj=4, original bounds=[0,+inf]
+CONSTRAINTS
+  [linear] <25_0>: <x_0_0>[C] +<x_0_1>[C] >= 1;
+  [linear] <25_1>: <x_1_0>[C] +<x_1_1>[C] >= 1;
+END

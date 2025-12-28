@@ -11,10 +11,10 @@ AFTER COMPILATION
 Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 x_0
-Subject to
-\   [nonlinear] <16_0>: exp((<x_0>)) <= 1;
-Bounds
- x_0 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [nonlinear] <16_0>: exp((<x_0>)) <= 1;
+END

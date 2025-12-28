@@ -12,14 +12,14 @@ AFTER COMPILATION
 can only convert an array of size 1 to a Python scalar
 ----------------------------------------
 SCIP
-Maximize
- Obj: +1 x_0
-Subject to
- maximum_1_0: +1 maximum_1 >= +1
- maximum_1_1: +1 maximum_1 >= +2
- 21: +1 maximum_1 <= +2
- 25_0: +1 x_0 <= +0
-Bounds
- x_0 free
- maximum_1 free
-End
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <maximum_1>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <maximum_1_0>: <maximum_1>[C] >= 1;
+  [linear] <maximum_1_1>: <maximum_1>[C] >= 2;
+  [linear] <21>: <maximum_1>[C] <= 2;
+  [linear] <25_0>: <x_0>[C] <= 0;
+END

@@ -11,39 +11,40 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Minimize
- Obj: +2 x_0 +2 x_1 +2 x_2 +2 x_3 +3 x_4 +3 x_5
-Subject to
- c1: -1 x_0 <= -1
- c2: -1 x_1 <= -1
- c3: -1 x_2 <= -1
- c4: -1 x_3 <= -1
- c5: -1 x_4 <= -1
- c6: -1 x_5 <= -1
-Bounds
- x_0 free
- x_1 free
- x_2 free
- x_3 free
- x_4 free
- x_5 free
-End
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_3>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=3, original bounds=[-inf,+inf]
+  [continuous] <x_5>: obj=3, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] <= -1;
+  [linear] <c2>:  -<x_1>[C] <= -1;
+  [linear] <c3>:  -<x_2>[C] <= -1;
+  [linear] <c4>:  -<x_3>[C] <= -1;
+  [linear] <c5>:  -<x_4>[C] <= -1;
+  [linear] <c6>:  -<x_5>[C] <= -1;
+END
 ----------------------------------------
 SCIP
-Minimize
- Obj: +2 x_0_0 +2 x_0_1 +2 x_1_0 +2 x_1_1 +3 y_0_0 +3 y_0_1 +6
-Subject to
- 40_0_0: +1 x_0_0 >= +1
- 40_0_1: +1 x_0_1 >= +1
- 40_1_0: +1 x_1_0 >= +1
- 40_1_1: +1 x_1_1 >= +1
- 45_0_0: +1 y_0_0 >= +1
- 45_0_1: +1 y_0_1 >= +1
-Bounds
- x_0_0 free
- x_0_1 free
- x_1_0 free
- x_1_1 free
- y_0_0 free
- y_0_1 free
-End
+OBJECTIVE
+  Sense            : minimize
+  Offset           : +6
+VARIABLES
+  [continuous] <x_0_0>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_0_1>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_1_0>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <x_1_1>: obj=2, original bounds=[-inf,+inf]
+  [continuous] <y_0_0>: obj=3, original bounds=[-inf,+inf]
+  [continuous] <y_0_1>: obj=3, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <40_0_0>: <x_0_0>[C] >= 1;
+  [linear] <40_0_1>: <x_0_1>[C] >= 1;
+  [linear] <40_1_0>: <x_1_0>[C] >= 1;
+  [linear] <40_1_1>: <x_1_1>[C] >= 1;
+  [linear] <45_0_0>: <y_0_0>[C] >= 1;
+  [linear] <45_0_1>: <y_0_1>[C] >= 1;
+END
