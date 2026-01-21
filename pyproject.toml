@@ -165,6 +165,7 @@ ignore = [
   "TD",      # TODOs are fine
   "PLC0415", # `import` not at top of file is on purpose
   "PLR2004", # 'magic' constants are not that annoying
+  "RUF067",  # try-except in __init__.py file
   "S101",    # asserts used for type narrowing
 ]
 exclude = [
