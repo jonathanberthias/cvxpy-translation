@@ -60,7 +60,7 @@ latest = [
   "gurobipy==13.0.1",
   "pyscipopt==5.7.1",
   "numpy==2.3.5",
-  "scipy==1.16.3",
+  "scipy==1.17.0",
 ]
 oldest = [
   { "include-group" = "test" },
