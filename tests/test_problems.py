@@ -537,6 +537,10 @@ def genexpr_norm1() -> Generator[cp.Problem]:
     yield from _genexpr_norm_problems(cp.norm1)
 
 
+@skipif(
+    lambda case: case.context.solver == cp.SCIP and case.idx in {2, 3, 7},
+    "SCIP v6 segfaults on this case; TODO: investigate",
+)
 @group_cases("genexpr_norm2")
 def genexpr_norm2() -> Generator[cp.Problem]:
     # we use pnorm(p=2) as the norm2 function will automatically
