@@ -60,7 +60,7 @@ latest = [
   "gurobipy==13.0.1",
   "pyscipopt==5.7.1",
   "numpy==2.3.5",
-  "scipy==1.17.0",
+  "scipy==1.17.1",
 ]
 oldest = [
   { "include-group" = "test" },
@@ -166,6 +166,7 @@ ignore = [
   "PLC0415", # `import` not at top of file is on purpose
   "PLR2004", # 'magic' constants are not that annoying
   "RUF067",  # try-except in __init__.py file
+  "RUF069",  # floating-point comparisons, false positive when lhs is a Variable instance
   "S101",    # asserts used for type narrowing
 ]
 exclude = [
