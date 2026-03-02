@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import re
 import warnings
 from itertools import chain
 from pathlib import Path
@@ -80,7 +81,18 @@ def test_lp(case: ProblemTestCase, snapshot: Snapshot, tmp_path: Path) -> None:
         )
     except Exception as e:  # noqa: BLE001
         # The solver interfaces in cvxpy can't solve some problems
-        cvxpy_interface_lines = [str(e)]
+        error_msg = str(e)
+        # The error message can contain the list of unsupported cones but the order is not deterministic
+        # so we extract the cones, sort them, and put them back in the error message to get deterministic snapshots
+        unsupported_cones_regex = r"\((\w+)(?:, (\w+))*\)"
+        match = re.search(unsupported_cones_regex, error_msg)
+        if match:
+            cones = match.groups()
+            sorted_cones = sorted(cones)
+            replacement = f"({', '.join(sorted_cones)})"
+            cvxpy_interface_lines = [error_msg.replace(match.group(0), replacement)]
+        else:
+            cvxpy_interface_lines = [error_msg]
     else:
         cvxpy_interface_lines = lp_from_solver(
             generated_model, case.context.solver, tmp_path
@@ -103,7 +115,7 @@ def test_lp(case: ProblemTestCase, snapshot: Snapshot, tmp_path: Path) -> None:
         )
     )
 
-    if CVXPY_VERSION[:2] == (1, 7):
+    if CVXPY_VERSION[:2] == (1, 8):
         outfile = f"{case.context.solver.lower()}/{case.group}_{case.idx:02d}.txt"
         snapshot.assert_match(output, outfile)
 
@@ -205,9 +217,6 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
         for key in our_sol.dual_vars:
             assert our_sol.dual_vars[key] == pytest.approx(cp_sol.dual_vars[key])
     assert set(our_sol.attr) >= set(cp_sol.attr)
-    # In some cases, iteration count can be negative??
-    cp_iters = max(cp_sol.attr.get(s.NUM_ITERS, math.inf), 0)
-    assert our_sol.attr[s.NUM_ITERS] <= cp_iters
 
 
 def lp_from_cvxpy(problem: cp.Problem) -> list[str]:

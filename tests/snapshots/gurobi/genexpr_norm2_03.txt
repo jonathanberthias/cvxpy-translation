@@ -2,7 +2,7 @@ CVXPY
 Maximize
   x
 Subject To
- 12: Pnorm(x, 2) <= 1.0
+ 12: PnormApprox(x, 2) <= 1.0
 Bounds
  x free
 End

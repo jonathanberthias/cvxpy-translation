@@ -501,6 +501,8 @@ class Translater:
             raise InvalidNormError(node)
         return self._handle_norm(node, 2, "norm2")
 
+    visit_PnormApprox = visit_Pnorm
+
     def visit_norm_inf(self, node: cp.norm_inf) -> Any:
         return self._handle_norm(node, np.inf, "norminf")
 
@@ -510,6 +512,8 @@ class Translater:
             raise InvalidPowerError(node.p)
         arg = self.visit(node.args[0])
         return arg**power
+
+    visit_PowerApprox = visit_power
 
     def visit_Problem(self, problem: cp.Problem) -> None:
         self.visit(problem.objective)

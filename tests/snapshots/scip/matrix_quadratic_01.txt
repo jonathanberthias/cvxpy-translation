@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  quad_over_lin(x + Promote(-1.0, (2,)), 1.0)
+  quad_over_lin(x + Promote(-1.0, (2,)), 1.0, None, False)
 Subject To
 Bounds
  x free

@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  power(x, 2.0) + x
+  PowerApprox(x, 2.0) + x
 Subject To
 Bounds
  x free

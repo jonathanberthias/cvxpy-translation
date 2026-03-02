@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Pnorm(x, 2)
+  PnormApprox(x, 2)
 Subject To
 Bounds
  x free
