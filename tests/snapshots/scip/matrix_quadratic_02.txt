@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 11: quad_over_lin(x, 1.0) <= 1.0
+ 11: quad_over_lin(x, 1.0, None, False) <= 1.0
 Bounds
  x free
 End

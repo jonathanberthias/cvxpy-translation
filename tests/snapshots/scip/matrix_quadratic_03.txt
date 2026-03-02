@@ -1,8 +1,8 @@
 CVXPY
 Minimize
-  quad_over_lin(x, 1.0)
+  quad_over_lin(x, 1.0, None, False)
 Subject To
- 17: quad_over_lin(x, 1.0) <= 1.0
+ 17: quad_over_lin(x, 1.0, None, False) <= 1.0
 Bounds
  x free
 End

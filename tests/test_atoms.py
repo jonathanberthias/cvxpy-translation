@@ -28,7 +28,10 @@ def test_no_missing_atoms(translater: Any) -> None:
     assert missing == set()
 
 
-@pytest.fixture(params=test_problems.all_invalid_problems())
+@pytest.fixture(
+    params=test_problems.all_invalid_problems(),
+    ids=lambda case: f"{case.context.solver}_{case.idx}",
+)
 def invalid_case(request: pytest.FixtureRequest) -> test_problems.ProblemTestCase:
     return request.param
 

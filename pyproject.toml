@@ -56,7 +56,7 @@ test = [
 ]
 latest = [
   { "include-group" = "test" },
-  "cvxpy-base==1.7.5",
+  "cvxpy-base==1.8.1",
   "gurobipy==13.0.1",
   "pyscipopt==6.1.0",
   "numpy==2.4.2",
@@ -174,7 +174,8 @@ exclude = [
 ]
 [tool.ruff.lint.extend-per-file-ignores]
 "src/cvxpy_translation/*/translation.py" = [
-  "N802",    # visitor uses uppercase letters in method names
+  "N802",    # visitor uses uppercase letters in method names...
+  "N815",    # ...and sometimes the methods are attributes
   "PLR6301", # method could be a function or staticmethod
   "PLR0904", # too many public methods in class
 ]

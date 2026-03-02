@@ -2,7 +2,7 @@ CVXPY
 Maximize
   Sum(x, None, False)
 Subject To
- 8: power(x, 2.0) <= 1.0
+ 8: PowerApprox(x, 2.0) <= 1.0
 Bounds
  0.0 <= x
 End

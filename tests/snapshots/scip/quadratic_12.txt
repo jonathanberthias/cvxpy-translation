@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  power(x + -y, 2.0) + x + y
+  PowerApprox(x + -y, 2.0) + x + y
 Subject To
  41: y == 0.0
 Bounds
