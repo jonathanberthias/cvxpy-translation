@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.8.1"
+    rev: v3.8.1
     hooks:
       - id: prettier
         args: [--prose-wrap=always]
@@ -8,5 +8,5 @@ repos:
     rev: v0.15.4
     hooks:
       - id: ruff-check
-        args: [--fix, "--show-fixes"]
+        args: [--fix, --show-fixes]
       - id: ruff-format

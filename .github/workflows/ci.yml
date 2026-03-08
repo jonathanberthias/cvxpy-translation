@@ -5,20 +5,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Check
-        uses: astral-sh/ruff-action@v3
-
-      - name: Format
-        uses: astral-sh/ruff-action@v3
-        with:
-          args: "format --check"
-
   test:
     runs-on: ubuntu-latest
 
