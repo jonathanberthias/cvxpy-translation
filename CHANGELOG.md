@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## [2.0.2] - 2026-03-15
+
+### New features
+
+- Add support for `cp.PnormApprox` and `cp.PowerApprox` atoms added in CVXPY 1.8
+  ([#245](https://github.com/jonathanberthias/cvxpy-translation/pull/245))
+
+### Other changes
+
+- Run tests with `PySCIPOpt` v6
+  ([#229](https://github.com/jonathanberthias/cvxpy-translation/pull/229))
+- Secure CI with `zizmor`
+  ([#256](https://github.com/jonathanberthias/cvxpy-translation/pull/256))
+
 ## [2.0.1] - 2025-09-06
 
 ### Bug fixes
@@ -206,3 +220,5 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v1.2.0...v2.0.0
 [2.0.1]:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.0...v2.0.1
+[2.0.2]:
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.1...v2.0.2
