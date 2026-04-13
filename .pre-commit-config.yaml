@@ -1,11 +1,11 @@
 repos:
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.8.1
+    rev: v3.8.2
     hooks:
       - id: prettier
         args: [--prose-wrap=always]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.7
+    rev: v0.15.10
     hooks:
       - id: ruff-check
         args: [--fix, --show-fixes]
