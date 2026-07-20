@@ -106,13 +106,13 @@ def backfill_problem(
         solver_stats = SolverStats.from_dict(solution.attr, GUROBI_TRANSLATION)
     else:
         solver_stats = SolverStats(solution.attr, GUROBI_TRANSLATION)  # type: ignore[arg-type]
-    problem._solver_stats = solver_stats  # noqa: SLF001
+    problem._solver_stats = solver_stats  # ruff:ignore[private-member-access]
 
     if solve_time is not None:
-        problem._solve_time = solve_time  # noqa: SLF001
+        problem._solve_time = solve_time  # ruff:ignore[private-member-access]
     if CVXPY_VERSION >= (1, 4) and compilation_time is not None:
         # added in https://github.com/cvxpy/cvxpy/pull/2046
-        problem._compilation_time = compilation_time  # noqa: SLF001
+        problem._compilation_time = compilation_time  # ruff:ignore[private-member-access]
 
 
 def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solution:
@@ -170,7 +170,7 @@ def extract_variable_value(
     return value
 
 
-def get_constraint_dual(  # noqa: PLR0911
+def get_constraint_dual(  # ruff:ignore[too-many-return-statements]
     model: gp.Model, constraint: Constraint
 ) -> npt.NDArray[np.float64] | None:
     constraint_name = str(constraint.constr_id)
