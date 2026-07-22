@@ -79,7 +79,7 @@ def test_lp(case: ProblemTestCase, snapshot: Snapshot, tmp_path: Path) -> None:
         generated_model = quiet_solve(
             problem, case.context.solver, params=PARAMS[case.context.solver]
         )
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # ruff:ignore[blind-except]
         # The solver interfaces in cvxpy can't solve some problems
         error_msg = str(e)
         # The error message can contain the list of unsupported cones but the order is not deterministic
@@ -192,7 +192,7 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
 
     try:
         quiet_solve(problem, case.context.solver, params=params)
-    except Exception:  # noqa: BLE001
+    except Exception:  # ruff:ignore[blind-except]
         pytest.skip(f"Problem can't be solved through CVXPY with {case.context.solver}")
 
     cp_sol: Solution = problem.solution
@@ -281,7 +281,7 @@ def quiet_solve(
             generated_model = problem.solution.attr[s.EXTRA_STATS]
 
         elif solver == cp.SCIP:
-            old_opt = SCIP._solve  # noqa: SLF001
+            old_opt = SCIP._solve  # ruff:ignore[private-member-access]
             generated_model = None
 
             def new_solve(
