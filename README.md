@@ -78,7 +78,7 @@ Consider this QP problem:
 import cvxpy as cp
 
 x = cp.Variable(name="x")
-problem = cp.Problem(cp.Minimize((x-1) ** 2))
+problem = cp.Problem(cp.Minimize((x - 1) ** 2))
 ```
 
 The problem will be sent to Gurobi as (in LP format):
