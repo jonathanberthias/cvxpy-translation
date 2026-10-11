@@ -10,15 +10,10 @@ AFTER COMPILATION
 OBJECTIVE
   Sense            : minimize
 VARIABLES
-  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
-CONSTRAINTS
-  [linear] <c1>:  -<x_0>[C] <= 0;
-  [linear] <c2>:  -<x_1>[C] <= 0;
-  [linear] <c3>:  -<x_2>[C] <= 0;
-  [linear] <c4>:  -<x_3>[C] <= 0;
+  [continuous] <x_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_3>: obj=0, original bounds=[0,+inf]
 END
 ----------------------------------------
 SCIP

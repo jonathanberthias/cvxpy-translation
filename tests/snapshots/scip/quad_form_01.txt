@@ -11,7 +11,7 @@ AFTER COMPILATION
 OBJECTIVE
   Sense            : minimize
 VARIABLES
-  [continuous] <x_0>: obj=13.7082039324994, original bounds=[-inf,+inf]
+  [continuous] <x_0>: obj=4, original bounds=[-inf,+inf]
   [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
   [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
   [continuous] <soc_t_0>: obj=0, original bounds=[0,+inf]
@@ -21,8 +21,8 @@ VARIABLES
 CONSTRAINTS
   [linear] <c1>: <soc_t_0>[C] -<x_0>[C] == 1;
   [linear] <c2>: <soc_t_1>[C] +<x_0>[C] == 1;
-  [linear] <c3>: <soc_t_2>[C] +0.248216560693358<x_1>[C] -0.153406271079096<x_2>[C] == 0;
-  [linear] <c4>: <soc_t_3>[C] -1.05146222423827<x_1>[C] -1.70130161670408<x_2>[C] == 0;
+  [linear] <c3>: <soc_t_2>[C] -2<x_1>[C] -3<x_2>[C] == 0;
+  [linear] <c4>: <soc_t_3>[C] -<x_2>[C] == 0;
   [nonlinear] <c5>: <soc_t_1>*<soc_t_1>+<soc_t_2>*<soc_t_2>+<soc_t_3>*<soc_t_3>-<soc_t_0>*<soc_t_0> <= 0;
 END
 ----------------------------------------

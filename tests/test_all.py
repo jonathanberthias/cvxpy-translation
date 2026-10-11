@@ -115,7 +115,7 @@ def test_lp(case: ProblemTestCase, snapshot: Snapshot, tmp_path: Path) -> None:
         )
     )
 
-    if CVXPY_VERSION[:2] == (1, 8):
+    if CVXPY_VERSION[:2] == (1, 9):
         outfile = f"{case.context.solver.lower()}/{case.group}_{case.idx:02d}.txt"
         snapshot.assert_match(output, outfile)
 

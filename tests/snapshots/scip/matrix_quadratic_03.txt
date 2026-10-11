@@ -14,27 +14,17 @@ VARIABLES
   [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
   [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
   [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
   [continuous] <soc_t_1>: obj=0, original bounds=[0,+inf]
   [continuous] <soc_t_2>: obj=0, original bounds=[-inf,+inf]
   [continuous] <soc_t_3>: obj=0, original bounds=[-inf,+inf]
   [continuous] <soc_t_4>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <soc_t_5>: obj=0, original bounds=[0,+inf]
-  [continuous] <soc_t_6>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <soc_t_7>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <soc_t_8>: obj=0, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [linear] <c1>: <x_3>[C] <= 1;
+  [linear] <c1>: <x_0>[C] <= 1;
   [linear] <c2>: <soc_t_1>[C] -<x_0>[C] == 1;
   [linear] <c3>: <soc_t_2>[C] +<x_0>[C] == 1;
   [linear] <c4>: <soc_t_3>[C] -2<x_1>[C] == 0;
   [linear] <c5>: <soc_t_4>[C] -2<x_2>[C] == 0;
   [nonlinear] <c6>: <soc_t_2>*<soc_t_2>+<soc_t_3>*<soc_t_3>+<soc_t_4>*<soc_t_4>-<soc_t_1>*<soc_t_1> <= 0;
-  [linear] <c7>: <soc_t_5>[C] -<x_3>[C] == 1;
-  [linear] <c8>: <soc_t_6>[C] +<x_3>[C] == 1;
-  [linear] <c9>: <soc_t_7>[C] -2<x_1>[C] == 0;
-  [linear] <c10>: <soc_t_8>[C] -2<x_2>[C] == 0;
-  [nonlinear] <c11>: <soc_t_6>*<soc_t_6>+<soc_t_7>*<soc_t_7>+<soc_t_8>*<soc_t_8>-<soc_t_5>*<soc_t_5> <= 0;
 END
 ----------------------------------------
 SCIP

@@ -3,7 +3,7 @@ Minimize
   Sum(X, None, False)
 Subject To
 Bounds
- [1. 1.] <= X[True, True]
+ 1.0 <= X
  X[True, True] <= [3. 4.]
 End
 ----------------------------------------
@@ -11,13 +11,8 @@ AFTER COMPILATION
 OBJECTIVE
   Sense            : minimize
 VARIABLES
-  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
-CONSTRAINTS
-  [linear] <c1>:  -<x_0>[C] <= -1;
-  [linear] <c2>:  -<x_1>[C] <= -1;
-  [linear] <c3>: <x_0>[C] <= 3;
-  [linear] <c4>: <x_1>[C] <= 4;
+  [continuous] <x_0>: obj=1, original bounds=[1,3]
+  [continuous] <x_1>: obj=1, original bounds=[1,4]
 END
 ----------------------------------------
 SCIP

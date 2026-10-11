@@ -14,23 +14,19 @@ VARIABLES
   [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
   [continuous] <x_2>: obj=1, original bounds=[-inf,+inf]
   [continuous] <x_3>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_4>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_5>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_6>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_7>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_4>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_5>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_6>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_7>: obj=0, original bounds=[0,+inf]
 CONSTRAINTS
-  [linear] <c1>:  -<x_4>[C] <= 0;
-  [linear] <c2>:  -<x_5>[C] <= 0;
-  [linear] <c3>:  -<x_6>[C] <= 0;
-  [linear] <c4>:  -<x_7>[C] <= 0;
-  [linear] <c5>:  -<x_0>[C] +<x_4>[C] <= 0;
-  [linear] <c6>:  -<x_1>[C] +<x_5>[C] <= 0;
-  [linear] <c7>:  -<x_2>[C] +<x_6>[C] <= 0;
-  [linear] <c8>:  -<x_3>[C] +<x_7>[C] <= 0;
-  [linear] <c9>:  -<x_0>[C] -<x_4>[C] <= 0;
-  [linear] <c10>:  -<x_1>[C] -<x_5>[C] <= 0;
-  [linear] <c11>:  -<x_2>[C] -<x_6>[C] <= 0;
-  [linear] <c12>:  -<x_3>[C] -<x_7>[C] <= 0;
+  [linear] <c1>:  -<x_0>[C] +<x_4>[C] <= 0;
+  [linear] <c2>:  -<x_1>[C] +<x_5>[C] <= 0;
+  [linear] <c3>:  -<x_2>[C] +<x_6>[C] <= 0;
+  [linear] <c4>:  -<x_3>[C] +<x_7>[C] <= 0;
+  [linear] <c5>:  -<x_0>[C] -<x_4>[C] <= 0;
+  [linear] <c6>:  -<x_1>[C] -<x_5>[C] <= 0;
+  [linear] <c7>:  -<x_2>[C] -<x_6>[C] <= 0;
+  [linear] <c8>:  -<x_3>[C] -<x_7>[C] <= 0;
 END
 ----------------------------------------
 SCIP

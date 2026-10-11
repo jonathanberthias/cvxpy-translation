@@ -19,39 +19,31 @@ VARIABLES
   [continuous] <x_5>: obj=1, original bounds=[-inf,+inf]
   [continuous] <x_6>: obj=1, original bounds=[-inf,+inf]
   [continuous] <x_7>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_8>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_9>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_10>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_11>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_12>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_13>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_14>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_15>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_8>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_9>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_10>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_11>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_12>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_13>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_14>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_15>: obj=0, original bounds=[0,+inf]
 CONSTRAINTS
-  [linear] <c1>:  -<x_8>[C] <= 0;
-  [linear] <c2>:  -<x_9>[C] <= 0;
-  [linear] <c3>:  -<x_10>[C] <= 0;
-  [linear] <c4>:  -<x_11>[C] <= 0;
-  [linear] <c5>:  -<x_12>[C] <= 0;
-  [linear] <c6>:  -<x_13>[C] <= 0;
-  [linear] <c7>:  -<x_14>[C] <= 0;
-  [linear] <c8>:  -<x_15>[C] <= 0;
-  [linear] <c9>:  -<x_0>[C] +<x_8>[C] <= 0;
-  [linear] <c10>:  -<x_1>[C] +<x_9>[C] <= 0;
-  [linear] <c11>:  -<x_2>[C] +<x_10>[C] <= 0;
-  [linear] <c12>:  -<x_3>[C] +<x_11>[C] <= 0;
-  [linear] <c13>:  -<x_0>[C] -<x_8>[C] <= 0;
-  [linear] <c14>:  -<x_1>[C] -<x_9>[C] <= 0;
-  [linear] <c15>:  -<x_2>[C] -<x_10>[C] <= 0;
-  [linear] <c16>:  -<x_3>[C] -<x_11>[C] <= 0;
-  [linear] <c17>:  -<x_4>[C] +<x_12>[C] <= 0;
-  [linear] <c18>:  -<x_5>[C] +<x_13>[C] <= 0;
-  [linear] <c19>:  -<x_6>[C] +<x_14>[C] <= 0;
-  [linear] <c20>:  -<x_7>[C] +<x_15>[C] <= 0;
-  [linear] <c21>:  -<x_4>[C] -<x_12>[C] <= 0;
-  [linear] <c22>:  -<x_5>[C] -<x_13>[C] <= 0;
-  [linear] <c23>:  -<x_6>[C] -<x_14>[C] <= 0;
-  [linear] <c24>:  -<x_7>[C] -<x_15>[C] <= 0;
+  [linear] <c1>:  -<x_0>[C] +<x_8>[C] <= 0;
+  [linear] <c2>:  -<x_1>[C] +<x_9>[C] <= 0;
+  [linear] <c3>:  -<x_2>[C] +<x_10>[C] <= 0;
+  [linear] <c4>:  -<x_3>[C] +<x_11>[C] <= 0;
+  [linear] <c5>:  -<x_0>[C] -<x_8>[C] <= 0;
+  [linear] <c6>:  -<x_1>[C] -<x_9>[C] <= 0;
+  [linear] <c7>:  -<x_2>[C] -<x_10>[C] <= 0;
+  [linear] <c8>:  -<x_3>[C] -<x_11>[C] <= 0;
+  [linear] <c9>:  -<x_4>[C] +<x_12>[C] <= 0;
+  [linear] <c10>:  -<x_5>[C] +<x_13>[C] <= 0;
+  [linear] <c11>:  -<x_6>[C] +<x_14>[C] <= 0;
+  [linear] <c12>:  -<x_7>[C] +<x_15>[C] <= 0;
+  [linear] <c13>:  -<x_4>[C] -<x_12>[C] <= 0;
+  [linear] <c14>:  -<x_5>[C] -<x_13>[C] <= 0;
+  [linear] <c15>:  -<x_6>[C] -<x_14>[C] <= 0;
+  [linear] <c16>:  -<x_7>[C] -<x_15>[C] <= 0;
 END
 ----------------------------------------
 SCIP

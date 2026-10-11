@@ -9,7 +9,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  2 C0 + C1
+  2 x_0 + x_1
 Subject To
 Bounds
 End

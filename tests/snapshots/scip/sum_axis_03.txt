@@ -3,13 +3,23 @@ Minimize
   Sum(x * [[1.00 3.00]
  [2.00 4.00]], None, False)
 Subject To
- 25: 1.0 <= Sum(x, -1, False)
+ 25: 1.0 <= Sum(x, 1, False)
 Bounds
  0.0 <= x
 End
 ----------------------------------------
 AFTER COMPILATION
-cannot reshape array of size 1 into shape (2,)
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=2, original bounds=[0,+inf]
+  [continuous] <x_2>: obj=3, original bounds=[0,+inf]
+  [continuous] <x_3>: obj=4, original bounds=[0,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] -<x_2>[C] <= -1;
+  [linear] <c2>:  -<x_1>[C] -<x_3>[C] <= -1;
+END
 ----------------------------------------
 SCIP
 OBJECTIVE

@@ -3,17 +3,17 @@ Minimize
   Sum(x * [[1.00 3.00]
  [2.00 4.00]], None, False)
 Subject To
- 25: 1.0 <= Sum(x, -1, False)
+ 25: 1.0 <= Sum(x, 1, False)
 Bounds
  0.0 <= x
 End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + 2 C1 + 3 C2 + 4 C3
+  x_0 + 2 x_1 + 3 x_2 + 4 x_3
 Subject To
- R0: - C0 - C1 - C2 - C3 <= -1
- R1: <= -1
+ R0: - x_0 - x_2 <= -1
+ R1: - x_1 - x_3 <= -1
 Bounds
 End
 ----------------------------------------

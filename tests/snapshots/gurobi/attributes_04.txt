@@ -14,16 +14,16 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0 - C1 - C2
+  - x_0 - x_1 - x_2
 Subject To
- R0: C1 <= 1
+ R0: x_1 <= 1
 Bounds
- -infinity <= C0 <= 0
- C1 free
+ -infinity <= x_0 <= 0
+ x_1 free
 Binaries
- C2
+ x_2
 Generals
- C1
+ x_1
 End
 ----------------------------------------
 GUROBI

@@ -9,11 +9,11 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0
+  x_0
 Subject To
 Bounds
 Binaries
- C0
+ x_0
 End
 ----------------------------------------
 GUROBI
