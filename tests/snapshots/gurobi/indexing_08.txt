@@ -8,7 +8,7 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0 + 0 C1 + C2 + 0 C3
+  x_0 + 0 x_1 + x_2 + 0 x_3
 Subject To
 Bounds
 End

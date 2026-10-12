@@ -8,10 +8,10 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  - C0
+  - x_0
 Subject To
 Bounds
- -infinity <= C0 <= 0
+ -infinity <= x_0 <= 0
 End
 ----------------------------------------
 GUROBI

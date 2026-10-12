@@ -13,8 +13,8 @@ OBJECTIVE
 VARIABLES
   [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
   [continuous] <x_1>: obj=-1, original bounds=[-inf,+inf]
-  [continuous] <x_2>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <x_3>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_2>: obj=0, original bounds=[2,+inf]
+  [continuous] <x_3>: obj=0, original bounds=[-1,+inf]
 CONSTRAINTS
   [linear] <c1>: <x_0>[C] -<x_2>[C] <= -2;
   [linear] <c2>: <x_1>[C] -<x_3>[C] <= 1;

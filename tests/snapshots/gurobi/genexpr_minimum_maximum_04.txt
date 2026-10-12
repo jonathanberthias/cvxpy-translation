@@ -9,14 +9,14 @@ End
 ----------------------------------------
 AFTER COMPILATION
 Minimize
-  C0
+  x_0
 Subject To
- R0: - C0 - C1 <= 1
- R1: - C1 <= 2
- R2: C1 <= -1
+ R0: - x_0 - x_1 <= 1
+ R1: - x_1 <= 2
+ R2: x_1 <= -1
 Bounds
- C0 free
- C1 free
+ x_0 free
+ x_1 free
 End
 ----------------------------------------
 GUROBI

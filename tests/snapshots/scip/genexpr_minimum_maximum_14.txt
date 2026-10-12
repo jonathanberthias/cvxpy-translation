@@ -12,7 +12,7 @@ OBJECTIVE
   Sense            : minimize
 VARIABLES
   [continuous] <x_0>: obj=-1, original bounds=[-inf,+inf]
-  [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=0, original bounds=[1,+inf]
 CONSTRAINTS
   [linear] <c1>: <x_0>[C] -<x_1>[C] <= 0;
   [linear] <c2>:  -<x_1>[C] <= -1;

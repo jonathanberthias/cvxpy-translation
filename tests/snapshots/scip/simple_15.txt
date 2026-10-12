@@ -11,16 +11,15 @@ OBJECTIVE
   Sense            : minimize
 VARIABLES
   [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_1>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <soc_t_1>: obj=0, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_0>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_1>: obj=0, original bounds=[-inf,+inf]
   [continuous] <soc_t_2>: obj=0, original bounds=[-inf,+inf]
-  [continuous] <soc_t_3>: obj=0, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [linear] <c1>:  -<x_1>[C] <= 0;
-  [linear] <c2>: <soc_t_1>[C] -<x_0>[C] == 1;
-  [linear] <c3>: <soc_t_2>[C] -<x_0>[C] == -1;
-  [linear] <c4>: <soc_t_3>[C] -2<x_1>[C] == -2;
-  [nonlinear] <c5>: <soc_t_2>*<soc_t_2>+<soc_t_3>*<soc_t_3>-<soc_t_1>*<soc_t_1> <= 0;
+  [linear] <c1>: <soc_t_0>[C] -<x_0>[C] == 1;
+  [linear] <c2>: <soc_t_1>[C] -<x_0>[C] == -1;
+  [linear] <c3>: <soc_t_2>[C] -2<x_1>[C] == -2;
+  [nonlinear] <c4>: <soc_t_1>*<soc_t_1>+<soc_t_2>*<soc_t_2>-<soc_t_0>*<soc_t_0> <= 0;
 END
 ----------------------------------------
 SCIP

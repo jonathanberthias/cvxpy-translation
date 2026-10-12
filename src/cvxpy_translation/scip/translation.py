@@ -95,6 +95,10 @@ def translate_variable(var: cp.Variable, model: scip.Model) -> AnyVar:
     # Bounds added in https://github.com/cvxpy/cvxpy/pull/2234
     if CVXPY_VERSION >= (1, 5, 0) and var.bounds is not None:
         lb, ub = var.bounds
+        if var.shape:
+            # CVXPY 1.9 can retain scalar bounds; SCIP needs matching array shapes.
+            lb = np.broadcast_to(lb, var.shape)
+            ub = np.broadcast_to(ub, var.shape)
     else:
         lb, ub = None, None
         if var.is_nonneg():

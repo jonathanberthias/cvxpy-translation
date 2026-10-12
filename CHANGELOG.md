@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Bug fixes
+
+- Broadcast scalar variable bounds when building SCIP models with CVXPY 1.9.
+
+### Other changes
+
+- Run tests and model snapshots with CVXPY 1.9.3.
+
 ## [2.0.2] - 2026-03-15
 
 ### New features

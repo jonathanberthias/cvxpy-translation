@@ -12,17 +12,13 @@ AFTER COMPILATION
 OBJECTIVE
   Sense            : minimize
 VARIABLES
-  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
-  [continuous] <x_1>: obj=2, original bounds=[-inf,+inf]
-  [continuous] <x_2>: obj=3, original bounds=[-inf,+inf]
-  [continuous] <x_3>: obj=4, original bounds=[-inf,+inf]
+  [continuous] <x_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=2, original bounds=[0,+inf]
+  [continuous] <x_2>: obj=3, original bounds=[0,+inf]
+  [continuous] <x_3>: obj=4, original bounds=[0,+inf]
 CONSTRAINTS
-  [linear] <c1>:  -<x_0>[C] <= 0;
-  [linear] <c2>:  -<x_1>[C] <= 0;
-  [linear] <c3>:  -<x_2>[C] <= 0;
-  [linear] <c4>:  -<x_3>[C] <= 0;
-  [linear] <c5>:  -<x_0>[C] -<x_1>[C] <= -1;
-  [linear] <c6>:  -<x_2>[C] -<x_3>[C] <= -1;
+  [linear] <c1>:  -<x_0>[C] -<x_1>[C] <= -1;
+  [linear] <c2>:  -<x_2>[C] -<x_3>[C] <= -1;
 END
 ----------------------------------------
 SCIP

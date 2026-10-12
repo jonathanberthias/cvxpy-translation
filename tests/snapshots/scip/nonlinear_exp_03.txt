@@ -8,7 +8,7 @@ Bounds
 End
 ----------------------------------------
 AFTER COMPILATION
-Either candidate conic solvers (['SCIP']) do not support the cones output by the problem (ExpCone, NonNeg), or there are not enough constraints in the problem.
+The solver SCIP cannot solve this problem.
 ----------------------------------------
 SCIP
 OBJECTIVE

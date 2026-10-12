@@ -12,11 +12,11 @@ AFTER COMPILATION
 Minimize
   - x_0 - x_1
 Subject To
- R0: 13.70820393249937 x_2 <= 1
+ R0: 4 x_2 <= 1
  R1: - x_2 + soc_t_1 = 1
  R2: x_2 + soc_x_2 = 1
- R3: 0.2482165606933579 x_0 - 0.1534062710790964 x_1 + soc_x_3 = 0
- R4: - 1.051462224238267 x_0 - 1.70130161670408 x_1 + soc_x_4 = 0
+ R3: - 2 x_0 - 3 x_1 + soc_x_3 = 0
+ R4: - x_1 + soc_x_4 = 0
  qc0: [ - soc_t_1 ^2 + soc_x_2 ^2 + soc_x_3 ^2 + soc_x_4 ^2 ] <= 0
 Bounds
  x_2 free
