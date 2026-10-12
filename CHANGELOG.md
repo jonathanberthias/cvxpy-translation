@@ -9,6 +9,7 @@
 ### Other changes
 
 - Run tests and model snapshots with CVXPY 1.9.3.
+- Add support for Python 3.14.
 
 ## [2.0.2] - 2026-03-15
 

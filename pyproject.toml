@@ -28,6 +28,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -79,7 +80,7 @@ dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
 [tool.uv]
 conflicts = [[{ group = "latest" }, { group = "oldest" }]]
 [tool.uv.dependency-groups]
-latest = { requires-python = "~=3.13.0" }
+latest = { requires-python = ">=3.13,<3.15" }
 oldest = { requires-python = "~=3.9.0" }
 
 [tool.hatch]
@@ -103,6 +104,7 @@ versions = [
 update-snapshots = "hatch run latest:update-snapshots -n 4 {args}"
 all-tests = [
   "hatch run latest:tests -n 4 {args}",
+  "hatch run latest-py314:tests -n 4 {args}",
   "hatch run oldest:tests -n 4 {args}",
 ]
 
@@ -111,6 +113,11 @@ description = "Dependencies at their most up-to-date versions, equivalent to `uv
 python = "3.13"
 dependency-groups = ["latest"]
 scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} tests/test_all.py::test_lp" }
+
+[tool.hatch.envs.latest-py314]
+description = "Latest dependency pins on Python 3.14"
+template = "latest"
+python = "3.14"
 
 [tool.hatch.envs.oldest]
 description = "The oldest supported set of dependencies, for testing purposes, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
