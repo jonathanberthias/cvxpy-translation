@@ -28,8 +28,6 @@ jobs:
       matrix:
         include:
           - env: "latest"
-            python: "3.13"
-          - env: "latest-py314"
             python: "3.14"
           - env: "oldest"
             python: "3.9"
