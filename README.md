@@ -141,7 +141,7 @@ For testing, run:
 hatch run latest:tests
 ```
 
-This will test the latest dependency pins on Python 3.14. Run
+This will test the latest version of dependencies. You can also run
 `hatch run oldest:tests` to test the minimum required dependency versions.
 
 Make sure any change is tested through a snapshot test. To add a new test case,
