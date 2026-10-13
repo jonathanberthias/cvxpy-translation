@@ -1,0 +1,24 @@
+CVXPY
+Minimize
+  Sum(Hstack(reshape(PowerApprox(x, 2.0), (1,), F), reshape(1.0, (1,), F)), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 ] / 2 
+Subject To
+Bounds
+End
+----------------------------------------
+GUROBI
+Minimize
+  reshape_1[0] + Constant
+Subject To
+ qc0: reshape_1[0] + [ - x ^2 ] = 0
+Bounds
+ reshape_1[0] free
+ Constant = 1
+End

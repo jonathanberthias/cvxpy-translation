@@ -1,6 +1,6 @@
 CVXPY
 Minimize
-  Sum(Vstack(x, 1.0), None, False)
+  Sum(Hstack(reshape(x + -2.0, (1,), F), reshape(1.0, (1,), F)), None, False)
 Subject To
 Bounds
  0.0 <= x
@@ -16,7 +16,7 @@ END
 SCIP
 OBJECTIVE
   Sense            : minimize
-  Offset           : +1
+  Offset           : -1
 VARIABLES
   [continuous] <x>: obj=1, original bounds=[0,+inf]
 END

@@ -719,7 +719,6 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     stack = getattr(cp, stack_name)
 
     if stack_name == "hstack":
-        # vstack does not support scalar variables
         x = cp.Variable(name="x")
         y = cp.Variable(name="y")
         yield cp.Problem(cp.Minimize(cp.sum(stack([x]))), [x >= 1])
@@ -759,6 +758,18 @@ def _stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(stack([x, y, A]))), [x >= 1, y >= 1])
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x]))), [x >= 1])
     yield cp.Problem(cp.Minimize(cp.sum(stack([2 * x, 3 * y, A]))), [x >= 1, y >= 1])
+
+
+def _scalar_stack(stack_name: Literal["vstack", "hstack"]) -> Generator[cp.Problem]:
+    stack = getattr(cp, stack_name)
+    x = cp.Variable(name="x", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x, 1]))))
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x - 2, 1]))))
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x**2, 1]))))
+    parameter = cp.Parameter(value=-2, name="p")
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x, parameter]))))
+    y = cp.Variable(name="y", nonneg=True)
+    yield cp.Problem(cp.Minimize(cp.sum(stack([x, y]))))
 
 
 @skipif(
@@ -920,14 +931,13 @@ def unsupported_attributes() -> Generator[cp.Problem]:
 
 
 @skipif(
-    lambda case: case.context.solver == cp.GUROBI,
-    "hstack variant not supported by gurobipy",
+    lambda case: case.context.solver == cp.GUROBI and GUROBI_MAJOR < 11,
+    "requires Gurobi 11+",
 )
 @group_cases("scalar_stack")
 def scalar_stack() -> Generator[cp.Problem]:
-    x = cp.Variable(name="x", nonneg=True)
-    yield cp.Problem(cp.Minimize(cp.sum(cp.hstack([x, 1]))))
-    yield cp.Problem(cp.Minimize(cp.sum(cp.vstack([x, 1]))))
+    yield from _scalar_stack("hstack")
+    yield from _scalar_stack("vstack")
 
 
 @skipif(lambda case: case.context.solver == cp.SCIP, "works with SCIP")

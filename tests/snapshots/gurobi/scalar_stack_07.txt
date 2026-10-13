@@ -1,0 +1,22 @@
+CVXPY
+Minimize
+  Sum(Vstack(PowerApprox(x, 2.0), 1.0), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+ [ 2 C0 ^2 ] / 2 
+Subject To
+Bounds
+End
+----------------------------------------
+GUROBI
+Minimize
+  + Constant + [ 2 x ^2 ] / 2 
+Subject To
+Bounds
+ Constant = 1
+End

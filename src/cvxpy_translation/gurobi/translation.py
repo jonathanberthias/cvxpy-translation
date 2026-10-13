@@ -135,6 +135,17 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
     raise NotImplementedError(msg)  # pragma: no cover
 
 
+def _to_matrix_api_object(expr: object) -> object:
+    """Promote scalar arguments for Gurobi's matrix manipulation functions."""
+    if isinstance(expr, (gp.Var, gp.LinExpr)):
+        return gp.MLinExpr.zeros(()) + expr
+    if isinstance(expr, gp.QuadExpr):
+        return gp.MQuadExpr.zeros(()) + expr
+    if isinstance(expr, (int, float, np.generic)):
+        return np.asarray(expr)
+    return expr
+
+
 HANDLED_ATTRIBUTES = {"integer", "boolean", "nonneg", "nonpos", "neg", "pos", "bounds"}
 NO_PARTIAL_ATTRIBUTES = {"integer", "boolean"}
 
@@ -372,8 +383,7 @@ class Translater:
         )
 
     def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
-        args = node.args
-        exprs = [self.visit(arg) for arg in args]
+        exprs = [_to_matrix_api_object(self.visit(arg)) for arg in node.args]
         return gp_fn(exprs)
 
     def visit_Hstack(self, node: Hstack) -> Any:
