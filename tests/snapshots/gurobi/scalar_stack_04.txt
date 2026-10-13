@@ -1,0 +1,22 @@
+CVXPY
+Minimize
+  Sum(Hstack(reshape(x, (1,), F), reshape(y, (1,), F)), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+ 0.0 <= y
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  x_0 + x_1
+Subject To
+Bounds
+End
+----------------------------------------
+GUROBI
+Minimize
+  x + y
+Subject To
+Bounds
+End

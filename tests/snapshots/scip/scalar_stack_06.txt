@@ -1,0 +1,22 @@
+CVXPY
+Minimize
+  Sum(Vstack(x + -2.0, 1.0), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[0,+inf]
+END
+----------------------------------------
+SCIP
+OBJECTIVE
+  Sense            : minimize
+  Offset           : -1
+VARIABLES
+  [continuous] <x>: obj=1, original bounds=[0,+inf]
+END

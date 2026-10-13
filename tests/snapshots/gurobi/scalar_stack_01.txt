@@ -1,0 +1,24 @@
+CVXPY
+Minimize
+  Sum(Hstack(reshape(x + -2.0, (1,), F), reshape(1.0, (1,), F)), None, False)
+Subject To
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  x_0
+Subject To
+Bounds
+End
+----------------------------------------
+GUROBI
+Minimize
+  reshape_1[0] + Constant
+Subject To
+ R0: - x + reshape_1[0] = -2
+Bounds
+ reshape_1[0] free
+ Constant = 1
+End
