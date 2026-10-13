@@ -1,15 +1,17 @@
 # Changelog
 
-## Unreleased
+## [2.0.3] - 2026-10-13
 
 ### Bug fixes
 
-- Broadcast scalar variable bounds when building SCIP models with CVXPY 1.9.
+- Fix building SCIP models for vector and matrix variables with scalar bounds in
+  CVXPY 1.9
+  ([#326](https://github.com/jonathanberthias/cvxpy-translation/pull/326))
 
 ### Other changes
 
-- Run tests and model snapshots with CVXPY 1.9.3.
-- Add support for Python 3.14.
+- Add support for Python 3.14
+  ([#327](https://github.com/jonathanberthias/cvxpy-translation/pull/327))
 
 ## [2.0.2] - 2026-03-15
 
@@ -231,3 +233,5 @@ In this release, the following elements are already covered:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.0...v2.0.1
 [2.0.2]:
   https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.1...v2.0.2
+[2.0.3]:
+  https://github.com/jonathanberthias/cvxpy-translation/compare/v2.0.2...v2.0.3
