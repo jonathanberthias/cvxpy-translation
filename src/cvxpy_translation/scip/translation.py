@@ -384,12 +384,13 @@ class Translater:
 
     def visit_Pnorm(self, node: cp.Pnorm) -> Any:
         (arg,) = node.args
-        expr = self.visit(arg)
         p = node.original_p
         if p != 2:
             raise InvalidNormError(node)
-        if isinstance(expr, scip.Expr):
-            return (expr**p) ** (1 / p)
+        if _is_scalar(arg):
+            # A scalar 2-norm is abs(x).
+            return abs(self.translate_into_scalar(arg))
+        expr = self.visit(arg)
         return (expr**p).sum() ** (1 / p)
 
     visit_PnormApprox = visit_Pnorm

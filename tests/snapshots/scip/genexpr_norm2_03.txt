@@ -28,5 +28,5 @@ OBJECTIVE
 VARIABLES
   [continuous] <x>: obj=1, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [nonlinear] <12>: ((<x>*<x>))^0.5 <= 1;
+  [nonlinear] <12>: abs((<x>)) <= 1;
 END
