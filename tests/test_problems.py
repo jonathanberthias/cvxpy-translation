@@ -272,14 +272,7 @@ def quad_form_stack() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.quad_form(cp.hstack([x, y]), np.eye(4))))
 
 
-@skipif(
-    lambda case: case.context.solver == cp.SCIP, "SCIP does not support PSD variables"
-)
-@skipif(
-    lambda case: case.context.solver == cp.GUROBI,
-    "Gurobi does not support PSD variables",
-)
-@group_cases("quad_form_psd")
+@group_cases("quad_form_psd", invalid_reason="unsupported PSD variables")
 def quad_form_psd() -> Generator[cp.Problem]:
     x = np.arange(1, 3)
     A = cp.Variable((2, 2), name="A", PSD=True)
