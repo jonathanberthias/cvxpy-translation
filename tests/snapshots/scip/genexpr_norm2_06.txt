@@ -27,5 +27,5 @@ VARIABLES
   [continuous] <x_0>: obj=0, original bounds=[-inf,+inf]
   [continuous] <x2>: obj=1, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [nonlinear] <c1>: ((<x_0>*<x_0>))^0.5+<x2>*(-1)+1 <= 0;
+  [nonlinear] <c1>: abs((<x_0>))+<x2>*(-1)+1 <= 0;
 END
