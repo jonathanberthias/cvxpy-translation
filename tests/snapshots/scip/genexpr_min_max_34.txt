@@ -48,10 +48,10 @@ VARIABLES
   [continuous] <Y_1_1>: obj=0, original bounds=[-inf,+inf]
   [continuous] <min_1>: obj=0, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [linear] <min_1_0_0>: <X_0_0>[C] +<Y_0_0>[C] -<min_1>[C] >= 0;
-  [linear] <min_1_0_1>: <X_0_1>[C] +<Y_0_1>[C] -<min_1>[C] >= 0;
-  [linear] <min_1_1_0>: <X_1_0>[C] +<Y_1_0>[C] -<min_1>[C] >= 0;
-  [linear] <min_1_1_1>: <X_1_1>[C] +<Y_1_1>[C] -<min_1>[C] >= 0;
+  [linear] <min_1_0_0>: <min_1>[C] -<X_0_0>[C] -<Y_0_0>[C] <= 0;
+  [linear] <min_1_0_1>: <min_1>[C] -<X_0_1>[C] -<Y_0_1>[C] <= 0;
+  [linear] <min_1_1_0>: <min_1>[C] -<X_1_0>[C] -<Y_1_0>[C] <= 0;
+  [linear] <min_1_1_1>: <min_1>[C] -<X_1_1>[C] -<Y_1_1>[C] <= 0;
   [linear] <40>: <min_1>[C] >= 1;
   [linear] <45_0_0>: <Y_0_0>[C] == 1;
   [linear] <45_0_1>: <Y_0_1>[C] == 1;

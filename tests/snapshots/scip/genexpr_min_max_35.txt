@@ -35,9 +35,9 @@ VARIABLES
   [continuous] <X_1_1>: obj=1, original bounds=[-inf,+inf]
   [continuous] <min_1>: obj=0, original bounds=[-inf,+inf]
 CONSTRAINTS
-  [linear] <min_1_0_0>: <X_0_0>[C] -<min_1>[C] >= -1;
-  [linear] <min_1_0_1>: <X_0_1>[C] -<min_1>[C] >= 2;
-  [linear] <min_1_1_0>: <X_1_0>[C] -<min_1>[C] >= -3;
-  [linear] <min_1_1_1>: <X_1_1>[C] -<min_1>[C] >= -4;
+  [linear] <min_1_0_0>: <min_1>[C] -<X_0_0>[C] <= 1;
+  [linear] <min_1_0_1>: <min_1>[C] -<X_0_1>[C] <= -2;
+  [linear] <min_1_1_0>: <min_1>[C] -<X_1_0>[C] <= 3;
+  [linear] <min_1_1_1>: <min_1>[C] -<X_1_1>[C] <= 4;
   [linear] <52>: <min_1>[C] >= 1;
 END
