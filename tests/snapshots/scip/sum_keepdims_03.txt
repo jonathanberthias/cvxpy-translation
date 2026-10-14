@@ -1,0 +1,88 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 33: Sum(PowerApprox(x, 2.0), 0, True)[0, 0:3] <= 1.0
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_2>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_3>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_4>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_5>: obj=-1, original bounds=[0,+inf]
+  [continuous] <x_6>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_7>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_8>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_9>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_10>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <x_11>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_3>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_4>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_5>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_6>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_7>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_8>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_9>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_10>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_11>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_12>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_13>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_14>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_15>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_16>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_17>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_18>: obj=0, original bounds=[0,+inf]
+  [continuous] <soc_t_19>: obj=0, original bounds=[-inf,+inf]
+  [continuous] <soc_t_20>: obj=0, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_6>[C] +<x_7>[C] <= 1;
+  [linear] <c2>: <x_8>[C] +<x_9>[C] <= 1;
+  [linear] <c3>: <x_10>[C] +<x_11>[C] <= 1;
+  [linear] <c4>: <soc_t_3>[C] -<x_6>[C] == 1;
+  [linear] <c5>: <soc_t_4>[C] -<x_6>[C] == -1;
+  [linear] <c6>: <soc_t_5>[C] -2<x_0>[C] == 0;
+  [nonlinear] <c7>: <soc_t_4>*<soc_t_4>+<soc_t_5>*<soc_t_5>-<soc_t_3>*<soc_t_3> <= 0;
+  [linear] <c8>: <soc_t_6>[C] -<x_7>[C] == 1;
+  [linear] <c9>: <soc_t_7>[C] -<x_7>[C] == -1;
+  [linear] <c10>: <soc_t_8>[C] -2<x_1>[C] == 0;
+  [nonlinear] <c11>: <soc_t_7>*<soc_t_7>+<soc_t_8>*<soc_t_8>-<soc_t_6>*<soc_t_6> <= 0;
+  [linear] <c12>: <soc_t_9>[C] -<x_8>[C] == 1;
+  [linear] <c13>: <soc_t_10>[C] -<x_8>[C] == -1;
+  [linear] <c14>: <soc_t_11>[C] -2<x_2>[C] == 0;
+  [nonlinear] <c15>: <soc_t_10>*<soc_t_10>+<soc_t_11>*<soc_t_11>-<soc_t_9>*<soc_t_9> <= 0;
+  [linear] <c16>: <soc_t_12>[C] -<x_9>[C] == 1;
+  [linear] <c17>: <soc_t_13>[C] -<x_9>[C] == -1;
+  [linear] <c18>: <soc_t_14>[C] -2<x_3>[C] == 0;
+  [nonlinear] <c19>: <soc_t_13>*<soc_t_13>+<soc_t_14>*<soc_t_14>-<soc_t_12>*<soc_t_12> <= 0;
+  [linear] <c20>: <soc_t_15>[C] -<x_10>[C] == 1;
+  [linear] <c21>: <soc_t_16>[C] -<x_10>[C] == -1;
+  [linear] <c22>: <soc_t_17>[C] -2<x_4>[C] == 0;
+  [nonlinear] <c23>: <soc_t_16>*<soc_t_16>+<soc_t_17>*<soc_t_17>-<soc_t_15>*<soc_t_15> <= 0;
+  [linear] <c24>: <soc_t_18>[C] -<x_11>[C] == 1;
+  [linear] <c25>: <soc_t_19>[C] -<x_11>[C] == -1;
+  [linear] <c26>: <soc_t_20>[C] -2<x_5>[C] == 0;
+  [nonlinear] <c27>: <soc_t_19>*<soc_t_19>+<soc_t_20>*<soc_t_20>-<soc_t_18>*<soc_t_18> <= 0;
+END
+----------------------------------------
+SCIP
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [continuous] <x_0_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_0_1>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_0_2>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1_1>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1_2>: obj=1, original bounds=[0,+inf]
+CONSTRAINTS
+  [nonlinear] <33_0>: <x_0_0>*<x_0_0>+<x_1_0>*<x_1_0> <= 1;
+  [nonlinear] <33_1>: <x_0_1>*<x_0_1>+<x_1_1>*<x_1_1> <= 1;
+  [nonlinear] <33_2>: <x_0_2>*<x_0_2>+<x_1_2>*<x_1_2> <= 1;
+END

@@ -279,7 +279,9 @@ class Translater:
         return np.hstack(exprs)
 
     def visit_index(self, node: index) -> Any:
-        return self.visit(node.args[0])[node.key]
+        # The normalized key turns integer indices into dimension-preserving slices.
+        _, key = node.get_data()
+        return self.visit(node.args[0])[key]
 
     def visit_Inequality(self, ineq: Inequality) -> Any:
         lo, up = ineq.args
@@ -479,14 +481,17 @@ class Translater:
 
     def visit_Sum(self, node: Sum) -> Any:
         expr = self.visit(node.args[0])
-        if _is_scalar(expr):
-            return expr
-        # axis is broken in PyScipOpt 5.5.0, so we handle it manually
-        if node.axis is None:
-            return expr.sum()
-        # TODO: use numpy.lib.array_utils.normalize_axis_index when we drop support for NumPy < 2.0
-        axis = node.axis + expr.ndim if node.axis < 0 else node.axis
-        return np.apply_along_axis(scip.quicksum, axis, expr).view(scip.MatrixExpr)
+        if _shape(expr):
+            # axis is broken in PyScipOpt 5.5.0, so we handle it manually
+            if node.axis is None:
+                expr = expr.sum()
+            else:
+                expr = np.apply_along_axis(scip.quicksum, node.axis, expr).view(
+                    scip.MatrixExpr
+                )
+        if node.keepdims and node.shape:
+            expr = np.asarray(expr).reshape(node.shape).view(scip.MatrixExpr)
+        return expr
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:

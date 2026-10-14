@@ -1,0 +1,70 @@
+CVXPY
+Maximize
+  Sum(x, None, False)
+Subject To
+ 33: Sum(PowerApprox(x, 2.0), 0, True)[0, 0:3] <= 1.0
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - x_0 - x_1 - x_2 - x_3 - x_4 - x_5
+Subject To
+ R0: x_6 + x_7 <= 1
+ R1: x_8 + x_9 <= 1
+ R2: x_10 + x_11 <= 1
+ R3: - x_6 + soc_t_3 = 1
+ R4: - x_6 + soc_x_4 = -1
+ R5: - 2 x_0 + soc_x_5 = 0
+ R6: - x_7 + soc_t_6 = 1
+ R7: - x_7 + soc_x_7 = -1
+ R8: - 2 x_1 + soc_x_8 = 0
+ R9: - x_8 + soc_t_9 = 1
+ R10: - x_8 + soc_x_10 = -1
+ R11: - 2 x_2 + soc_x_11 = 0
+ R12: - x_9 + soc_t_12 = 1
+ R13: - x_9 + soc_x_13 = -1
+ R14: - 2 x_3 + soc_x_14 = 0
+ R15: - x_10 + soc_t_15 = 1
+ R16: - x_10 + soc_x_16 = -1
+ R17: - 2 x_4 + soc_x_17 = 0
+ R18: - x_11 + soc_t_18 = 1
+ R19: - x_11 + soc_x_19 = -1
+ R20: - 2 x_5 + soc_x_20 = 0
+ qc0: [ - soc_t_3 ^2 + soc_x_4 ^2 + soc_x_5 ^2 ] <= 0
+ qc1: [ - soc_t_6 ^2 + soc_x_7 ^2 + soc_x_8 ^2 ] <= 0
+ qc2: [ - soc_t_9 ^2 + soc_x_10 ^2 + soc_x_11 ^2 ] <= 0
+ qc3: [ - soc_t_12 ^2 + soc_x_13 ^2 + soc_x_14 ^2 ] <= 0
+ qc4: [ - soc_t_15 ^2 + soc_x_16 ^2 + soc_x_17 ^2 ] <= 0
+ qc5: [ - soc_t_18 ^2 + soc_x_19 ^2 + soc_x_20 ^2 ] <= 0
+Bounds
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+ x_10 free
+ x_11 free
+ soc_x_4 free
+ soc_x_5 free
+ soc_x_7 free
+ soc_x_8 free
+ soc_x_10 free
+ soc_x_11 free
+ soc_x_13 free
+ soc_x_14 free
+ soc_x_16 free
+ soc_x_17 free
+ soc_x_19 free
+ soc_x_20 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  x[0,0] + x[0,1] + x[0,2] + x[1,0] + x[1,1] + x[1,2]
+Subject To
+ 33[0]: [ x[0,0] ^2 + x[1,0] ^2 ] <= 1
+ 33[1]: [ x[0,1] ^2 + x[1,1] ^2 ] <= 1
+ 33[2]: [ x[0,2] ^2 + x[1,2] ^2 ] <= 1
+Bounds
+End
