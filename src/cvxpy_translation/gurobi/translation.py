@@ -266,8 +266,10 @@ class Translater:
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
-        if isinstance(expr, (int, float, np.generic)):
-            return expr.item() if isinstance(expr, np.generic) else expr
+        if isinstance(expr, np.generic):
+            return expr.item()
+        if isinstance(expr, (int, float)):
+            return expr
         if isinstance(expr, (gp.MVar, np.ndarray)):
             if scalar:
                 # Extract the underlying variable - will raise an error if the shape is not scalar
