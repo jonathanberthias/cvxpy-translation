@@ -1,0 +1,40 @@
+CVXPY
+Minimize
+  Sum(x * [[1.00 3.00 5.00]
+ [2.00 4.00 6.00]], None, False)
+Subject To
+ 24: 1.0 <= Sum(x, 1, True) * [[1.00]
+ [2.00]]
+Bounds
+ 0.0 <= x
+End
+----------------------------------------
+AFTER COMPILATION
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_1>: obj=2, original bounds=[0,+inf]
+  [continuous] <x_2>: obj=3, original bounds=[0,+inf]
+  [continuous] <x_3>: obj=4, original bounds=[0,+inf]
+  [continuous] <x_4>: obj=5, original bounds=[0,+inf]
+  [continuous] <x_5>: obj=6, original bounds=[0,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] -<x_2>[C] -<x_4>[C] <= -1;
+  [linear] <c2>:  -2<x_1>[C] -2<x_3>[C] -2<x_5>[C] <= -1;
+END
+----------------------------------------
+SCIP
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0_0>: obj=1, original bounds=[0,+inf]
+  [continuous] <x_0_1>: obj=3, original bounds=[0,+inf]
+  [continuous] <x_0_2>: obj=5, original bounds=[0,+inf]
+  [continuous] <x_1_0>: obj=2, original bounds=[0,+inf]
+  [continuous] <x_1_1>: obj=4, original bounds=[0,+inf]
+  [continuous] <x_1_2>: obj=6, original bounds=[0,+inf]
+CONSTRAINTS
+  [linear] <24_0_0>: <x_0_0>[C] +<x_0_1>[C] +<x_0_2>[C] >= 1;
+  [linear] <24_1_0>:  +2<x_1_0>[C] +2<x_1_1>[C] +2<x_1_2>[C] >= 1;
+END

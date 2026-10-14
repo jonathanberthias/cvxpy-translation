@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import inspect
 from typing import Any
 
 import cvxpy as cp
 import gurobipy as gp
+import numpy as np
 import pyscipopt as scip
 import pytest
 
@@ -12,9 +15,11 @@ from cvxpy_translation.gurobi.translation import Translater as GrbTranslater
 from cvxpy_translation.scip.translation import Translater as ScipTranslater
 
 
-@pytest.fixture(params=[GrbTranslater(gp.Model()), ScipTranslater(scip.Model())])
+@pytest.fixture(params=[cp.GUROBI, cp.SCIP])
 def translater(request: pytest.FixtureRequest) -> Any:
-    return request.param
+    if request.param == cp.GUROBI:
+        return GrbTranslater(gp.Model())
+    return ScipTranslater(scip.Model())
 
 
 @pytest.mark.xfail(reason="TODO: implement all atoms")
@@ -74,3 +79,53 @@ def test_parameter_reshape(translater: Any) -> None:
     p = cp.Parameter()
     p.value = 1
     translater.visit(cp.reshape(p, (1,), order="C"))
+
+
+def test_gurobi_indexed_constant() -> None:
+    translater = GrbTranslater(gp.Model())
+    result = translater.translate_into_variable(cp.Constant([2.0, 3.0])[0])
+    assert result == 2.0
+    translater.model.update()
+    assert translater.model.NumVars == 0
+
+
+@pytest.mark.parametrize(
+    ("arg", "axis", "keepdims"),
+    [
+        pytest.param(cp.Variable(), None, True, id="scalar"),
+        pytest.param(cp.Variable(1), None, True, id="singleton-vector"),
+        pytest.param(cp.Variable((1, 1)), 0, True, id="singleton-matrix"),
+        pytest.param(cp.Variable((1, 1)), 0, False, id="drop-singleton-axis"),
+        pytest.param(
+            cp.maximum(cp.Variable((1, 1)), 0), 0, True, id="scalarized-matrix"
+        ),
+        pytest.param(cp.Variable((2, 3)), None, True, id="matrix-all"),
+        pytest.param(cp.Variable((2, 3)) + 1, 0, True, id="affine-columns"),
+        pytest.param(cp.square(cp.Variable((2, 3))), 1, True, id="quadratic-rows"),
+        pytest.param(cp.Constant(np.ones((2, 3))), 0, True, id="constant-columns"),
+        pytest.param(
+            cp.Parameter((2, 3), value=np.ones((2, 3))), 1, True, id="parameter-rows"
+        ),
+        pytest.param(
+            cp.Variable((2, 3)),
+            -1,
+            True,
+            id="negative-axis",
+            marks=pytest.mark.skipif(
+                cvxpy_translation.CVXPY_VERSION < (1, 6, 6),
+                reason="CVXPY's negative-axis support is broken before 1.6.6",
+            ),
+        ),
+    ],
+)
+def test_sum_shape(
+    translater: Any, arg: cp.Expression, axis: int | None, keepdims: bool
+) -> None:
+    expr = cp.sum(arg, axis=axis, keepdims=keepdims)
+    translated = translater.visit(expr)
+    assert getattr(translated, "shape", ()) == expr.shape
+    for axis_to_index in range(expr.ndim):
+        key = tuple(0 if i == axis_to_index else slice(None) for i in range(expr.ndim))
+        indexed = expr[key]
+        translated = translater.visit(indexed)
+        assert getattr(translated, "shape", ()) == indexed.shape

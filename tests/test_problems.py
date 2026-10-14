@@ -604,6 +604,24 @@ def sum_axis() -> Generator[cp.Problem]:
         yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=-1) >= 1])
 
 
+@group_cases("sum_keepdims")
+def sum_keepdims() -> Generator[cp.Problem]:
+    x = cp.Variable((2, 3), name="x", nonneg=True)
+    weights = np.arange(1, 7).reshape((2, 3), order="F")
+    obj = cp.sum(cp.multiply(x, weights))
+
+    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, keepdims=True)[0, 0] >= 1])
+
+    columns = cp.sum(x + 1, axis=0, keepdims=True)[0, :]
+    yield cp.Problem(cp.Minimize(obj), [columns >= 4])
+
+    rows = cp.sum(x, axis=1, keepdims=True)
+    yield cp.Problem(cp.Minimize(obj), [cp.multiply(rows, np.array([[1], [2]])) >= 1])
+
+    squares = cp.sum(cp.square(x), axis=0, keepdims=True)[0, :]
+    yield cp.Problem(cp.Maximize(cp.sum(x)), [squares <= 1])
+
+
 @group_cases("reshape")
 def reshape() -> Generator[cp.Problem]:
     x = cp.Variable(name="x")

@@ -135,7 +135,7 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
     raise NotImplementedError(msg)  # pragma: no cover
 
 
-def _to_matrix_api_object(expr: object) -> object:
+def _to_matrix_api_object(expr: object) -> Any:
     """Promote scalar arguments for Gurobi's matrix manipulation functions."""
     if isinstance(expr, (gp.Var, gp.LinExpr)):
         return gp.MLinExpr.zeros(()) + expr
@@ -266,6 +266,10 @@ class Translater:
         expr = self.visit(node)
         if isinstance(expr, gp.Var):
             return expr
+        if isinstance(expr, np.generic):
+            return expr.item()
+        if isinstance(expr, (int, float)):
+            return expr
         if isinstance(expr, (gp.MVar, np.ndarray)):
             if scalar:
                 # Extract the underlying variable - will raise an error if the shape is not scalar
@@ -392,7 +396,9 @@ class Translater:
         return self._stack(node, gp.hstack)
 
     def visit_index(self, node: index) -> Any:
-        return self.visit(node.args[0])[node.key]
+        # The normalized key turns integer indices into dimension-preserving slices.
+        _, key = node.get_data()
+        return self.visit(node.args[0])[key]
 
     def visit_Inequality(self, ineq: Inequality) -> Any:
         lo, up = ineq.args
@@ -581,9 +587,16 @@ class Translater:
 
     def visit_Sum(self, node: Sum) -> Any:
         expr = self.visit(node.args[0])
-        if _is_scalar(expr):
-            return expr
-        return expr.sum(axis=node.axis)
+        if _shape(expr):
+            expr = expr.sum(axis=node.axis)
+        if node.keepdims and node.shape:
+            # Matrix expressions have no reshape method, but support new axes.
+            expr = _to_matrix_api_object(expr)
+            if node.axis is None or not _shape(expr):
+                return expr[(None,) * len(node.shape)]
+            axis = node.axis % node.args[0].ndim
+            return expr[(slice(None),) * axis + (None,)]
+        return expr
 
     def visit_Variable(self, var: cp.Variable) -> AnyVar:
         if var.id not in self.vars:
