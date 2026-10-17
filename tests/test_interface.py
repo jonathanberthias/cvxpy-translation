@@ -21,6 +21,9 @@ if TYPE_CHECKING:
     from cvxpy_translation.interface import ParamDict
 
 
+gurobi_only = pytest.mark.parametrize("solver", [cp.GUROBI])
+
+
 @pytest.fixture
 def problem() -> cp.Problem:
     x = cp.Variable(name="x", pos=True)
@@ -96,11 +99,10 @@ def test_registered_solver(
     validate(problem)
 
 
+@gurobi_only
 def test_registered_solver_with_env(
     problem: cp.Problem, solver: str, validate: Validator, params: ParamDict
 ) -> None:
-    if solver != cp.GUROBI:
-        pytest.skip("Only GUROBI supports env parameter")
     env = gp.Env(params=params)
     with register_solver(solver) as method:
         problem.solve(method=method, env=env)
@@ -114,11 +116,10 @@ def test_direct_solve(
     validate(problem)
 
 
+@gurobi_only
 def test_direct_solve_with_env(
-    problem: cp.Problem, solver: str, validate: Validator, params: ParamDict
+    problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    if solver != cp.GUROBI:
-        pytest.skip("Only GUROBI supports env parameter")
     env = gp.Env(params=params)
     cvxpy_translation.gurobi.solve(problem, env=env)
     validate(problem)
@@ -135,11 +136,10 @@ def test_manual(
     validate(problem)
 
 
+@gurobi_only
 def test_manual_with_env(
-    problem: cp.Problem, solver: str, validate: Validator, params: ParamDict
+    problem: cp.Problem, validate: Validator, params: ParamDict
 ) -> None:
-    if solver != cp.GUROBI:
-        pytest.skip("Only GUROBI supports env parameter")
     env = gp.Env(params=params)
     model = cvxpy_translation.gurobi.build_model(problem, env=env)
     model.optimize()
