@@ -48,7 +48,8 @@ def solve(problem: cp.Problem, **params: Param) -> float:
         problem, model, compilation_time=compilation.time, solve_time=solve.time
     )
 
-    return float(problem.value)  # pyright: ignore[reportArgumentType]
+    assert problem.value is not None
+    return float(problem.value)
 
 
 def register_solver(name: str = SCIP_TRANSLATION) -> str:

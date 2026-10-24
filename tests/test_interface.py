@@ -31,12 +31,12 @@ def problem() -> cp.Problem:
 
 @pytest.fixture(params=[cp.GUROBI, cp.SCIP])
 def solver(request: pytest.FixtureRequest) -> str:
-    return request.param  # type: ignore[no-any-return]
+    return request.param
 
 
 @pytest.fixture(params=[False, True])
 def dual(request: pytest.FixtureRequest) -> bool:
-    return request.param  # type: ignore[no-any-return]
+    return request.param
 
 
 @pytest.fixture

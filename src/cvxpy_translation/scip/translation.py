@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.sum import Sum
     from cvxpy.atoms.affine.unary_operators import NegExpression
     from cvxpy.atoms.affine.vstack import Vstack
-    from cvxpy.atoms.elementwise.power import power
+    from cvxpy.atoms.elementwise.power import Power
     from cvxpy.atoms.quad_over_lin import quad_over_lin
     from cvxpy.constraints.nonpos import Inequality
     from cvxpy.constraints.zero import Equality
@@ -46,6 +46,7 @@ if TYPE_CHECKING:
 
 
 AnyVar: TypeAlias = Union[scip.Variable, scip.MatrixVariable]
+Bound: TypeAlias = Union[float, npt.NDArray[np.float64], None]
 Param: TypeAlias = Union[str, float]
 ParamDict: TypeAlias = dict[str, Param]
 
@@ -122,8 +123,8 @@ def add_variable(
     *,
     name: str,
     vtype: str = "CONTINUOUS",
-    lb: float | None = None,
-    ub: float | None = None,
+    lb: Bound = None,
+    ub: Bound = None,
 ) -> scip.Variable: ...
 @overload
 def add_variable(
@@ -132,29 +133,31 @@ def add_variable(
     *,
     name: str,
     vtype: str = "CONTINUOUS",
-    lb: float | None = None,
-    ub: float | None = None,
-) -> scip.MatrixVariable: ...
+    lb: Bound = None,
+    ub: Bound = None,
+) -> AnyVar: ...
 def add_variable(
     model: scip.Model,
     shape: tuple[int, ...],
     *,
     name: str,
     vtype: str = "CONTINUOUS",
-    lb: float | None = None,
-    ub: float | None = None,
+    lb: Bound = None,
+    ub: Bound = None,
 ) -> scip.Variable | scip.MatrixVariable:
     if shape == ():
+        lb = float(lb) if isinstance(lb, np.ndarray) else lb
+        ub = float(ub) if isinstance(ub, np.ndarray) else ub
         return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
     return model.addMatrixVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
 
 
 def add_constraint(
-    cons: scip.scip.ExprCons | scip.scip.MatrixExprCons, model: scip.Model, *, name: str
+    cons: scip.ExprCons | scip.MatrixExprCons, model: scip.Model, *, name: str
 ) -> None:
-    if isinstance(cons, scip.scip.ExprCons):
+    if isinstance(cons, scip.ExprCons):
         model.addCons(cons, name=name)
-    elif isinstance(cons, scip.scip.MatrixExprCons):
+    elif isinstance(cons, scip.MatrixExprCons):
         model.addMatrixCons(cons, name=name)
     else:  # pragma: no cover
         msg = f"Unexpected constraint type: {type(cons)}"
@@ -248,8 +251,11 @@ class Translater:
 
     def visit_Constant(self, const: cp.Constant) -> Any:
         val = const.value
+        assert val is not None
         if sp.issparse(val):
-            return val.toarray()
+            # CVXPY normalizes sparse constants to CSC (or COO for ND arrays).
+            # Those concrete types provide toarray; issparse's ABC does not.
+            return val.toarray()  # pyrefly: ignore[missing-attribute]
         return val
 
     def visit_Parameter(self, param: cp.Parameter) -> Any:
@@ -410,7 +416,7 @@ class Translater:
         add_constraint(z >= abs(expr), self.model, name=f"norminf_{self._aux_id}")
         return z
 
-    def visit_power(self, node: power) -> Any:
+    def visit_power(self, node: Power) -> Any:
         power = self.visit(node.p)
         if power != 2:
             raise InvalidPowerError(node.p)
@@ -423,9 +429,9 @@ class Translater:
         self.visit(problem.objective)
         for constraint in problem.constraints:
             cons = self.visit(constraint)
-            if isinstance(cons, scip.scip.ExprCons):
+            if isinstance(cons, scip.ExprCons):
                 self.model.addCons(cons, name=str(constraint.constr_id))
-            elif isinstance(cons, scip.scip.MatrixExprCons):
+            elif isinstance(cons, scip.MatrixExprCons):
                 self.model.addMatrixCons(cons, name=str(constraint.constr_id))
             else:  # pragma: no cover
                 msg = f"Unexpected constraint type: {type(cons)}"
@@ -454,7 +460,7 @@ class Translater:
 
     def visit_reshape(
         self, node: cp.reshape
-    ) -> scip.MatrixVariable | npt.NDArray[np.float64]:
+    ) -> scip.Expr | scip.MatrixExpr | npt.NDArray[np.float64]:
         """Reshape a variable or expression.
 
         Only MVars have a reshape method, so anything else will be proxied by an MVar.
@@ -486,6 +492,7 @@ class Translater:
             if node.axis is None:
                 expr = expr.sum()
             else:
+                assert isinstance(node.axis, (int, np.integer))
                 expr = np.apply_along_axis(scip.quicksum, node.axis, expr).view(
                     scip.MatrixExpr
                 )

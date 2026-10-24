@@ -49,7 +49,8 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
         problem, model, compilation_time=compilation.time, solve_time=solve.time
     )
 
-    return float(problem.value)  # pyright: ignore[reportArgumentType]
+    assert problem.value is not None
+    return float(problem.value)
 
 
 def register_solver(name: str = GUROBI_TRANSLATION) -> str:

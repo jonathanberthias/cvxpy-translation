@@ -133,7 +133,8 @@ def test_backfill(case: ProblemTestCase) -> None:
 def check_backfill_gurobi(case: ProblemTestCase) -> None:
     problem = case.problem
     params = PARAMS[case.context.solver]
-    cvxpy_translation.gurobi.solve(problem, **params)
+    cvxpy_translation.gurobi.solve(problem, env=None, **params)
+    assert problem.solution is not None
     our_sol: Solution = problem.solution
     our_model: gp.Model = our_sol.attr[s.EXTRA_STATS]
     assert our_model.Status == gp.GRB.Status.OPTIMAL
@@ -145,6 +146,7 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     except cp.SolverError:
         pytest.skip(f"Problem can't be solved through CVXPY with {case.context.solver}")
 
+    assert problem.solution is not None
     cp_sol: Solution = problem.solution
     if not case.invalid_reason and cp_sol.status not in s.SOLUTION_PRESENT:
         pytest.skip(f"CVXPY's solution status is unexpected: {cp_sol.status}")
@@ -185,6 +187,7 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     our_model.setParams(params)
     our_model.optimize()
     cvxpy_translation.scip.backfill_problem(problem, our_model)
+    assert problem.solution is not None
     our_sol: Solution = problem.solution
     assert our_model.getStatus() == "optimal"
     assert our_sol.opt_val is not None
@@ -195,6 +198,7 @@ def check_backfill_scip(case: ProblemTestCase) -> None:
     except Exception:  # ruff: ignore[blind-except]
         pytest.skip(f"Problem can't be solved through CVXPY with {case.context.solver}")
 
+    assert problem.solution is not None
     cp_sol: Solution = problem.solution
 
     assert our_sol.status == cp_sol.status
@@ -278,6 +282,7 @@ def quiet_solve(
         if solver == cp.GUROBI:
             # Gurobi's solve method returns a Model object
             problem.solve(solver=cp.GUROBI, **params)
+            assert problem.solution is not None
             generated_model = problem.solution.attr[s.EXTRA_STATS]
 
         elif solver == cp.SCIP:
