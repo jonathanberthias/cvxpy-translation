@@ -145,9 +145,10 @@ hatch run latest:tests
 This will test the latest version of dependencies. You can also run
 `hatch run oldest:tests` to test the minimum required dependency versions.
 
-Run `hatch run types:check` to check annotations with Pyrefly. The typing
-environment includes the latest CVXPY and solver dependencies and checks both
-`src/` and `tests/`, targeting Python 3.9.
+Run `hatch run types:check` to check annotations with Pyrefly in strict mode.
+The typing environment includes the latest CVXPY and solver dependencies and
+checks both `src/` and `tests/`, targeting Python 3.9. Unused Pyrefly and
+`type: ignore` comments are errors.
 
 Make sure any change is tested through a snapshot test. To add a new test case,
 build a simple CVXPY problem in `tests/test_problems.py` in the appropriate

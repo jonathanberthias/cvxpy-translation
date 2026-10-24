@@ -128,9 +128,13 @@ dependency-groups = ["latest", "types"]
 check = "pyrefly check {args}"
 
 [tool.pyrefly]
+preset = "strict"
 project-includes = ["src", "tests"]
 search-path = ["src", "tests"]
 python-version = "3.9"
+
+[tool.pyrefly.errors]
+unused-type-ignore = "error"
 
 [tool.hatch.envs.hatch-static-analysis]
 # https://hatch.pypa.io/latest/config/static-analysis/

@@ -111,7 +111,9 @@ def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
         yield exprs[0]
 
 
-def to_subexpressions_array(expr: Any, shape: tuple[int, ...]) -> npt.NDArray:
+def to_subexpressions_array(
+    expr: Any, shape: tuple[int, ...]
+) -> npt.NDArray[np.object_]:
     return np.fromiter(
         iter_subexpressions(expr, shape=shape), dtype=np.object_
     ).reshape(shape)
@@ -386,7 +388,7 @@ class Translater:
             nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
         )
 
-    def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
+    def _stack(self, node: Hstack | Vstack, gp_fn: Callable[[list[Any]], Any]) -> Any:
         exprs = [_to_matrix_api_object(self.visit(arg)) for arg in node.args]
         return gp_fn(exprs)
 

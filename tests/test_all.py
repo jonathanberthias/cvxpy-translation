@@ -273,7 +273,7 @@ def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:
 
 
 def quiet_solve(
-    problem: cp.Problem, solver: str, params: dict
+    problem: cp.Problem, solver: str, params: dict[str, Any]
 ) -> gp.Model | scip.Model:
     with warnings.catch_warnings():
         # Some problems are unbounded
