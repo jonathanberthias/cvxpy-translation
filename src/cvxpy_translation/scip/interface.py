@@ -37,6 +37,10 @@ def solve(problem: cp.Problem, **params: Param) -> float:
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_translation.scip.solve(problem)
+
+    Raises:
+        SolverError: If no objective value is available after optimization.
+
     """
     with Timer() as compilation:
         model = build_model(problem, params=params)
@@ -48,7 +52,11 @@ def solve(problem: cp.Problem, **params: Param) -> float:
         problem, model, compilation_time=compilation.time, solve_time=solve.time
     )
 
-    return float(problem.value)  # pyright: ignore[reportArgumentType]
+    value = problem.value
+    if value is None:
+        msg = f"SCIP returned no objective value (status: {problem.status})."
+        raise cp.SolverError(msg)
+    return float(value)
 
 
 def register_solver(name: str = SCIP_TRANSLATION) -> str:

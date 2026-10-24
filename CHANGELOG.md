@@ -9,6 +9,10 @@
 - Require gurobipy 10.0.0 or newer, matching the matrix API used by the
   translator.
 
+### Bug fixes
+
+- Raise `cvxpy.SolverError` when optimization stops without an objective value.
+
 ## [2.0.3] - 2026-10-13
 
 ### Bug fixes
