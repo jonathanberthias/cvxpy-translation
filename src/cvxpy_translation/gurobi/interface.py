@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Union
 
@@ -17,7 +16,6 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
-from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.gurobi.translation import Translater
 from cvxpy_translation.utils import Timer
 
@@ -101,17 +99,12 @@ def backfill_problem(
     solution = extract_solution_from_model(model, problem)
     problem.unpack(solution)
 
-    if CVXPY_VERSION >= (1, 4):
-        # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
-        solver_stats = SolverStats.from_dict(solution.attr, GUROBI_TRANSLATION)
-    else:
-        solver_stats = SolverStats(solution.attr, GUROBI_TRANSLATION)  # type: ignore[arg-type]
+    solver_stats = SolverStats.from_dict(solution.attr, GUROBI_TRANSLATION)
     problem._solver_stats = solver_stats  # ruff: ignore[private-member-access]
 
     if solve_time is not None:
         problem._solve_time = solve_time  # ruff: ignore[private-member-access]
-    if CVXPY_VERSION >= (1, 4) and compilation_time is not None:
-        # added in https://github.com/cvxpy/cvxpy/pull/2046
+    if compilation_time is not None:
         problem._compilation_time = compilation_time  # ruff: ignore[private-member-access]
 
 
@@ -123,10 +116,7 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
     }
     status = gurobi_conif.GUROBI.STATUS_MAP[model.Status]
     if status not in SOLUTION_PRESENT:
-        if CVXPY_VERSION >= (1, 2, 0):
-            # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
-            return failure_solution(status, attr)
-        return failure_solution(status)
+        return failure_solution(status, attr)
 
     primal_vars = {}
     dual_vars = {}
@@ -170,7 +160,7 @@ def extract_variable_value(
     return value
 
 
-def get_constraint_dual(  # ruff: ignore[too-many-return-statements]
+def get_constraint_dual(
     model: gp.Model, constraint: Constraint
 ) -> npt.NDArray[np.float64] | None:
     constraint_name = str(constraint.constr_id)
@@ -190,18 +180,6 @@ def get_constraint_dual(  # ruff: ignore[too-many-return-statements]
             return np.array([constr.QCPi])
         return None
 
-    if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
-        # In older versions of CVXPY, the shape of a scalar quad form is (1, 1)
-        _, constr_name = next(_matrix_to_gurobi_names(constraint_name, ()))
-        with suppress(LookupError):
-            constr = get_constraint_by_name(model, constr_name)
-            if isinstance(constr, gp.Constr):
-                return np.array(constr.Pi)
-            assert isinstance(constr, gp.QConstr)
-            if has_qcp_duals:
-                return np.array([constr.QCPi])
-            return None
-
     dual = np.zeros(shape)
     for idx, subconstr_name in _matrix_to_gurobi_names(constraint_name, shape):
         subconstr = get_constraint_by_name(model, subconstr_name)
@@ -213,10 +191,6 @@ def get_constraint_dual(  # ruff: ignore[too-many-return-statements]
         else:
             dual[idx] = subconstr.Pi
     return dual
-
-
-def _contains_quad_form(constraint: Constraint) -> bool:
-    return any(cp.QuadForm in arg.atoms() for arg in constraint.args)
 
 
 def get_constraint_by_name(model: gp.Model, name: str) -> gp.Constr | gp.QConstr:

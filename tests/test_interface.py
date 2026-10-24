@@ -12,7 +12,6 @@ import pytest
 
 import cvxpy_translation.gurobi
 import cvxpy_translation.scip
-from cvxpy_translation import CVXPY_VERSION
 
 if TYPE_CHECKING:
     from typing_extensions import Generator
@@ -67,8 +66,7 @@ def validate(problem: cp.Problem, solver: str, *, dual: bool) -> None:
         problem.solver_stats.extra_stats,
         gp.Model if solver == cp.GUROBI else scip.Model,
     )
-    if CVXPY_VERSION >= (1, 4):  # didn't exist before
-        assert problem.compilation_time is not None
+    assert problem.compilation_time is not None
     dual_value = problem.constraints[0].dual_value
     if dual and solver == cp.GUROBI:
         assert dual_value is not None

@@ -43,9 +43,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-cvxpy = ["cvxpy>=1.1.16"]
-cvxpy-base = ["cvxpy-base>=1.1.16"]
-gurobi = ["gurobipy>=9"]
+cvxpy = ["cvxpy>=1.4.0"]
+cvxpy-base = ["cvxpy-base>=1.4.0"]
+gurobi = ["gurobipy>=10.0.0"]
 scip = ["pyscipopt>=5.4.1"]
 
 [dependency-groups]
@@ -65,7 +65,7 @@ latest = [
 ]
 oldest = [
   { "include-group" = "test" },
-  "cvxpy-base>=1.1.24",
+  "cvxpy-base>=1.4.0",
   "gurobipy>=12.0.0",
   "pyscipopt>=5.4.1",
   "numpy>=1.23.0",

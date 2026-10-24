@@ -121,14 +121,15 @@ have to rewrite the problem when switching solvers.
 
 # Supported versions
 
-All supported versions of Python and CVXPY should work.
+Python 3.9 or newer and CVXPY 1.4.0 or newer are required. Either `cvxpy` or
+`cvxpy-base` must be installed.
 
-The same goes for `gurobipy`. However, due to licensing restrictions, old
-versions of `gurobipy` cannot be tested in CI. If you run into a bug, please
-open an issue in this repo specifying the versions used.
+Gurobi requires `gurobipy` 10.0.0 or newer for the matrix API used by the
+translator. Due to licensing restrictions, CI tests Gurobi 12.0.0 and newer. If
+you run into a bug with an older supported version, please open an issue in this
+repo specifying the versions used.
 
-Only versions of `pyscipopt` after 5.5.0 are supported as that is when the
-matrix API was introduced.
+SCIP requires `pyscipopt` 5.4.1 or newer; version 5.5.0 or newer is recommended.
 
 # Contributing
 
