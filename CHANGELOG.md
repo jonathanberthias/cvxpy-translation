@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- Require CVXPY or cvxpy-base 1.4.0 or newer and remove compatibility code for
+  earlier versions.
+- Require gurobipy 10.0.0 or newer, matching the matrix API used by the
+  translator.
+
 ## [2.0.3] - 2026-10-13
 
 ### Bug fixes

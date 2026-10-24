@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Union
 
@@ -16,7 +15,6 @@ from cvxpy.reductions.solution import Solution
 from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import scip_conif
 
-from cvxpy_translation import CVXPY_VERSION
 from cvxpy_translation.scip.translation import Translater
 from cvxpy_translation.utils import Timer
 
@@ -108,17 +106,12 @@ def backfill_problem(
     # overwrite the status
     problem._status = original_status  # ruff: ignore[private-member-access]
 
-    if CVXPY_VERSION >= (1, 4):
-        # class construction changed in https://github.com/cvxpy/cvxpy/pull/2141
-        solver_stats = SolverStats.from_dict(solution.attr, SCIP_TRANSLATION)
-    else:
-        solver_stats = SolverStats(solution.attr, SCIP_TRANSLATION)  # type: ignore[arg-type]
+    solver_stats = SolverStats.from_dict(solution.attr, SCIP_TRANSLATION)
     problem._solver_stats = solver_stats  # ruff: ignore[private-member-access]
 
     if solve_time is not None:
         problem._solve_time = solve_time  # ruff: ignore[private-member-access]
-    if CVXPY_VERSION >= (1, 4) and compilation_time is not None:
-        # added in https://github.com/cvxpy/cvxpy/pull/2046
+    if compilation_time is not None:
         problem._compilation_time = compilation_time  # ruff: ignore[private-member-access]
 
 
@@ -141,10 +134,7 @@ def extract_solution_from_model(model: scip.Model, problem: cp.Problem) -> Solut
             if model.getStatus().endswith("limit")
             else cp_settings.SOLVER_ERROR
         )
-        if CVXPY_VERSION >= (1, 2, 0):
-            # attr was added in https://github.com/cvxpy/cvxpy/pull/1270
-            return failure_solution(status, attr)
-        return failure_solution(status)
+        return failure_solution(status, attr)
 
     primal_vars = {}
     dual_vars = {}
@@ -191,20 +181,10 @@ def get_constraint_dual(
     if shape == ():
         return np.array(_get_scalar_constraint_dual(model, constraint_name))
 
-    if CVXPY_VERSION < (1, 4) and shape == (1, 1) and _contains_quad_form(constraint):
-        # In older versions of CVXPY, the shape of a scalar quad form is (1, 1)
-        _, constr_name = next(_matrix_to_scip_names(constraint_name, ()))
-        with suppress(LookupError):
-            return np.array(_get_scalar_constraint_dual(model, constr_name))
-
     dual = np.zeros(shape)
     for idx, subconstr_name in _matrix_to_scip_names(constraint_name, shape):
         dual[idx] = _get_scalar_constraint_dual(model, subconstr_name)
     return dual
-
-
-def _contains_quad_form(constraint: Constraint) -> bool:
-    return any(cp.QuadForm in arg.atoms() for arg in constraint.args)
 
 
 def _get_scalar_constraint_dual(model: scip.Model, constraint_name: str) -> float:

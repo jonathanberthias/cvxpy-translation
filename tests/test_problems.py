@@ -631,13 +631,10 @@ def reshape() -> Generator[cp.Problem]:
     yield cp.Problem(
         cp.Maximize(x), [cp.reshape(x, (1, 1), order="F") <= np.ones((1, 1))]
     )
-    if CVXPY_VERSION >= (1, 4, 0):
-        # -1 support added in https://github.com/cvxpy/cvxpy/pull/2061
-        yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1, order="F") <= np.ones(1)])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(x, -1, order="F") <= np.ones(1)])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (), order="F") <= 1])
     yield cp.Problem(cp.Maximize(x), [cp.reshape(a, (1,), order="F") <= np.ones(1)])
-    if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1, order="F") <= np.ones(1)])
+    yield cp.Problem(cp.Maximize(x), [cp.reshape(a, -1, order="F") <= np.ones(1)])
 
     yield cp.Problem(cp.Maximize(x), [cp.vec(x) <= np.ones(1)])
 
@@ -654,10 +651,9 @@ def reshape() -> Generator[cp.Problem]:
     yield cp.Problem(
         cp.Maximize(cp.sum(x)), [cp.reshape(x, (2,), order="F") <= np.ones(2)]
     )
-    if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(
-            cp.Maximize(cp.sum(x)), [cp.reshape(x, -1, order="F") <= np.ones(2)]
-        )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(x, -1, order="F") <= np.ones(2)]
+    )
     yield cp.Problem(
         cp.Maximize(cp.sum(x)), [cp.reshape(x, (2, 1), order="F") <= np.ones((2, 1))]
     )
@@ -667,10 +663,9 @@ def reshape() -> Generator[cp.Problem]:
     yield cp.Problem(
         cp.Maximize(cp.sum(x)), [cp.reshape(a, (2,), order="F") <= np.ones(2)]
     )
-    if CVXPY_VERSION >= (1, 4, 0):
-        yield cp.Problem(
-            cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,), order="F") <= np.ones(2)]
-        )
+    yield cp.Problem(
+        cp.Maximize(cp.sum(x)), [cp.reshape(a, (-1,), order="F") <= np.ones(2)]
+    )
     yield cp.Problem(
         cp.Maximize(cp.sum(x)), [cp.reshape(a, (2, 1), order="F") <= np.ones((2, 1))]
     )
