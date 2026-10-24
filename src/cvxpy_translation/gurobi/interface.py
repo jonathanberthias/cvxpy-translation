@@ -38,6 +38,10 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
 
     This function can be used to solve CVXPY problems without registering the solver:
         cvxpy_translation.gurobi.solve(problem)
+
+    Raises:
+        SolverError: If no objective value is available after optimization.
+
     """
     with Timer() as compilation:
         model = build_model(problem, params=params, env=env)
@@ -49,8 +53,11 @@ def solve(problem: cp.Problem, *, env: gp.Env | None = None, **params: Param) ->
         problem, model, compilation_time=compilation.time, solve_time=solve.time
     )
 
-    assert problem.value is not None
-    return float(problem.value)
+    value = problem.value
+    if value is None:
+        msg = f"Gurobi returned no objective value (status: {problem.status})."
+        raise cp.SolverError(msg)
+    return float(value)
 
 
 def register_solver(name: str = GUROBI_TRANSLATION) -> str:
@@ -118,6 +125,9 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
     status = gurobi_conif.GUROBI.STATUS_MAP[model.Status]
     if status not in SOLUTION_PRESENT:
         return failure_solution(status, attr)
+    if model.SolCount == 0:
+        msg = f"Gurobi returned no objective value (status: {status})."
+        raise cp.SolverError(msg)
 
     primal_vars = {}
     dual_vars = {}
