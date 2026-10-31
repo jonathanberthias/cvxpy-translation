@@ -8,6 +8,7 @@ from functools import wraps
 from typing import TYPE_CHECKING
 from typing import Callable
 from typing import Literal
+from typing import cast
 
 import cvxpy as cp
 import numpy as np
@@ -192,7 +193,7 @@ def matrix_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y == 1, y == 0])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y + 1 == 0, y == 0])
 
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cast("cp.Expression", S @ x) == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y == 1, y == 0])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0, y == 0])
 
@@ -596,12 +597,17 @@ def sum_axis() -> Generator[cp.Problem]:
     x = cp.Variable((2, 2), name="x", nonneg=True)
     obj = cp.sum(cp.multiply(x, np.arange(1, 5).reshape((2, 2), order="F")))
 
-    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=None) >= 1])
-    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=0) >= 1])
-    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=1) >= 1])
+    # CVXPY's sum wrapper also accepts iterables and infers a possible int result.
+    yield cp.Problem(
+        cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=None)) >= 1]
+    )
+    yield cp.Problem(cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=0)) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=1)) >= 1])
     if CVXPY_VERSION >= (1, 6, 6):
         # axis=-1 support added in 1.6.0, but it's broken until 1.6.6
-        yield cp.Problem(cp.Minimize(obj), [cp.sum(x, axis=-1) >= 1])
+        yield cp.Problem(
+            cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=-1)) >= 1]
+        )
 
 
 @group_cases("sum_keepdims")
@@ -610,15 +616,17 @@ def sum_keepdims() -> Generator[cp.Problem]:
     weights = np.arange(1, 7).reshape((2, 3), order="F")
     obj = cp.sum(cp.multiply(x, weights))
 
-    yield cp.Problem(cp.Minimize(obj), [cp.sum(x, keepdims=True)[0, 0] >= 1])
+    yield cp.Problem(
+        cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, keepdims=True))[0, 0] >= 1]
+    )
 
-    columns = cp.sum(x + 1, axis=0, keepdims=True)[0, :]
+    columns = cast("cp.Expression", cp.sum(x + 1, axis=0, keepdims=True))[0, :]
     yield cp.Problem(cp.Minimize(obj), [columns >= 4])
 
     rows = cp.sum(x, axis=1, keepdims=True)
     yield cp.Problem(cp.Minimize(obj), [cp.multiply(rows, np.array([[1], [2]])) >= 1])
 
-    squares = cp.sum(cp.square(x), axis=0, keepdims=True)[0, :]
+    squares = cast("cp.Expression", cp.sum(cp.square(x), axis=0, keepdims=True))[0, :]
     yield cp.Problem(cp.Maximize(cp.sum(x)), [squares <= 1])
 
 
@@ -888,7 +896,8 @@ def invalid_expressions() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(x**4))
     yield cp.Problem(cp.Maximize(cp.sqrt(x)))
     yield cp.Problem(cp.Minimize(cp.norm(v, 4)))
-    yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))
+    # CVXPY accepts fractional p values, but its annotation only lists int | str.
+    yield cp.Problem(cp.Minimize(cp.norm(v, 0.5)))  # pyrefly: ignore[bad-argument-type]
 
 
 @group_cases("unsupported_attributes", invalid_reason="unsupported attributes")
@@ -914,7 +923,7 @@ def unsupported_attributes() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(diag)))
 
     hermitian = cp.Variable((2, 2), hermitian=True)
-    yield cp.Problem(cp.Minimize(x), [cp.sum(hermitian) == 1])
+    yield cp.Problem(cp.Minimize(x), [cast("cp.Expression", cp.sum(hermitian)) == 1])
 
     sparsity = cp.Variable(4, sparsity=[[0]])
     yield cp.Problem(cp.Minimize(cp.sum(sparsity)))

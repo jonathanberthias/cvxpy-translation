@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import inspect
 from typing import Any
+from typing import cast
 
 import cvxpy as cp
 import gurobipy as gp
 import numpy as np
 import pyscipopt as scip
 import pytest
+import scipy.sparse as sp
 
 import cvxpy_translation
 import test_problems
@@ -28,7 +30,7 @@ def test_no_missing_atoms(translater: Any) -> None:
         atom
         for atom in cp.EXP_ATOMS + cp.PSD_ATOMS + cp.SOC_ATOMS + cp.NONPOS_ATOMS
         if inspect.isclass(atom)
-        and getattr(translater, f"visit_{atom.__name__}", None) is None  # type: ignore[attr-defined]
+        and getattr(translater, f"visit_{atom.__name__}", None) is None
     }
     assert missing == set()
 
@@ -81,6 +83,31 @@ def test_parameter_reshape(translater: Any) -> None:
     translater.visit(cp.reshape(p, (1,), order="C"))
 
 
+@pytest.mark.parametrize(
+    "sparse_format", ["bsr", "coo", "csc", "csr", "dia", "dok", "lil"]
+)
+@pytest.mark.parametrize("kind", ["matrix", "array"])
+def test_sparse_constant(translater: Any, sparse_format: str, kind: str) -> None:
+    constructor = getattr(sp, f"{sparse_format}_{kind}", None)
+    if constructor is None:
+        pytest.skip("Sparse arrays are unavailable in older SciPy versions")
+    dense = np.array([[0.0, 1.0, 2.0], [3.0, 0.0, 4.0]])
+    const = cp.Constant(constructor(dense))
+
+    translated = translater.visit(const)
+    if isinstance(translater, ScipTranslater):
+        assert isinstance(translated, np.ndarray)
+    else:
+        assert sp.issparse(translated)
+    np.testing.assert_array_equal(sp.csr_matrix(translated).toarray(), dense)
+
+    reshaped = translater.visit(cp.reshape(const, (3, 2), order="C"))
+    assert reshaped.shape == (3, 2)
+    np.testing.assert_array_equal(
+        sp.csr_matrix(reshaped).toarray(), dense.reshape(3, 2)
+    )
+
+
 def test_gurobi_indexed_constant() -> None:
     translater = GrbTranslater(gp.Model())
     result = translater.translate_into_variable(cp.Constant([2.0, 3.0])[0])
@@ -100,6 +127,7 @@ def test_gurobi_indexed_constant() -> None:
             cp.maximum(cp.Variable((1, 1)), 0), 0, True, id="scalarized-matrix"
         ),
         pytest.param(cp.Variable((2, 3)), None, True, id="matrix-all"),
+        pytest.param(cp.Variable((2, 3)), np.int64(0), True, id="numpy-integer-axis"),
         pytest.param(cp.Variable((2, 3)) + 1, 0, True, id="affine-columns"),
         pytest.param(cp.square(cp.Variable((2, 3))), 1, True, id="quadratic-rows"),
         pytest.param(cp.Constant(np.ones((2, 3))), 0, True, id="constant-columns"),
@@ -121,7 +149,8 @@ def test_gurobi_indexed_constant() -> None:
 def test_sum_shape(
     translater: Any, arg: cp.Expression, axis: int | None, keepdims: bool
 ) -> None:
-    expr = cp.sum(arg, axis=axis, keepdims=keepdims)
+    # CVXPY's sum wrapper also accepts iterables and infers a possible int result.
+    expr = cast("cp.Expression", cp.sum(arg, axis=axis, keepdims=keepdims))
     translated = translater.visit(expr)
     assert getattr(translated, "shape", ()) == expr.shape
     for axis_to_index in range(expr.ndim):
