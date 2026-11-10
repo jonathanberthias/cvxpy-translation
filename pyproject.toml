@@ -58,7 +58,7 @@ test = [
 latest = [
   { "include-group" = "test" },
   "cvxpy-base==1.9.3",
-  "gurobipy==13.0.3",
+  "gurobipy==14.0.0",
   "pyscipopt==6.3.0",
   "numpy==2.5.4",
   "scipy==1.18.1",
