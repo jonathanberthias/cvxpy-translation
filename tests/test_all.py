@@ -32,7 +32,11 @@ if TYPE_CHECKING:
 
 
 PARAMS: Final = {
-    cp.GUROBI: {gp.GRB.Param.QCPDual: 1},
+    cp.GUROBI: {
+        gp.GRB.Param.QCPDual: 1,
+        # Resolve nearly flat norm objectives accurately enough to compare primals.
+        gp.GRB.Param.BarQCPConvTol: 1e-8,
+    },
     cp.SCIP: {
         "numerics/feastol": 1e-10,
         "numerics/dualfeastol": 1e-10,
