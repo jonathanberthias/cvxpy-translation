@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from cvxpy.atoms.affine.sum import Sum
     from cvxpy.atoms.affine.unary_operators import NegExpression
     from cvxpy.atoms.affine.vstack import Vstack
-    from cvxpy.atoms.elementwise.power import power
+    from cvxpy.atoms.elementwise.power import Power
     from cvxpy.atoms.quad_over_lin import quad_over_lin
     from cvxpy.constraints.nonpos import Inequality
     from cvxpy.constraints.zero import Equality
@@ -111,7 +111,9 @@ def iter_subexpressions(expr: Any, shape: tuple[int, ...]) -> Iterator[Any]:
         yield exprs[0]
 
 
-def to_subexpressions_array(expr: Any, shape: tuple[int, ...]) -> npt.NDArray:
+def to_subexpressions_array(
+    expr: Any, shape: tuple[int, ...]
+) -> npt.NDArray[np.object_]:
     return np.fromiter(
         iter_subexpressions(expr, shape=shape), dtype=np.object_
     ).reshape(shape)
@@ -129,7 +131,7 @@ def promote_array_to_gurobi_matrixapi(array: npt.NDArray[np.object_]) -> Any:
     """Promote an array of Gurobi objects to the equivalent Gurobi matrixapi object."""
     kind = type(array.flat[0])
     if issubclass(kind, gp.Var):
-        return gp.MVar.fromlist(array)
+        return gp.MVar.fromlist(array.tolist())
     # TODO: support other types
     msg = f"Cannot promote array of {kind}"
     raise NotImplementedError(msg)  # pragma: no cover
@@ -273,7 +275,7 @@ class Translater:
         if isinstance(expr, (gp.MVar, np.ndarray)):
             if scalar:
                 # Extract the underlying variable - will raise an error if the shape is not scalar
-                return expr.item()  # type: ignore[return-value]
+                return expr.item()
             return expr
         return self.make_auxilliary_variable_for(
             expr, node.__class__.__name__, vtype=vtype, lb=lb, ub=ub
@@ -319,7 +321,7 @@ class Translater:
         return promote_array_to_gurobi_matrixapi(translated)
 
     def star_apply_and_visit_elementwise(
-        self, fn: Callable[[Any], Any], *exprs: cp.Expression
+        self, fn: Callable[..., cp.Expression], *exprs: cp.Expression
     ) -> Any:
         """Apply fn across all given expressions and return the array of results.
 
@@ -386,7 +388,7 @@ class Translater:
             nlfunc.exp(expr), "exp", desired_shape=_shape(expr)
         )
 
-    def _stack(self, node: Hstack | Vstack, gp_fn: Callable) -> Any:
+    def _stack(self, node: Hstack | Vstack, gp_fn: Callable[[list[Any]], Any]) -> Any:
         exprs = [_to_matrix_api_object(self.visit(arg)) for arg in node.args]
         return gp_fn(exprs)
 
@@ -465,7 +467,7 @@ class Translater:
             varargs = [self.translate_into_variable(arg, scalar=True) for arg in args]
             return self.make_auxilliary_variable_for(gp_fn(varargs), name)
 
-        return self.star_apply_and_visit_elementwise(type(node), *args)  # pyright: ignore[reportArgumentType]
+        return self.star_apply_and_visit_elementwise(type(node), *args)
 
     def visit_maximum(self, node: cp.maximum) -> Any:
         return self._minimum_maximum(node, gp_fn=gp.max_, name="maximum")
@@ -502,6 +504,7 @@ class Translater:
     ) -> Any:
         (x,) = node.args
         if isinstance(x, cp.Constant):
+            assert x.value is not None
             return np.linalg.norm(x.value.ravel(), p)
         arg = self.translate_into_variable(x)
         assert isinstance(arg, (gp.Var, gp.MVar))
@@ -522,7 +525,7 @@ class Translater:
     def visit_norm_inf(self, node: cp.norm_inf) -> Any:
         return self._handle_norm(node, np.inf, "norminf")
 
-    def visit_power(self, node: power) -> Any:
+    def visit_power(self, node: Power) -> Any:
         power = self.visit(node.p)
         if power != 2:
             raise InvalidPowerError(node.p)
@@ -555,7 +558,9 @@ class Translater:
         lin = self.visit(y)
         return quad / lin
 
-    def visit_reshape(self, node: cp.reshape) -> gp.MVar | npt.NDArray[np.float64]:
+    def visit_reshape(
+        self, node: cp.reshape
+    ) -> gp.MVar | npt.NDArray[np.float64] | sp.spmatrix | sp.sparray:
         """Reshape a variable or expression.
 
         Only MVars have a reshape method, so anything else will be proxied by an MVar.
@@ -570,7 +575,9 @@ class Translater:
         if isinstance(expr, gp.Var):
             expr = gp.MVar.fromvar(expr)
         elif isinstance(expr, np.ndarray) or sp.issparse(expr):
-            return expr.reshape(target_shape)
+            # Sparse values from CVXPY and SciPy arithmetic are concrete formats
+            # providing reshape; issparse's broader ABC does not guarantee it.
+            return expr.reshape(target_shape)  # pyrefly: ignore[missing-attribute]
         elif not isinstance(expr, gp.MVar):
             expr_shape = _shape(expr)
             # Force creation of an MVar even if the shape is scalar
@@ -594,6 +601,7 @@ class Translater:
             expr = _to_matrix_api_object(expr)
             if node.axis is None or not _shape(expr):
                 return expr[(None,) * len(node.shape)]
+            assert isinstance(node.axis, (int, np.integer))
             axis = node.axis % node.args[0].ndim
             return expr[(slice(None),) * axis + (None,)]
         return expr
