@@ -18,8 +18,8 @@ Subject To
 Bounds
  x[0] free
  log1p_1[0] free
-General Constraints
-\ log1p_1[0] = log(2 + x[0])
- GC0: log1p_1[0] = NL : ( LOG , -1 , -1 ) ( PLUS , -1 , 0 ) 
-  ( CONSTANT , 2 , 1 ) ( VARIABLE , x[0] , 1 )
+Nonlinear Constraints
+\ NLC0: log1p_1[0] - log(2 + x[0]) = 0
+ NLC0: ( MINUS , -1 , -1 ) ( VARIABLE , log1p_1[0] , 0 ) ( LOG , -1 , 0 ) 
+  ( PLUS , -1 , 2 ) ( CONSTANT , 2 , 3 ) ( VARIABLE , x[0] , 3 ) = 0
 End

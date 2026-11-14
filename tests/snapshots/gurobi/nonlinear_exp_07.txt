@@ -21,11 +21,11 @@ Bounds
  x[1] free
  exp_1[0] free
  exp_1[1] free
-General Constraints
-\ exp_1[0] = exp(1 + x[0])
- GC0: exp_1[0] = NL : ( EXP , -1 , -1 ) ( PLUS , -1 , 0 ) 
-  ( CONSTANT , 1 , 1 ) ( VARIABLE , x[0] , 1 )
-\ exp_1[1] = exp(2 + x[1])
- GC1: exp_1[1] = NL : ( EXP , -1 , -1 ) ( PLUS , -1 , 0 ) 
-  ( CONSTANT , 2 , 1 ) ( VARIABLE , x[1] , 1 )
+Nonlinear Constraints
+\ NLC0: exp_1[0] - exp(1 + x[0]) = 0
+ NLC0: ( MINUS , -1 , -1 ) ( VARIABLE , exp_1[0] , 0 ) ( EXP , -1 , 0 ) 
+  ( PLUS , -1 , 2 ) ( CONSTANT , 1 , 3 ) ( VARIABLE , x[0] , 3 ) = 0
+\ NLC1: exp_1[1] - exp(2 + x[1]) = 0
+ NLC1: ( MINUS , -1 , -1 ) ( VARIABLE , exp_1[1] , 0 ) ( EXP , -1 , 0 ) 
+  ( PLUS , -1 , 2 ) ( CONSTANT , 2 , 3 ) ( VARIABLE , x[1] , 3 ) = 0
 End

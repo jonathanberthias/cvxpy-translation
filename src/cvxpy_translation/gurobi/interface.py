@@ -16,6 +16,7 @@ from cvxpy.reductions.solution import failure_solution
 from cvxpy.reductions.solvers.conic_solvers import gurobi_conif
 from cvxpy.settings import SOLUTION_PRESENT
 
+from cvxpy_translation.gurobi.translation import GUROBI_MAJOR
 from cvxpy_translation.gurobi.translation import Translater
 from cvxpy_translation.utils import Timer
 
@@ -122,9 +123,7 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
     dual_vars = {}
     for var in problem.variables():
         primal_vars[var.id] = extract_variable_value(model, var.name(), var.shape)
-    # Duals are only available for convex continuous problems
-    # https://www.gurobi.com/documentation/current/refman/pi.html
-    if not model.IsMIP:
+    if supports_duals(model):
         for constr in problem.constraints:
             dual = get_constraint_dual(model, constr)
             if dual is None:
@@ -142,6 +141,18 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
         dual_vars=dual_vars,
         attr=attr,
     )
+
+
+def supports_duals(model: gp.Model) -> bool:
+    """Exclude model types for which Gurobi does not provide constraint duals.
+
+    Individual dual values still depend on convexity and QCPDual settings.
+    """
+    # Before Gurobi 14, nonlinear constraints were general constraints,
+    # which made IsMIP true even for continuous models.
+    # From Gurobi 14 onward, check nonlinear constraints separately.
+    has_nonlinear_constraints = GUROBI_MAJOR >= 14 and model.NumNLConstrs > 0
+    return not model.IsMIP and not has_nonlinear_constraints
 
 
 def extract_variable_value(
