@@ -146,8 +146,8 @@ def add_variable(
     ub: Bound = None,
 ) -> scip.Variable | scip.MatrixVariable:
     if shape == ():
-        lb = float(lb) if isinstance(lb, np.ndarray) else lb
-        ub = float(ub) if isinstance(ub, np.ndarray) else ub
+        lb = float(lb) if lb is not None else None
+        ub = float(ub) if ub is not None else None
         return model.addVar(name=name, lb=lb, ub=ub, vtype=vtype)
     return model.addMatrixVar(shape, name=name, lb=lb, ub=ub, vtype=vtype)
 
