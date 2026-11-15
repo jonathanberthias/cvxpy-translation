@@ -40,17 +40,23 @@ def test_solve_infeasible_or_unbounded() -> None:
 def test_backfill_unbounded() -> None:
     problem = cp.Problem(cp.Maximize(cp.Variable()))
     value = cvxpy_translation.gurobi.solve(problem)
-    assert math.isinf(value)
-    model = problem.solver_stats.extra_stats
     assert problem.status == s.UNBOUNDED
+    assert math.isinf(value)
+    assert problem.solver_stats is not None
+    model = problem.solver_stats.extra_stats
+    assert isinstance(model, gp.Model)
     assert model.Status == gp.GRB.Status.UNBOUNDED
 
 
 def test_backfill_infeasible() -> None:
     x = cp.Variable(nonneg=True)
     problem = cp.Problem(cp.Maximize(x), [x <= -1])
-    value = cvxpy_translation.gurobi.solve(problem, **{gp.GRB.Param.DualReductions: 0})
-    assert math.isinf(value)
-    model = problem.solver_stats.extra_stats
+    value = cvxpy_translation.gurobi.solve(
+        problem, env=None, **{gp.GRB.Param.DualReductions: 0}
+    )
     assert problem.status == s.INFEASIBLE
+    assert math.isinf(value)
+    assert problem.solver_stats is not None
+    model = problem.solver_stats.extra_stats
+    assert isinstance(model, gp.Model)
     assert model.Status == gp.GRB.Status.INFEASIBLE
