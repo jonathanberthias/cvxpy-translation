@@ -21,6 +21,7 @@ from pytest_snapshot.plugin import Snapshot
 import cvxpy_translation.gurobi
 import cvxpy_translation.scip
 from cvxpy_translation import CVXPY_VERSION
+from cvxpy_translation.gurobi.interface import supports_duals
 from test_problems import ProblemTestCase
 from test_problems import all_valid_problems
 
@@ -31,7 +32,11 @@ if TYPE_CHECKING:
 
 
 PARAMS: Final = {
-    cp.GUROBI: {gp.GRB.Param.QCPDual: 1},
+    cp.GUROBI: {
+        gp.GRB.Param.QCPDual: 1,
+        # Resolve nearly flat norm objectives accurately enough to compare primals.
+        gp.GRB.Param.BarQCPConvTol: 1e-8,
+    },
     cp.SCIP: {
         "numerics/feastol": 1e-10,
         "numerics/dualfeastol": 1e-10,
@@ -161,10 +166,10 @@ def check_backfill_gurobi(case: ProblemTestCase) -> None:
     # Dual values are not available for MIPs
     # Sometimes, the Gurobi model is a MIP even though the CVXPY problem is not,
     # notably when using genexprs
-    # So we only check the dual values if the model is not a MIP
+    # Nonlinear constraints in Gurobi 14 also prevent dual extraction.
     # This is one point where we cannot guarantee that our solution is the same as CVXPY's
     # if the dual values are important
-    if not our_model.IsMIP:
+    if supports_duals(our_model):
         assert set(our_sol.dual_vars) == set(cp_sol.dual_vars)
         for key in our_sol.dual_vars:
             assert our_sol.dual_vars[key] == pytest.approx(
@@ -263,7 +268,11 @@ def lp_from_solver(model: Any, solver: str, tmp_path: Path) -> list[str]:
 def lp_from_gurobi(model: gp.Model, tmp_path: Path) -> list[str]:
     out_path = tmp_path / "gurobi.lp"
     model.write(str(out_path))
-    return out_path.read_text().splitlines()[1:]
+    return [
+        line
+        for line in out_path.read_text().splitlines()[1:]
+        if line != r"\ Note: variable lower bounds are 0 unless specified otherwise"
+    ]
 
 
 def lp_from_scip(model: scip.Model, tmp_path: Path) -> list[str]:

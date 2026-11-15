@@ -18,7 +18,8 @@ Subject To
 Bounds
  x free
  log_1 free
-General Constraints
-\ log_1 = log(x)
- GC0: log_1 = NL : ( LOG , -1 , -1 ) ( VARIABLE , x , 0 )
+Nonlinear Constraints
+\ NLC0: log_1 - log(x) = 0
+ NLC0: ( MINUS , -1 , -1 ) ( VARIABLE , log_1 , 0 ) ( LOG , -1 , 0 ) 
+  ( VARIABLE , x , 2 ) = 0
 End
