@@ -145,7 +145,7 @@ hatch run latest:tests
 This will test the latest version of dependencies. You can also run
 `hatch run oldest:tests` to test the minimum required dependency versions.
 
-Run `hatch run types:check` to check annotations with Pyrefly in strict mode.
+Run `hatch run types:check` to check annotations with Pyrefly.
 
 Make sure any change is tested through a snapshot test. To add a new test case,
 build a simple CVXPY problem in `tests/test_problems.py` in the appropriate
