@@ -1,0 +1,31 @@
+CVXPY
+Minimize
+  Sum(Z, None, False)
+Subject To
+ 52: max([[np.float64(0.0) np.float64(4.0) np.float64(-2.0)]
+ [np.float64(3.0) np.float64(-1.0) np.float64(0.0)]], 1, True)[0:2, 0] <= Z
+Bounds
+ Z free
+End
+----------------------------------------
+AFTER COMPILATION
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>:  -<x_0>[C] <= -4;
+  [linear] <c2>:  -<x_1>[C] <= -3;
+END
+----------------------------------------
+SCIP
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <Z_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Z_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <52_0>: <Z_0>[C] >= 4;
+  [linear] <52_1>: <Z_1>[C] >= 3;
+END

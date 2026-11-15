@@ -81,7 +81,7 @@ def group_cases(
 
 
 def skipif(
-    condition: Callable[[ProblemTestCase], bool], reason: str
+    condition: bool | Callable[[ProblemTestCase], bool], reason: str
 ) -> Callable[
     [Callable[[], Generator[ProblemTestCase]]], Callable[[], Generator[ProblemTestCase]]
 ]:
@@ -92,8 +92,11 @@ def skipif(
     ) -> Callable[[], Generator[ProblemTestCase]]:
         @wraps(iter_fn)
         def inner() -> Generator[ProblemTestCase]:
+            # A group-wide condition must be checked before constructing problems.
+            if isinstance(condition, bool) and condition:
+                return
             for case in iter_fn():
-                if condition(case):
+                if callable(condition) and condition(case):
                     yield replace(case, skip_reason=reason)
                 else:
                     yield case
@@ -411,6 +414,79 @@ def genexpr_min_max() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + y) <= 1, y == 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x + A) <= 1])
     yield cp.Problem(cp.Maximize(cp.sum(x)), [cp.max(x) + cp.max(A) <= 1])
+
+
+@group_cases("min_max_axis")
+def min_max_axis() -> Generator[cp.Problem]:
+    x = cp.Variable((2, 3), name="X")
+    y = cp.Variable(3, name="Y")
+    z = cp.Variable(2, name="Z")
+    A = np.array([[1.0, 4.0, -2.0], [3.0, -1.0, 5.0]])
+
+    yield cp.Problem(cp.Maximize(cp.sum(y)), [x == A, y <= cp.min(x, axis=0)])
+    yield cp.Problem(cp.Minimize(cp.sum(z)), [x == A, z >= cp.max(x, axis=1)])
+    yield cp.Problem(cp.Minimize(cp.sum(z)), [z == cp.max(A, axis=1)])
+
+    x = cp.Variable((1, 3), name="X")
+    A = np.array([[1.0, 4.0, -2.0]])
+    yield cp.Problem(cp.Minimize(cp.sum(y)), [x == A, y >= cp.max(x + 1, axis=0)])
+
+    x = cp.Variable((3, 1), name="X")
+    A = np.array([[3.0], [-1.0], [5.0]])
+    yield cp.Problem(cp.Maximize(cp.sum(y)), [x == A, y <= cp.min(x + 1, axis=1)])
+    yield cp.Problem(
+        cp.Minimize(cp.sum(y)), [x == A, y >= cp.max(cp.square(x), axis=1)]
+    )
+
+    B = sp.csc_matrix([[0.0, 4.0, -2.0], [3.0, -1.0, 0.0]])
+    z = cp.Variable(name="z")
+    yield cp.Problem(cp.Minimize(z), [z >= cp.max(B)])
+    yield cp.Problem(cp.Maximize(cp.sum(y)), [y <= cp.min(B, axis=0)])
+
+
+@skipif(CVXPY_VERSION < (1, 6, 6), "negative axes require CVXPY 1.6.6+ (#2805)")
+@group_cases("min_max_negative_axis")
+def min_max_negative_axis() -> Generator[cp.Problem]:
+    x = cp.Variable((2, 3), name="X")
+    y = cp.Variable(2, name="Y")
+    A = np.array([[1.0, 4.0, -2.0], [3.0, -1.0, 5.0]])
+    yield cp.Problem(cp.Maximize(cp.sum(y)), [x == A, y <= cp.min(x, axis=-1)])
+
+
+@skipif(CVXPY_VERSION < (1, 8, 2), "requires CVXPY axis canonicalizer fix (#3166)")
+@group_cases("min_max_keepdims")
+def min_max_keepdims() -> Generator[cp.Problem]:
+    x = cp.Variable((2, 3), name="X")
+    y = cp.Variable(3, name="Y")
+    z = cp.Variable(2, name="Z")
+    A = np.array([[1.0, 4.0, -2.0], [3.0, -1.0, 5.0]])
+
+    yield cp.Problem(
+        cp.Maximize(cp.sum(y)), [x == A, y <= cp.min(x, axis=0, keepdims=True)[0, :]]
+    )
+    yield cp.Problem(
+        cp.Minimize(cp.sum(z)), [x == A, z >= cp.max(x, axis=1, keepdims=True)[:, 0]]
+    )
+    yield cp.Problem(cp.Maximize(cp.min(x, keepdims=True)[0, 0]), [x == A])
+
+    x = cp.Variable((1, 1), name="X")
+    yield cp.Problem(cp.Minimize(cp.max(x + 1, axis=1)[0]), [x >= 2])
+
+    x = cp.Variable(3, name="X")
+    yield cp.Problem(
+        cp.Minimize(cp.max(x, axis=0, keepdims=True)[0]),
+        [x == np.array([1.0, 4.0, -2.0])],
+    )
+
+    B = sp.csc_matrix([[0.0, 4.0, -2.0], [3.0, -1.0, 0.0]])
+    yield cp.Problem(
+        cp.Minimize(cp.sum(z)), [z >= cp.max(B, axis=1, keepdims=True)[:, 0]]
+    )
+
+    A = np.arange(12.0).reshape((2, 3, 2))
+    x = cp.Variable(A.shape, name="X")
+    y = cp.Variable(3, name="Y")
+    yield cp.Problem(cp.Minimize(cp.sum(y)), [x == A, y >= cp.max(x, axis=(0, 2))])
 
 
 @group_cases("genexpr_minimum_maximum")

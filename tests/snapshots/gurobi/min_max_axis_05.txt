@@ -1,0 +1,83 @@
+CVXPY
+Minimize
+  Sum(Y, None, False)
+Subject To
+ 59: X == [[3.00]
+ [-1.00]
+ [5.00]]
+ 65: max(PowerApprox(X, 2.0), 1, False) <= Y
+Bounds
+ Y free
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  x_0 + x_1 + x_2
+Subject To
+ R0: x_3 = 3
+ R1: x_4 = -1
+ R2: x_5 = 5
+ R3: x_6 - x_9 <= 0
+ R4: x_7 - x_10 <= 0
+ R5: x_8 - x_11 <= 0
+ R6: - x_0 + x_9 <= 0
+ R7: - x_1 + x_10 <= 0
+ R8: - x_2 + x_11 <= 0
+ R9: - x_6 + soc_t_9 = 1
+ R10: - x_6 + soc_x_10 = -1
+ R11: - 2 x_3 + soc_x_11 = 0
+ R12: - x_7 + soc_t_12 = 1
+ R13: - x_7 + soc_x_13 = -1
+ R14: - 2 x_4 + soc_x_14 = 0
+ R15: - x_8 + soc_t_15 = 1
+ R16: - x_8 + soc_x_16 = -1
+ R17: - 2 x_5 + soc_x_17 = 0
+ qc0: [ - soc_t_9 ^2 + soc_x_10 ^2 + soc_x_11 ^2 ] <= 0
+ qc1: [ - soc_t_12 ^2 + soc_x_13 ^2 + soc_x_14 ^2 ] <= 0
+ qc2: [ - soc_t_15 ^2 + soc_x_16 ^2 + soc_x_17 ^2 ] <= 0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+ x_10 free
+ x_11 free
+ soc_x_10 free
+ soc_x_11 free
+ soc_x_13 free
+ soc_x_14 free
+ soc_x_16 free
+ soc_x_17 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  Y[0] + Y[1] + Y[2]
+Subject To
+ 59[0,0]: X[0,0] = 3
+ 59[1,0]: X[1,0] = -1
+ 59[2,0]: X[2,0] = 5
+ 65[0]: - Y[0] + PowerApprox_1[0,0] <= 0
+ 65[1]: - Y[1] + PowerApprox_1[1,0] <= 0
+ 65[2]: - Y[2] + PowerApprox_1[2,0] <= 0
+ qc0: PowerApprox_1[0,0] + [ - X[0,0] ^2 ] = 0
+ qc1: PowerApprox_1[1,0] + [ - X[1,0] ^2 ] = 0
+ qc2: PowerApprox_1[2,0] + [ - X[2,0] ^2 ] = 0
+Bounds
+ Y[0] free
+ Y[1] free
+ Y[2] free
+ X[0,0] free
+ X[1,0] free
+ X[2,0] free
+ PowerApprox_1[0,0] free
+ PowerApprox_1[1,0] free
+ PowerApprox_1[2,0] free
+End

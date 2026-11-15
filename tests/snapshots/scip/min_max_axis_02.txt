@@ -1,0 +1,31 @@
+CVXPY
+Minimize
+  Sum(Z, None, False)
+Subject To
+ 28: Z == max([[1.00 4.00 -2.00]
+ [3.00 -1.00 5.00]], 1, False)
+Bounds
+ Z free
+End
+----------------------------------------
+AFTER COMPILATION
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <x_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <x_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <c1>: <x_0>[C] == 4;
+  [linear] <c2>: <x_1>[C] == 5;
+END
+----------------------------------------
+SCIP
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [continuous] <Z_0>: obj=1, original bounds=[-inf,+inf]
+  [continuous] <Z_1>: obj=1, original bounds=[-inf,+inf]
+CONSTRAINTS
+  [linear] <28_0>: <Z_0>[C] == 4;
+  [linear] <28_1>: <Z_1>[C] == 5;
+END
