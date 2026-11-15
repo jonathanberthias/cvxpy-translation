@@ -137,6 +137,7 @@ python-version = "3.9"
 # Translation dispatch and third-party APIs require gradual typing.
 explicit-any = "ignore"
 unknown-argument-type = "ignore"
+unknown-attribute-access = "ignore"
 unknown-variable-type = "ignore"
 no-any-return = "ignore"
 # Truthiness checks and discarded solver return values are intentional.

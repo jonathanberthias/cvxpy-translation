@@ -8,8 +8,9 @@ if TYPE_CHECKING:
 
 
 class Timer:
-    time: float
-    _start: float
+    # Initialized by __exit__ and __enter__, respectively.
+    time: float  # pyrefly: ignore[uninitialized-instance-variable]
+    _start: float  # pyrefly: ignore[uninitialized-instance-variable]
 
     def __enter__(self) -> Self:
         self._start = time.perf_counter()
