@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 class Timer:
     time: float
+    _start: float
 
     def __enter__(self) -> Self:
         self._start = time.perf_counter()

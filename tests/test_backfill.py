@@ -6,7 +6,7 @@ from cvxpy_translation import backfill_problem
 from cvxpy_translation import build_model
 
 
-def test_empty_presolved_model_scip():
+def test_empty_presolved_model_scip() -> None:
     """If presolve removes the constraints, it is impossible to get their dual value."""
     x = cp.Variable()
     problem = cp.Problem(cp.Minimize(x), [x >= 0])
@@ -16,7 +16,7 @@ def test_empty_presolved_model_scip():
     backfill_problem(problem, model)
 
 
-def test_empty_presolved_model_grb():
+def test_empty_presolved_model_grb() -> None:
     """If presolve removes the constraints, it should still be possible to get their dual value."""
     x = cp.Variable()
     problem = cp.Problem(cp.Minimize(x), [x >= 0])
@@ -37,7 +37,7 @@ def test_empty_presolved_model_grb():
         ("limits/bestsol", 0, "bestsollimit"),
     ],
 )
-def test_user_limit_scip(param: str, value: int, status: str):
+def test_user_limit_scip(param: str, value: int, status: str) -> None:
     """If the user limit is reached, the problem should still be backfilled."""
     x = cp.Variable(50, boolean=True)
     # some random non-trivial problem
