@@ -10,3 +10,15 @@ repos:
       - id: ruff-check
         args: [--fix, --show-fixes]
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: pyrefly
+        name: pyrefly
+        entry: uvx hatch run types:check
+        language: system
+        pass_filenames: false
+        files: ^(src/.*\.py|tests/.*\.py|pyproject\.toml)$
+
+ci:
+  # The Hatch environment needs network access; GitHub Actions checks types.
+  skip: [pyrefly]

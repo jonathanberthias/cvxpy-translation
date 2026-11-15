@@ -158,6 +158,7 @@ ignore = [
   "E501",    # comments may exceed line length
   "FIX",     # TODOs are fine
   "TD",      # TODOs are fine
+  "TC006",   # use runtime types in cast calls
   "PLC0415", # `import` not at top of file is on purpose
   "PLR2004", # 'magic' constants are not that annoying
   "RUF067",  # try-except in __init__.py file

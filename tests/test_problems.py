@@ -193,7 +193,7 @@ def matrix_constraints() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y == 1, y == 0])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [A @ x + y + 1 == 0, y == 0])
 
-    yield cp.Problem(cp.Minimize(cp.sum(x)), [cast("cp.Expression", S @ x) == 1])
+    yield cp.Problem(cp.Minimize(cp.sum(x)), [cast(cp.Expression, S @ x) == 1])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y == 1, y == 0])
     yield cp.Problem(cp.Minimize(cp.sum(x)), [S @ x + y + 1 == 0, y == 0])
 
@@ -598,15 +598,13 @@ def sum_axis() -> Generator[cp.Problem]:
     obj = cp.sum(cp.multiply(x, np.arange(1, 5).reshape((2, 2), order="F")))
 
     # CVXPY's sum wrapper also accepts iterables and infers a possible int result.
-    yield cp.Problem(
-        cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=None)) >= 1]
-    )
-    yield cp.Problem(cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=0)) >= 1])
-    yield cp.Problem(cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=1)) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cast(cp.Expression, cp.sum(x, axis=None)) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cast(cp.Expression, cp.sum(x, axis=0)) >= 1])
+    yield cp.Problem(cp.Minimize(obj), [cast(cp.Expression, cp.sum(x, axis=1)) >= 1])
     if CVXPY_VERSION >= (1, 6, 6):
         # axis=-1 support added in 1.6.0, but it's broken until 1.6.6
         yield cp.Problem(
-            cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, axis=-1)) >= 1]
+            cp.Minimize(obj), [cast(cp.Expression, cp.sum(x, axis=-1)) >= 1]
         )
 
 
@@ -617,16 +615,16 @@ def sum_keepdims() -> Generator[cp.Problem]:
     obj = cp.sum(cp.multiply(x, weights))
 
     yield cp.Problem(
-        cp.Minimize(obj), [cast("cp.Expression", cp.sum(x, keepdims=True))[0, 0] >= 1]
+        cp.Minimize(obj), [cast(cp.Expression, cp.sum(x, keepdims=True))[0, 0] >= 1]
     )
 
-    columns = cast("cp.Expression", cp.sum(x + 1, axis=0, keepdims=True))[0, :]
+    columns = cast(cp.Expression, cp.sum(x + 1, axis=0, keepdims=True))[0, :]
     yield cp.Problem(cp.Minimize(obj), [columns >= 4])
 
     rows = cp.sum(x, axis=1, keepdims=True)
     yield cp.Problem(cp.Minimize(obj), [cp.multiply(rows, np.array([[1], [2]])) >= 1])
 
-    squares = cast("cp.Expression", cp.sum(cp.square(x), axis=0, keepdims=True))[0, :]
+    squares = cast(cp.Expression, cp.sum(cp.square(x), axis=0, keepdims=True))[0, :]
     yield cp.Problem(cp.Maximize(cp.sum(x)), [squares <= 1])
 
 
@@ -923,7 +921,7 @@ def unsupported_attributes() -> Generator[cp.Problem]:
     yield cp.Problem(cp.Minimize(cp.sum(diag)))
 
     hermitian = cp.Variable((2, 2), hermitian=True)
-    yield cp.Problem(cp.Minimize(x), [cast("cp.Expression", cp.sum(hermitian)) == 1])
+    yield cp.Problem(cp.Minimize(x), [cast(cp.Expression, cp.sum(hermitian)) == 1])
 
     sparsity = cp.Variable(4, sparsity=[[0]])
     yield cp.Problem(cp.Minimize(cp.sum(sparsity)))
