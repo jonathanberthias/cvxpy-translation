@@ -1,0 +1,60 @@
+CVXPY
+Minimize
+  Sum(Y, None, False)
+Subject To
+ 34: X == [[ 1.  4. -2.]]
+ 41: max(X + Promote(1.0, (1, 3)), 0, False) <= Y
+Bounds
+ Y free
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  x_0 + x_1 + x_2
+Subject To
+ R0: x_3 = 1
+ R1: x_4 = 4
+ R2: x_5 = -2
+ R3: x_3 - x_6 <= -1
+ R4: x_4 - x_7 <= -1
+ R5: x_5 - x_8 <= -1
+ R6: - x_0 + x_6 <= 0
+ R7: - x_1 + x_7 <= 0
+ R8: - x_2 + x_8 <= 0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  Y[0] + Y[1] + Y[2]
+Subject To
+ 34[0,0]: X[0,0] = 1
+ 34[0,1]: X[0,1] = 4
+ 34[0,2]: X[0,2] = -2
+ R3: - X[0,0] + AddExpression_1[0,0] = 1
+ R4: - X[0,1] + AddExpression_1[0,1] = 1
+ R5: - X[0,2] + AddExpression_1[0,2] = 1
+ 41[0]: - Y[0] + AddExpression_1[0,0] <= 0
+ 41[1]: - Y[1] + AddExpression_1[0,1] <= 0
+ 41[2]: - Y[2] + AddExpression_1[0,2] <= 0
+Bounds
+ Y[0] free
+ Y[1] free
+ Y[2] free
+ X[0,0] free
+ X[0,1] free
+ X[0,2] free
+ AddExpression_1[0,0] free
+ AddExpression_1[0,1] free
+ AddExpression_1[0,2] free
+End

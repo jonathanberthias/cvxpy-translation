@@ -1,0 +1,31 @@
+CVXPY
+Minimize
+  Sum(Z, None, False)
+Subject To
+ 28: Z == max([[1.00 4.00 -2.00]
+ [3.00 -1.00 5.00]], 1, False)
+Bounds
+ Z free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  x_0 + x_1
+Subject To
+ R0: x_0 = 4
+ R1: x_1 = 5
+Bounds
+ x_0 free
+ x_1 free
+End
+----------------------------------------
+GUROBI
+Minimize
+  Z[0] + Z[1]
+Subject To
+ 28[0]: Z[0] = 4
+ 28[1]: Z[1] = 5
+Bounds
+ Z[0] free
+ Z[1] free
+End

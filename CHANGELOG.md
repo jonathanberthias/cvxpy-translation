@@ -11,6 +11,8 @@
 
 ### Bug fixes
 
+- Honor `axis` and `keepdims` when translating `cp.min` and `cp.max`.
+
 - Raise `cvxpy.SolverError` when optimization stops without an objective value.
 
 ## [2.0.3] - 2026-10-13

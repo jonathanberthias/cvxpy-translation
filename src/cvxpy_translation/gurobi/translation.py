@@ -438,19 +438,51 @@ class Translater:
         self,
         node: cp.min | cp.max,
         gp_fn: Callable[[list[gp.Var]], Any],
-        np_fn: Callable[[Any], float],
+        np_fn: Callable[..., Any],
         name: str,
     ) -> Any:
         (arg,) = node.args
         if isinstance(arg, cp.Constant):
-            return np_fn(arg.value)
+            value = arg.value
+            if sp.issparse(value):
+                value = value.toarray()  # pyrefly: ignore[missing-attribute]
+            return np.asarray(np_fn(value, axis=node.axis, keepdims=node.keepdims))
         if _is_scalar_shape(arg.shape):
-            # min/max of a scalar is itself
-            return self.visit(arg)
+            # min/max of a single element is itself, with the reduced shape.
+            expr = self.translate_into_scalar(arg)
+            return (
+                _to_matrix_api_object(expr)[(None,) * len(node.shape)]
+                if node.shape
+                else expr
+            )
 
-        var = self.translate_into_variable(arg)
-        assert isinstance(var, gp.MVar)  # other cases were handled above
-        return self.make_auxilliary_variable_for(gp_fn(var.reshape(-1).tolist()), name)
+        var = self.visit(arg)
+        if not isinstance(var, gp.MVar):
+            var = self.make_auxilliary_variable_for(
+                var, type(arg).__name__, desired_shape=arg.shape
+            )
+        assert isinstance(var, gp.MVar)
+
+        def reduce_slice(values: npt.NDArray[np.object_]) -> gp.Var:
+            if values.size == 1:
+                return values.item()
+            result = self.make_auxilliary_variable_for(gp_fn(values.tolist()), name)
+            assert isinstance(result, gp.Var)
+            return result
+
+        values = np.asarray(var.tolist(), dtype=object)
+        if node.axis is None:
+            values = values.reshape(-1)
+            axes = (0,)
+        elif isinstance(node.axis, (int, np.integer)):
+            axes = (node.axis,)
+        else:
+            axes = node.axis
+        for axis in sorted(axes, reverse=True):
+            values = np.apply_along_axis(reduce_slice, axis, values)
+
+        values = values.reshape(node.shape)
+        return gp.MVar.fromlist(values.tolist()) if node.shape else values.item()
 
     def visit_max(self, node: cp.max) -> Any:
         return self._min_max(node, gp_fn=gp.max_, np_fn=np.max, name="max")

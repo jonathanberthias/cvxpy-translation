@@ -307,31 +307,34 @@ class Translater:
         (arg,) = node.args
         return scip.log(self.visit(arg) + 1)
 
-    def visit_max(self, node: cp.max) -> Any:
+    def _min_max(self, node: cp.min | cp.max, *, name: Literal["min", "max"]) -> Any:
         (arg,) = node.args
         expr = self.visit(arg)
         if isinstance(arg, cp.Constant):
-            return np.max(expr)
+            np_fn = np.min if name == "min" else np.max
+            return np.asarray(np_fn(expr, axis=node.axis, keepdims=node.keepdims))
         if _is_scalar(arg):
-            # max of a scalar is itself
-            return expr
+            # min/max of a single element is itself, with the reduced shape.
+            reduced = np.asarray(expr).reshape(node.shape)
+            return reduced.view(scip.MatrixExpr) if node.shape else reduced.item()
+
         self._aux_id += 1
-        bound_var = add_variable(self.model, shape=(), name=f"max_{self._aux_id}")
-        self.model.addMatrixCons(bound_var >= expr, name=f"max_{self._aux_id}")
+        var_name = f"{name}_{self._aux_id}"
+        bound_var = add_variable(self.model, shape=node.shape, name=var_name)
+        bound = bound_var
+        if node.axis is not None and not node.keepdims:
+            bound = np.expand_dims(bound_var, axis=node.axis)
+        # Older PySCIPOpt versions do not broadcast matrix comparisons.
+        bound = np.broadcast_to(bound, arg.shape).view(scip.MatrixExpr)
+        cons = bound <= expr if name == "min" else bound >= expr
+        self.model.addMatrixCons(cons, name=var_name)
         return bound_var
 
+    def visit_max(self, node: cp.max) -> Any:
+        return self._min_max(node, name="max")
+
     def visit_min(self, node: cp.min) -> Any:
-        (arg,) = node.args
-        expr = self.visit(arg)
-        if isinstance(arg, cp.Constant):
-            return np.min(expr)
-        if _is_scalar(arg):
-            # min of a scalar is itself
-            return expr
-        self._aux_id += 1
-        bound_var = add_variable(self.model, shape=(), name=f"min_{self._aux_id}")
-        self.model.addMatrixCons(bound_var <= expr, name=f"min_{self._aux_id}")
-        return bound_var
+        return self._min_max(node, name="min")
 
     def visit_maximum(self, node: cp.maximum) -> Any:
         args = node.args

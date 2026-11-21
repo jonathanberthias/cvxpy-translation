@@ -139,9 +139,12 @@ def extract_solution_from_model(model: gp.Model, problem: cp.Problem) -> Solutio
             dual = get_constraint_dual(model, constr)
             if dual is None:
                 continue
-            if isinstance(problem.objective, cp.Minimize) and (
-                isinstance(constr, Equality)
-                or (isinstance(constr, Inequality) and constr.args[1].is_constant())
+            if isinstance(constr, Inequality):
+                # CVXPY inequality duals are nonnegative; Gurobi's sign depends
+                # on the constraint direction and objective sense.
+                dual = np.abs(dual)
+            elif isinstance(problem.objective, cp.Minimize) and isinstance(
+                constr, Equality
             ):
                 dual *= -1
             dual_vars[constr.constr_id] = dual
