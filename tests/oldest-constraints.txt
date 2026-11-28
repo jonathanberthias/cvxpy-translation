@@ -1,0 +1,2 @@
+# Hatch installs the project before applying the oldest dependency group.
+scipy>=1.8.0

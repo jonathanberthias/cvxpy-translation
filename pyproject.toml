@@ -116,7 +116,7 @@ scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} 
 
 [tool.hatch.envs.oldest]
 description = "Lowest dependency versions tested on Python 3.10, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
-env-vars = { UV_RESOLUTION = "lowest-direct" }
+env-vars = { UV_RESOLUTION = "lowest-direct", UV_CONSTRAINT = "{root}/tests/oldest-constraints.txt" }
 python = "3.10"
 dependency-groups = ["oldest"]
 
