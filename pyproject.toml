@@ -74,7 +74,7 @@ oldest = [
   "cvxpy-translation[gurobi]",
   "cvxpy-translation[scip]",
 ]
-types = ["pyrefly==1.4.1", "scipy-stubs==1.18.1.1"]
+types = ["pyrefly==1.5.0", "scipy-stubs==1.18.1.1"]
 dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
 
 [tool.uv]
