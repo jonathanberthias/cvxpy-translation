@@ -69,7 +69,6 @@ oldest = [
   "gurobipy>=13.0.3",
   "pyscipopt>=5.4.1",
   "numpy>=1.23.0",
-  "scipy>=1.8.0",
   "cvxpy-translation[cvxpy-base]",
   "cvxpy-translation[gurobi]",
   "cvxpy-translation[scip]",
@@ -79,6 +78,8 @@ dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
 
 [tool.uv]
 conflicts = [[{ group = "latest" }, { group = "oldest" }]]
+# Hatch installs the project before it applies the oldest dependency group.
+constraint-dependencies = ["scipy>=1.8.0; python_version >= '3.10'"]
 [tool.uv.dependency-groups]
 latest = { requires-python = "~=3.14.0" }
 oldest = { requires-python = "~=3.10.0" }
@@ -116,7 +117,7 @@ scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} 
 
 [tool.hatch.envs.oldest]
 description = "Lowest dependency versions tested on Python 3.10, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
-env-vars = { UV_RESOLUTION = "lowest-direct", UV_CONSTRAINT = "{root}/tests/oldest-constraints.txt" }
+env-vars = { UV_RESOLUTION = "lowest-direct" }
 python = "3.10"
 dependency-groups = ["oldest"]
 
