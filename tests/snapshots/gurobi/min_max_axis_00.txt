@@ -1,0 +1,77 @@
+CVXPY
+Maximize
+  Sum(Y, None, False)
+Subject To
+ 7: X == [[1.00 4.00 -2.00]
+ [3.00 -1.00 5.00]]
+ 12: Y <= min(X, 0, False)
+Bounds
+ Y free
+ X free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - x_0 - x_1 - x_2
+Subject To
+ R0: x_3 = 1
+ R1: x_4 = 3
+ R2: x_5 = 4
+ R3: x_6 = -1
+ R4: x_7 = -2
+ R5: x_8 = 5
+ R6: - x_3 - x_9 <= 0
+ R7: - x_4 - x_9 <= 0
+ R8: - x_5 - x_10 <= 0
+ R9: - x_6 - x_10 <= 0
+ R10: - x_7 - x_11 <= 0
+ R11: - x_8 - x_11 <= 0
+ R12: x_0 + x_9 <= 0
+ R13: x_1 + x_10 <= 0
+ R14: x_2 + x_11 <= 0
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+ x_3 free
+ x_4 free
+ x_5 free
+ x_6 free
+ x_7 free
+ x_8 free
+ x_9 free
+ x_10 free
+ x_11 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  Y[0] + Y[1] + Y[2]
+Subject To
+ 7[0,0]: X[0,0] = 1
+ 7[0,1]: X[0,1] = 4
+ 7[0,2]: X[0,2] = -2
+ 7[1,0]: X[1,0] = 3
+ 7[1,1]: X[1,1] = -1
+ 7[1,2]: X[1,2] = 5
+ 12[0]: Y[0] - min_1 <= 0
+ 12[1]: Y[1] - min_2 <= 0
+ 12[2]: Y[2] - min_3 <= 0
+Bounds
+ Y[0] free
+ Y[1] free
+ Y[2] free
+ X[0,0] free
+ X[0,1] free
+ X[0,2] free
+ X[1,0] free
+ X[1,1] free
+ X[1,2] free
+ min_1 free
+ min_2 free
+ min_3 free
+General Constraints
+ GC0: min_1 = MIN ( X[0,0] , X[1,0] )
+ GC1: min_2 = MIN ( X[0,1] , X[1,1] )
+ GC2: min_3 = MIN ( X[0,2] , X[1,2] )
+End

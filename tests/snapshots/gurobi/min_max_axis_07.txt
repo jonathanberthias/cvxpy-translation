@@ -1,0 +1,35 @@
+CVXPY
+Maximize
+  Sum(Y, None, False)
+Subject To
+ 77: Y <= min([[np.float64(0.0) np.float64(4.0) np.float64(-2.0)]
+ [np.float64(3.0) np.float64(-1.0) np.float64(0.0)]], 0, False)
+Bounds
+ Y free
+End
+----------------------------------------
+AFTER COMPILATION
+Minimize
+  - x_0 - x_1 - x_2
+Subject To
+ R0: x_0 <= 0
+ R1: x_1 <= -1
+ R2: x_2 <= -2
+Bounds
+ x_0 free
+ x_1 free
+ x_2 free
+End
+----------------------------------------
+GUROBI
+Maximize
+  Y[0] + Y[1] + Y[2]
+Subject To
+ 77[0]: Y[0] <= 0
+ 77[1]: Y[1] <= -1
+ 77[2]: Y[2] <= -2
+Bounds
+ Y[0] free
+ Y[1] free
+ Y[2] free
+End
