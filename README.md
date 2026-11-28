@@ -143,7 +143,7 @@ hatch run latest:tests
 ```
 
 This will test the latest version of dependencies. You can also run
-`hatch run oldest:tests` to test the minimum required dependency versions.
+`hatch run oldest:tests` to test older dependency versions on Python 3.10.
 
 Run `hatch run types:check` to check annotations with Pyrefly.
 

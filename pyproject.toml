@@ -66,10 +66,10 @@ latest = [
 oldest = [
   { "include-group" = "test" },
   "cvxpy-base>=1.4.0",
-  "gurobipy>=12.0.0",
+  "gurobipy>=13.0.3",
   "pyscipopt>=5.4.1",
   "numpy>=1.23.0",
-  "scipy>=1.5.4",
+  "scipy>=1.8.0",
   "cvxpy-translation[cvxpy-base]",
   "cvxpy-translation[gurobi]",
   "cvxpy-translation[scip]",
@@ -81,7 +81,7 @@ dev = [{ "include-group" = "latest" }, { "include-group" = "types" }]
 conflicts = [[{ group = "latest" }, { group = "oldest" }]]
 [tool.uv.dependency-groups]
 latest = { requires-python = "~=3.14.0" }
-oldest = { requires-python = "~=3.9.0" }
+oldest = { requires-python = "~=3.10.0" }
 types = { requires-python = ">=3.12" }
 
 [tool.hatch]
@@ -115,9 +115,9 @@ dependency-groups = ["latest"]
 scripts = { update-snapshots = "hatch run latest:tests --snapshot-update {args} tests/test_all.py::test_lp" }
 
 [tool.hatch.envs.oldest]
-description = "The oldest supported set of dependencies, for testing purposes, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
+description = "Lowest dependency versions tested on Python 3.10, equivalent to `uv sync --group oldest --no-dev --resolution=lowest-direct`"
 env-vars = { UV_RESOLUTION = "lowest-direct" }
-python = "3.9"
+python = "3.10"
 dependency-groups = ["oldest"]
 
 [tool.hatch.envs.types]
