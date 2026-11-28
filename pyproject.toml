@@ -66,9 +66,10 @@ latest = [
 oldest = [
   { "include-group" = "test" },
   "cvxpy-base>=1.4.0",
-  "gurobipy>=13.0.3",
+  "gurobipy>=13.0.0",
   "pyscipopt>=5.4.1",
   "numpy>=1.23.0",
+  "scipy>=1.5.4",
   "cvxpy-translation[cvxpy-base]",
   "cvxpy-translation[gurobi]",
   "cvxpy-translation[scip]",
